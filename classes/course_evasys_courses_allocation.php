@@ -66,4 +66,16 @@ class course_evasys_courses_allocation  extends persistent {
         array_unique($coursearray);
         return $coursearray;
     }
+
+    public static function get_record_by_course(int $course, $exception = true) {
+        global $DB;
+        if (!$record = $DB->get_record(self::TABLE, array('course' => $course))) {
+            if (!$exception) {
+                return false;
+            } else {
+                throw new \dml_missing_record_exception(self::TABLE);
+            }
+        }
+        return new static(0, $record);
+    }
 }

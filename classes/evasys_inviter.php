@@ -17,7 +17,11 @@
 namespace block_evasys_sync;
 
 defined('MOODLE_INTERNAL') || die();
-require_once($CFG->dirroot . "/local/lsf_unification/lib_his.php");
+if (!defined('BEHAT_SITE_RUNNING')) {
+    require_once($CFG->dirroot . "/local/lsf_unification/lib_his.php");
+} else {
+    require_once($CFG->dirroot . "/blocks/evasys_sync/classes/lsf_api_mock_testable.php");
+}
 require_once($CFG->libdir . '/adminlib.php');
 require_once($CFG->dirroot . '/course/lib.php');
 /**
@@ -29,10 +33,10 @@ require_once($CFG->dirroot . '/course/lib.php');
 class evasys_inviter {
 
     public static $instance = null;
-    private $soapclient;
+    private $evasysapi;
 
     private function __construct() {
-        $this->soapclient = $this->init_soap_client();
+        $this->evasysapi = evasys_api::get_instance();
     }
 
     public static function get_instance() {
@@ -85,7 +89,7 @@ class evasys_inviter {
      * @return array IDs of surveys
      */
     public function get_evasys_course_surveys($evasyskennung, $all = true) {
-        $soapresult = $this->soapclient->GetCourse($evasyskennung, 'PUBLIC', true, false);
+        $soapresult = $this->evasysapi->get_course($evasyskennung);
         $surveyids = $soapresult->m_oSurveyHolder->m_aSurveys;
         if (is_soap_fault($soapresult)) {
             return array();
@@ -156,7 +160,7 @@ class evasys_inviter {
         $surveyids = array_unique($surveyids);
 
         foreach ($surveyids as $surveyid) {
-            $this->soapclient->SendInvitationToParticipants($surveyid);
+            $this->evasysapi->send_invitation_to_participants_of_survey($surveyid);
         }
     }
 
@@ -236,7 +240,7 @@ class evasys_inviter {
 
         $soapresult = false;
         foreach ($evasyscourses as $evasyscourse) {
-            $soapresult = $this->soapclient->InsertParticipants($personlist, $evasyscourse, 'PUBLIC', false);
+            $soapresult = $this->evasysapi->insert_participants($personlist, $evasyscourse);
             if (!is_soap_fault($soapresult) && $soapresult) {
                 // Create enough passwords, then try again.
                 $this->make_sure_enough_passwords_are_available($evasyscourse);
@@ -248,12 +252,12 @@ class evasys_inviter {
     }
 
     public function make_sure_enough_passwords_are_available($evasyscourseid) {
-        $evasyscourse = $this->soapclient->GetCourse($evasyscourseid, 'PUBLIC' , false, false);
+        $evasyscourse = $this->evasysapi->get_course($evasyscourseid);
         if (!is_soap_fault($evasyscourse)) {
             $usercount = $evasyscourse->m_nCountStud;
             $surveys = $this->get_evasys_course_surveys($evasyscourseid);
             foreach ($surveys as $survey) {
-                $this->soapclient->GetPswdsBySurvey((string)$survey->m_nSurveyId, $usercount, 1, true, false);
+                $this->evasysapi->create_passwords((string)$survey->m_nSurveyId, $usercount);
             }
         }
     }
@@ -270,22 +274,6 @@ class evasys_inviter {
         return $emailadresses;
     }
 
-    public function init_soap_client() {
-        $soapclient = new \SoapClient(get_config('block_evasys_sync', 'evasys_wsdl_url'), [
-            'trace' => 1,
-            'exceptions' => 0,
-            'location' => get_config('block_evasys_sync', 'evasys_soap_url')
-        ]);
-
-        $headerbody = new \SoapVar([
-                                       new \SoapVar(get_config('block_evasys_sync', 'evasys_username'), XSD_STRING, null, null, 'Login', null),
-                                       new \SoapVar(get_config('block_evasys_sync', 'evasys_password'), XSD_STRING, null, null, 'Password', null),
-                                   ], SOAP_ENC_OBJECT);
-        $header = new \SOAPHEADER('soap', 'Header', $headerbody);
-        $soapclient->__setSoapHeaders($header);
-        return $soapclient;
-    }
-
     public function set_close_task($surveyid) {
         $time = new \DateTime();
         $time->add(new \DateInterval("PT10S"));
@@ -294,13 +282,13 @@ class evasys_inviter {
         $task->StartTime = $time->format("Y-m-d\TH:i:s");
         $task->Status = 3;
         $task->SendReport = false;
-        $soapresult = $this->soapclient->InsertCloseTask($task);
+        $soapresult = $this->evasysapi->insert_close_task($task);
         if (is_soap_fault($soapresult)) {
             // The Close Task has already been executed. This can happen if the Survey was reopened for some Reason.
             // Because of this, we'll still close the survey, however we can't send the result mail.
             // Also there might be another Error. In any Case we want to make sure the Survey gets closed.
             // If this was called by the close survey method the evaluationkoordinator will be notified.
-            $this->soapclient->CloseSurvey($surveyid);
+            $this->evasysapi->close_survey($surveyid);
             return false;
         }
         return true;

@@ -40,6 +40,8 @@ Example context (json):
     <input type="hidden" name="courseid" value="{{courseid}}">
     {{#onlyend}}<input id="only_end" type="hidden" name="only_end" value="true">{{/onlyend}}
     {{#nostudents}}<span style="color: orange; ">{{# str}}syncnostudents, block_evasys_sync{{/str}}</span>{{/nostudents}}
+    {{#invalididnumberwarning}}<div style="color: red; ">{{# str}}warning_invalid_idnumber, block_evasys_sync{{/str}}</div>{{/invalididnumberwarning}}
+    {{#invalidextrawarning}}<div style="color: red; ">{{# str}}warning_invalid_extra, block_evasys_sync{{/str}}</div>{{/invalidextrawarning}}
     {{#courses}}
         {{#.}}
             <div title="{{# str}}evacourseid, block_evasys_sync{{/str}} {{evasyscourseid}}
@@ -67,7 +69,9 @@ Example context (json):
     {{> block_evasys_sync/coursemapping}}
 {{/coursemappingenabled}}
 <div class = "linedrawer"></div>
-{{#warning}}<div style="color: red; ">{{# str}}warning_inconsistent_states, block_evasys_sync{{/str}}</div>{{/warning}}
+{{#warningnotallopen}}<div style="color: red; ">{{# str}}warning_not_all_open, block_evasys_sync{{/str}}</div>{{/warningnotallopen}}
+{{#warningnotallclosed}}<div style="color: red; ">{{# str}}warning_not_all_closed, block_evasys_sync{{/str}}</div>{{/warningnotallclosed}}
+{{#inconsistentmodeswarning}}<div style="color: orange; ">{{# str}}warning_inconsistent_modes, block_evasys_sync{{/str}}</div>{{/inconsistentmodeswarning}}
 {{#emailsentnotice}}<div style="color: limegreen; ">{{# str}}emailsentnotice, block_evasys_sync{{/str}}</div>{{/emailsentnotice}}
 {{#evaluationperiodsetnotice}}<div style="color: limegreen; ">{{# str}}evalperiodsetnotice, block_evasys_sync{{/str}}</div>{{/evaluationperiodsetnotice}}
     {{#showcontrols}}

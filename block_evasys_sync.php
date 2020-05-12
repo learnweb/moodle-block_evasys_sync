@@ -34,6 +34,7 @@ class block_evasys_sync extends block_base{
      */
     public function get_content() {
         global $OUTPUT;
+
         $evasyssynccheck = optional_param('evasyssynccheck', 0, PARAM_BOOL);
         $status = optional_param('status', "", PARAM_TEXT);
 
@@ -60,7 +61,7 @@ class block_evasys_sync extends block_base{
 
         // If we are not in sync mode, we display either the course mapping or the check status button.
         if ($evasyssynccheck !== 1) {
-            $inlsf = !empty($this->page->course->idnumber);
+            $inlsf = (!empty($this->page->course->idnumber) or $this->page->course->idnumber === '0');
             $hasextras = \block_evasys_sync\course_evasys_courses_allocation::record_exists_select(
                 "course = {$this->page->course->id} AND NOT evasyscourses = ''");
 
@@ -82,13 +83,13 @@ class block_evasys_sync extends block_base{
         if ($ismodeautomated) {
             $this->page->requires->js_call_amd('block_evasys_sync/invite_manager', 'init');
         } else {
-            $categoryhasstandardtime = \block_evasys_sync\evasys_synchronizer::get_standard_timemode($this->page->course->category);
 
             // Only use standardtime js if no record exists.
             if (!$record) {
                 $this->page->requires->js_call_amd('block_evasys_sync/standardtime', 'init');
             }
         }
+        $categoryhasstandardtime = \block_evasys_sync\evasys_synchronizer::get_standard_timemode($this->page->course->category);
         $evasyssynchronizer = new \block_evasys_sync\evasys_synchronizer($this->page->course->id);
         try {
             $evasyscourses = $evasyssynchronizer->get_courses_from_lsf();
@@ -97,7 +98,6 @@ class block_evasys_sync extends block_base{
             $this->content->text .= html_writer::div(get_string('syncnotpossible', 'block_evasys_sync'));
             return $this->content;
         }
-
         if ($ismodeautomated) {
             $href = new moodle_url('/course/view.php',
                                    array('id' => $this->page->course->id, "evasyssynccheck" => true));
@@ -110,6 +110,7 @@ class block_evasys_sync extends block_base{
         $enddisabled = false;
         $emailsentnotice = false;
         $periodsetnotice = false;
+        $wasstarted = false;
 
         // Set start to today and end to a week from now.
         $start = time();
@@ -134,6 +135,8 @@ class block_evasys_sync extends block_base{
                 // If the persistenceclass exists and the state is automatic and not opened
                 // the period must have been set.
                 $periodsetnotice = true;
+            } else {
+                $wasstarted = true;
             }
             if ($state >= course_evaluation_allocation::STATE_AUTO_OPENED || $nostudents) {
                 // If the course was already opened, disable the start date. If there are no students disable all controls.
@@ -149,7 +152,7 @@ class block_evasys_sync extends block_base{
             $end = $record->get('enddate');
             $recordhasstandardtime = $record->get('usestandardtime');
         } else {
-            if (!$ismodeautomated && $categoryhasstandardtime) {
+            if ($categoryhasstandardtime) {
                 $start = $categoryhasstandardtime['start'];
                 $end = $categoryhasstandardtime['end'];
                 $recordhasstandardtime = true;
@@ -161,15 +164,27 @@ class block_evasys_sync extends block_base{
         $this->page->requires->js_call_amd('block_evasys_sync/initialize', 'init', array($start, $end, $jsmodestring));
 
         // Initialize variables to pass to mustache.
+        $unknownidnumbercourse = false;
+        $unknownextracourse = false;
         $courses = array();
         $hassurveys = false;
         $startoption = ($startdisabled xor $enddisabled);
-        $warning = false;
+        $warningnotallclosed = false;
+        $warningnotallopen = false;
         $invalidcourses = false;
         // Query course data (put in function).
         foreach ($evasyscourses as $evasyscourseinfo) {
             $course = array();
             $course['evasyscoursetitle'] = $evasyssynchronizer->get_course_name($evasyscourseinfo['id']);
+            if ($course['evasyscoursetitle'] == 'Unknown') {
+                $couseidnum = $this->page->course->idnumber;
+                if ($evasyscourseinfo['lsf_id'] == $couseidnum) {
+                    $unknownidnumbercourse = true;
+                } else {
+                    $unknownextracourse = true;
+                }
+                continue;
+            }
             $course['technicalid'] = $evasyssynchronizer->get_course_id($evasyscourseinfo['id']);
             $course['evasyscourseid'] = $evasyscourseinfo['id'];
             $course['c_participants'] = format_string($evasyssynchronizer->get_amount_participants($evasyscourseinfo['id']));
@@ -184,12 +199,18 @@ class block_evasys_sync extends block_base{
                     $rawsurvey->surveyStatus == 'open') {
                     // If the evaluation has ended as far as we know, but there are still open evaluations output a warning...
                     // and enable all controls.
-                    $warning = true;
+                    $warningnotallclosed = true;
                     $startdisabled = false;
                     $enddisabled = false;
                 }
+                if (($record !== false && ($record->get('state') == course_evaluation_allocation::STATE_AUTO_NOTOPENED
+                    || $record->get('state') == course_evaluation_allocation::STATE_AUTO_OPENED)
+                    && $rawsurvey->surveyStatus == 'closed')
+                    or ($ismodeautomated and $record === false and $rawsurvey->surveyStatus == 'closed')) {
+                    $warningnotallopen = true;
+                }
                 if (($record === false || $record->get('state') == course_evaluation_allocation::STATE_MANUAL) &&
-                    $rawsurvey->surveyStatus == 'closed') {
+                    $rawsurvey->surveyStatus == 'closed' && !$ismodeautomated) {
                     // In case of a manual evaluation get the status of the evaluation by...
                     // checking whether the evaluations are closed.
                     $emailsentnotice = false;
@@ -211,9 +232,7 @@ class block_evasys_sync extends block_base{
             // Append this course.
             $courses[] = $course;
         }
-
-        $standardttimemode = (!$ismodeautomated && $recordhasstandardtime && !$record);
-
+        $standardttimemode = ($recordhasstandardtime && !$wasstarted);
         // Create the data object for the mustache table.
         $data = array(
             'href' => $href,
@@ -224,7 +243,7 @@ class block_evasys_sync extends block_base{
             * In case of the automated workflow, we require surveys
             * in order to be able to automatically trigger the evaluation. */
             'showcontrols' => ($hassurveys || !$ismodeautomated) && count($evasyscourses) > 0 && !$invalidcourses,
-            'usestandardtimelayout' => (!$ismodeautomated && $recordhasstandardtime && !$record),
+            'usestandardtimelayout' => $standardttimemode,
             // Choose mode.
             'direct' => $ismodeautomated,
             'startdisabled' => $startdisabled || $standardttimemode,
@@ -241,9 +260,15 @@ class block_evasys_sync extends block_base{
             // Defines if an lsf course is already mapped to the moodle course.
             'optional' => !empty($evasyscourses),
             // Outputs a warning that there are open course when there shouldn't.
-            'warning' => $warning
+            'warningnotallclosed' => $warningnotallclosed,
+            'warningnotallopen' => $warningnotallopen,
+            'invalididnumberwarning' => $unknownidnumbercourse,
+            'invalidextrawarning' => $unknownextracourse,
+            // If there is a internal state that is reserved for auto/manual mode, but the mode doesn't match warn the user.
+            'inconsistentmodeswarning' => isset($state) ?
+                ($state == course_evaluation_allocation::STATE_MANUAL and $ismodeautomated)
+                or ($state < course_evaluation_allocation::STATE_MANUAL and !$ismodeautomated) : false
         );
-
         $this->content->text .= $OUTPUT->render_from_template("block_evasys_sync/block", $data);
         $this->content->footer = '';
         return $this->content;
