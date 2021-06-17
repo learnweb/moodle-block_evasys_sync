@@ -38,7 +38,7 @@ class evasys_synchronizer {
 
     public function get_courses_from_lsf() {
         global $DB;
-        var_dump("in get_courses_from_lsf evasys_synchronizer");
+
         if ($this->lsfcourses !== null) {
             return $this->lsfcourses;
         }
@@ -46,17 +46,11 @@ class evasys_synchronizer {
 
         // Fetch veranstnr from LSF view.
         if ($course->idnumber) {
-            //establish_secondary_DB_connection();
-            //$lsfentry = get_course_by_veranstid(intval($course->idnumber));
-            //close_secondary_DB_connection();
-
-            //if (!is_object($lsfentry)) {
-            //    throw new \Exception('Cannot sync: Connection to LSF could not be established. Please try again later.');
-            //}
-            $maincourse = $course->idnumber;//trim($lsfentry->veranstid);
+            $maincourse = $course->idnumber;
         }
         // Fetch persistent object id.
         $pid = $DB->get_field('block_evasys_sync_courses', 'id', array('course' => $this->courseid));
+
         // Get all associated courses.
         if (!$pid === false) {
             $extras = new \block_evasys_sync\course_evasys_courses_allocation($pid);
@@ -71,18 +65,7 @@ class evasys_synchronizer {
             }
         }
         $extras = array_filter($extras);
-        /*establish_secondary_DB_connection();
-        // Fetch metadata (id, title) for the courses.
-        $result = array();
-        foreach ($extras as $course) {
-            $courseinfo = get_course_by_veranstid(intval($course));
-            $result[] = array(
-                'title' => $courseinfo->titel,
-                'id' => trim($courseinfo->veranstnr) . ' ' . trim($courseinfo->semestertxt));
-        }
-        close_secondary_DB_connection();*/
         $this->lsfcourses = $extras;
-        var_dump($this->lsfcourses);
         return $this->lsfcourses;
     }
 
@@ -104,17 +87,15 @@ class evasys_synchronizer {
     private function get_course_information() {
         $result = [];
         foreach ($this->get_courses_from_lsf() as $course) {
-            var_dump(intval($course));
-            $soapresult = $this->soapclient->GetCourse(intval($course), 'PUBLIC', true, true);
+            $soapresult = $this->soapclient->GetCourse($course, 'PUBLIC', true, true);
             if (is_soap_fault($soapresult)) {
-                var_dump($soapresult);
                 var_dump("soap verbindung nicht funktioniert");
                 // This happens e.g. if there is no corresponding course in EvaSys.
                 return null;
             }
-            $result[$course['id']] = $soapresult;
+	    $result[$course] = $soapresult;
         }
-        return $result;
+	return $result;
     }
 
     /**
