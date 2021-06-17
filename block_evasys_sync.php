@@ -169,11 +169,11 @@ class block_evasys_sync extends block_base{
         // Query course data (put in function).
         foreach ($evasyscourses as $evasyscourseinfo) {
             $course = array();
-            $course['evasyscoursetitle'] = $evasyssynchronizer->get_course_name($evasyscourseinfo['id']);
-            $course['technicalid'] = $evasyssynchronizer->get_course_id($evasyscourseinfo['id']);
-            $course['evasyscourseid'] = $evasyscourseinfo['id'];
-            $course['c_participants'] = format_string($evasyssynchronizer->get_amount_participants($evasyscourseinfo['id']));
-            $rawsurveys = $evasyssynchronizer->get_surveys($evasyscourseinfo['id']);
+            $course['evasyscoursetitle'] = $evasyssynchronizer->get_course_name($evasyscourseinfo);
+            $course['technicalid'] = $evasyssynchronizer->get_course_id($evasyscourseinfo);
+            $course['evasyscourseid'] = $evasyscourseinfo;
+            $course['c_participants'] = format_string($evasyssynchronizer->get_amount_participants($evasyscourseinfo));
+            $rawsurveys = $evasyssynchronizer->get_surveys($evasyscourseinfo);
             $surveys = array();
             foreach ($rawsurveys as $rawsurvey) {
                 $survey = array();
