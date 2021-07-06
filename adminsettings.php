@@ -95,6 +95,11 @@ if (has_capability('moodle/site:config', context_system::instance())) {
             } else {
                 set_config('default_evasys_mode', 0, 'block_evasys_sync');
             }
+            if (isset($data->default_his_connection)) {
+                set_config('default_his_connection', $data->default_his_connection, 'block_evasys_sync');
+            } else {
+                set_config('default_his_connection', 0, 'block_evasys_sync');
+            }
 
             $records = \block_evasys_sync\user_cat_allocation::get_records();
             foreach ($records as $allocation) {

@@ -153,6 +153,9 @@ $string['settings_soap_url'] = 'EvaSys SOAP URL';
 $string['settings_wsdl_url'] = 'EvaSys WSDL URL';
 $string['settings_moodleuser'] = 'Standard Nutzer-ID des Benachrichtigungsempfängers nach Sync';
 $string['settings_mode'] = 'Standardmodus für Kategorien';
+$string['his_connection'] = 'Aktive HIS Verbindung';
+$string['his_connection_help'] = 'Wenn aktiviert, benötigt dieses Plugin das Plugin local_lsf_unification und
+die HIS LSF Kursmanagement Software.';
 $string['settings_moodleuser_select'] = 'Kurskategorien';
 $string['settings_cc_select'] = 'Kurskategorie auswählen';
 $string['settings_cc_user'] = 'Nutzer-ID des Empfängers für die gewählte Kurskategorie';

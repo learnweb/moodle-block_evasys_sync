@@ -213,6 +213,7 @@ class block_evasys_sync extends block_base{
         }
 
         $standardttimemode = (!$ismodeautomated && $recordhasstandardtime && !$record);
+        $hisconnection = get_config('block_evasys_sync', 'default_his_connection');
 
         // Create the data object for the mustache table.
         $data = array(
@@ -234,7 +235,7 @@ class block_evasys_sync extends block_base{
             // If the evaluation hasn't ended yet, display option to restart it.
             'startoption' => $startoption,
             // Only allow coursemapping before starting an evaluation.
-            'coursemappingenabled' => !$startdisabled or is_siteadmin(),
+            'coursemappingenabled' => $hisconnection and (!$startdisabled or is_siteadmin()),
             'nostudents' => $nostudents,
             'emailsentnotice' => $emailsentnotice,
             'evaluationperiodsetnotice' => $periodsetnotice,
