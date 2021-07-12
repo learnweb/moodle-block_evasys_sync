@@ -26,7 +26,7 @@ class evasys_synchronizer {
     protected $soapclient;
     private $blockcontext;
     private $courseinformation;
-    private $lsfcourses;
+    private $evasyscourses;
 
     public function __construct($courseid) {
         $this->courseid = $courseid;
@@ -35,15 +35,14 @@ class evasys_synchronizer {
         $this->courseinformation = $this->get_course_information();
     }
 
-    public function get_courses_from_lsf() {
+    public function get_allocated_courses() {
         global $DB;
 
-        if ($this->lsfcourses !== null) {
-            return $this->lsfcourses;
+        if ($this->evasyscourses !== null) {
+            return $this->evasyscourses;
         }
         $course = get_course($this->courseid);
 
-        // Fetch veranstnr from LSF view.
         if ($course->idnumber) {
             $maincourse = $course->idnumber;
         }
@@ -64,8 +63,8 @@ class evasys_synchronizer {
             }
         }
         $extras = array_filter($extras);
-        $this->lsfcourses = $extras;
-        return $this->lsfcourses;
+        $this->evasyscourses = $extras;
+        return $this->evasyscourses;
     }
 
     private function init_soap_client() {
@@ -85,7 +84,7 @@ class evasys_synchronizer {
 
     private function get_course_information() {
         $result = [];
-        foreach ($this->get_courses_from_lsf() as $course) {
+        foreach ($this->get_allocated_courses() as $course) {
             $soapresult = $this->soapclient->GetCourse($course, 'PUBLIC', true, true);
             if (is_soap_fault($soapresult)) {
                 var_dump("soap verbindung nicht funktioniert");
@@ -130,7 +129,7 @@ class evasys_synchronizer {
     public function get_all_surveys() {
         // Gets all surveys from the associated evasys courses.
         $surveys = [];
-        foreach ($this->lsfcourses as $course) {
+        foreach ($this->evasyscourses as $course) {
             $surveys = array_merge($surveys, $this->get_surveys($course['id']));
         }
         return $surveys;

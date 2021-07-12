@@ -91,7 +91,7 @@ class block_evasys_sync extends block_base{
         }
         $evasyssynchronizer = new \block_evasys_sync\evasys_synchronizer($this->page->course->id);
         try {
-            $evasyscourses = $evasyssynchronizer->get_courses_from_lsf();
+            $evasyscourses = $evasyssynchronizer->get_allocated_courses();
         } catch (Exception $exception) {
             \core\notification::warning(get_string('syncnotpossible', 'block_evasys_sync'));
             $this->content->text .= html_writer::div(get_string('syncnotpossible', 'block_evasys_sync'));
