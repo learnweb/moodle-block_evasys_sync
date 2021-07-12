@@ -55,6 +55,7 @@ $string['add_course_header'] = "Wählen Sie die LSF-Veranstaltungen, die gemeins
 $string['coursename'] = "Kursname";
 $string['associated'] = "zugeordnet";
 $string['forbidden'] = "Die Aktion ist im aktuellen Status des Kurses nicht zulässig";
+$string['hisconnection_error'] = "Um diese Funktion nutzen zu können, muss das lokale Plugin lsf_unification installiert werden";
 $string['maincoursepredefined'] = 'Vordefinierte Zuordnung.';
 $string['maincoursepredefined_help'] = 'Dieser LSF-Kurs ist fest zugeordnet, da dies der entsprechende Learnweb-Kurs ist. Falls Sie dies für nicht korrekt halten, wenden Sie sich bitte an den Learnweb-Support.';
 
