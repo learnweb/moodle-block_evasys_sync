@@ -153,9 +153,10 @@ $string['settings_soap_url'] = 'EvaSys SOAP URL';
 $string['settings_wsdl_url'] = 'EvaSys WSDL URL';
 $string['settings_moodleuser'] = 'Standard Nutzer-ID des Benachrichtigungsempfängers nach Sync';
 $string['settings_mode'] = 'Standardmodus für Kategorien';
-$string['his_connection'] = 'Aktive HIS Verbindung';
-$string['his_connection_help'] = 'Wenn aktiviert, benötigt dieses Plugin das Plugin local_lsf_unification und
-die HIS LSF Kursmanagement Software.';
+$string['his_connection'] = 'Aktiviere Mehrfach-Evaluationen (Achtung, externes Plugin notwendig!)';
+$string['his_connection_help'] = 'Optionales Feature, dass es ermöglicht einem Kurs mehrere evasys Evaluationen zuzuordnen.
+Dazu wird ein externes lokale Plugin lsf_unification (https://github.com/learnweb/his_unification) und 
+eine Anbindung an das CMS Software HIS LSF benötigt um weitere Veranstaltungen von den verantwortlichen Lehrenden zu identifizieren.';
 $string['settings_moodleuser_select'] = 'Kurskategorien';
 $string['settings_cc_select'] = 'Kurskategorie auswählen';
 $string['settings_cc_user'] = 'Nutzer-ID des Empfängers für die gewählte Kurskategorie';

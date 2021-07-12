@@ -160,9 +160,10 @@ $string['settings_soap_url'] = 'EvaSys SOAP URL';
 $string['settings_wsdl_url'] = 'EvaSys WSDL URL';
 $string['settings_moodleuser'] = 'Default user ID of mail recipient after sync';
 $string['settings_mode'] = 'Default mode for categories';
-$string['his_connection'] = 'Enable HIS connection';
-$string['his_connection_help'] = 'When enabled, this requires the plugin local_lsf_unification and the availability of 
-a HIS LSF Course Management Tool';
+$string['his_connection'] = 'Enable multiple evaluations (Caution, this requires an external plugin)';
+$string['his_connection_help'] = 'Optional Feature which enables to assign multiple evasys evaluations to one course. This
+requires the external local plugin lsf_unification (https://github.com/learnweb/his_unification) and a connection to the CMS Software HIS LSF
+to identify further lectures of the corresponding teachers.';
 $string['settings_moodleuser_select'] = 'Course categories';
 $string['settings_cc_select'] = 'Select course category';
 $string['settings_cc_user'] = 'Recipient (moodle user id) for selected course category';
