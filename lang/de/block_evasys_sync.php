@@ -144,6 +144,7 @@ $string['surveystatusclosed'] = 'geschlossen';
 // Capabilities.
 $string['evasys_sync:mayevaluate'] = 'An Kursevaluation teilnehmen';
 $string['evasys_sync:synchronize'] = 'Teilnehmer zu EvaSys synchronisieren';
+$string['evasys_sync:modifymapping'] = 'Verknüpfung von EvaSys Veranstaltungen zu Moodle Kurs bearbeiten';
 
 // Settings.
 $string['settings'] = 'EvaSys Sync Block Einstellungen';

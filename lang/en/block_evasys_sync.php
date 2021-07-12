@@ -151,6 +151,7 @@ $string['surveystatusclosed'] = 'closed';
 // Capabilities.
 $string['evasys_sync:mayevaluate'] = 'Evaluate a course using EvaSys';
 $string['evasys_sync:synchronize'] = 'Export participants to EvaSys';
+$string['evasys_sync:modifymapping'] = 'Modify mapping of EvaSys courses to moodle course';
 
 // Settings.
 $string['settings'] = 'EvaSys Sync Block Settings';
