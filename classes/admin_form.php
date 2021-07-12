@@ -231,7 +231,8 @@ class admin_form extends moodleform {
                                                 FROM {course_categories}
                                                 LEFT JOIN {block_evasys_sync_categories}
                                                 ON {block_evasys_sync_categories}.course_category = {course_categories}.id
-                                                WHERE {block_evasys_sync_categories}.course_category IS NULL');
+                                                WHERE {block_evasys_sync_categories}.course_category IS NULL
+                                                ORDER BY name ASC');
 
         $cat = array();
         foreach ($categories as $category) {
