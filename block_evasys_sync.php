@@ -91,7 +91,7 @@ class block_evasys_sync extends block_base{
         }
         $evasyssynchronizer = new \block_evasys_sync\evasys_synchronizer($this->page->course->id);
         try {
-            $evasyscourses = $evasyssynchronizer->get_courses_from_lsf();
+            $evasyscourses = $evasyssynchronizer->get_allocated_courses();
         } catch (Exception $exception) {
             \core\notification::warning(get_string('syncnotpossible', 'block_evasys_sync'));
             $this->content->text .= html_writer::div(get_string('syncnotpossible', 'block_evasys_sync'));
@@ -169,11 +169,11 @@ class block_evasys_sync extends block_base{
         // Query course data (put in function).
         foreach ($evasyscourses as $evasyscourseinfo) {
             $course = array();
-            $course['evasyscoursetitle'] = $evasyssynchronizer->get_course_name($evasyscourseinfo['id']);
-            $course['technicalid'] = $evasyssynchronizer->get_course_id($evasyscourseinfo['id']);
-            $course['evasyscourseid'] = $evasyscourseinfo['id'];
-            $course['c_participants'] = format_string($evasyssynchronizer->get_amount_participants($evasyscourseinfo['id']));
-            $rawsurveys = $evasyssynchronizer->get_surveys($evasyscourseinfo['id']);
+            $course['evasyscoursetitle'] = $evasyssynchronizer->get_course_name($evasyscourseinfo);
+            $course['technicalid'] = $evasyssynchronizer->get_course_id($evasyscourseinfo);
+            $course['evasyscourseid'] = $evasyscourseinfo;
+            $course['c_participants'] = format_string($evasyssynchronizer->get_amount_participants($evasyscourseinfo));
+            $rawsurveys = $evasyssynchronizer->get_surveys($evasyscourseinfo);
             $surveys = array();
             foreach ($rawsurveys as $rawsurvey) {
                 $survey = array();
@@ -213,6 +213,7 @@ class block_evasys_sync extends block_base{
         }
 
         $standardttimemode = (!$ismodeautomated && $recordhasstandardtime && !$record);
+        $hisconnection = get_config('block_evasys_sync', 'default_his_connection');
 
         // Create the data object for the mustache table.
         $data = array(
@@ -234,7 +235,7 @@ class block_evasys_sync extends block_base{
             // If the evaluation hasn't ended yet, display option to restart it.
             'startoption' => $startoption,
             // Only allow coursemapping before starting an evaluation.
-            'coursemappingenabled' => !$startdisabled or is_siteadmin(),
+            'coursemappingenabled' => $hisconnection and (!$startdisabled or is_siteadmin()),
             'nostudents' => $nostudents,
             'emailsentnotice' => $emailsentnotice,
             'evaluationperiodsetnotice' => $periodsetnotice,

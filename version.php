@@ -21,7 +21,3 @@ $plugin->component = 'block_evasys_sync';
 $plugin->version = 2019203100;  // YYYYMMDDHH (year, month, day, 24-hr time).
 $plugin->requires = 2017111300; // YYYmoYMMDDHH (This is the release version for Moodle 2.0).
 $plugin->maturity = MATURITY_RC;
-
-$plugin->dependencies = array(
-    'local_lsf_unification' => 2013090304,   // The lsf_unification module is needed for retrieving the lsf id.
-);

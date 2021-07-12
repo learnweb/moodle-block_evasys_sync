@@ -74,6 +74,14 @@ class admin_form extends moodleform {
         $mform->setType($name, PARAM_BOOL);
         $mform->setDefault($name, get_config('block_evasys_sync', 'default_evasys_mode'));
 
+        // Default Mode.
+        $name = 'default_his_connection';
+        $title = get_string('his_connection', 'block_evasys_sync');
+        $mform->addElement('checkbox', $name, $title);
+        $mform->setType($name, PARAM_BOOL);
+        $mform->addHelpButton('default_his_connection','his_connection', 'block_evasys_sync');
+        $mform->setDefault($name, get_config('block_evasys_sync', 'default_his_connection'));
+
         // Heading Add Category.
         $mform->addElement('html', '<h3>' . get_string('hd_user_cat', 'block_evasys_sync') . '</h3>');
 
