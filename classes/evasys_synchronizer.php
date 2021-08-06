@@ -18,20 +18,24 @@ namespace block_evasys_sync;
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->dirroot . "/local/lsf_unification/lib_his.php");
+if (!defined('BEHAT_SITE_RUNNING')) {
+    require_once($CFG->dirroot . "/local/lsf_unification/lib_his.php");
+} else {
+    require_once($CFG->dirroot . "/blocks/evasys_sync/classes/lsf_api_mock_testable.php");
+}
 require_once($CFG->libdir . '/adminlib.php');
 require_once($CFG->dirroot . '/course/lib.php');
 
 class evasys_synchronizer {
     private $courseid;
-    protected $soapclient;
     private $blockcontext;
     private $courseinformation;
     private $lsfcourses;
+    private $evasysapi;
 
     public function __construct($courseid) {
         $this->courseid = $courseid;
-        $this->init_soap_client();
+        $this->evasysapi = evasys_api::get_instance();
         $this->blockcontext = \context_course::instance($courseid); // TODO Course context or block context? Check caps.
         $this->courseinformation = $this->get_course_information();
     }
@@ -42,18 +46,6 @@ class evasys_synchronizer {
             return $this->lsfcourses;
         }
         $course = get_course($this->courseid);
-
-        // Fetch veranstnr from LSF view.
-        if ($course->idnumber) {
-            establish_secondary_DB_connection();
-            $lsfentry = get_course_by_veranstid(intval($course->idnumber));
-            close_secondary_DB_connection();
-
-            if (!is_object($lsfentry)) {
-                throw new \Exception('Cannot sync: Connection to LSF could not be established. Please try again later.');
-            }
-            $maincourse = trim($lsfentry->veranstid);
-        }
         // Fetch persistent object id.
         $pid = $DB->get_field('block_evasys_sync_courses', 'id', array('course' => $this->courseid));
         // Get all associated courses.
@@ -64,45 +56,30 @@ class evasys_synchronizer {
             $extras = [];
         }
         // If noone has associated the course itself, we force that.
-        if (isset($maincourse) && !empty($maincourse)) {
-            if (!in_array($maincourse, $extras)) {
-                $extras[] = $maincourse;
+        if (!(is_null($course->idnumber)) && !($course->idnumber == '')) {
+            if (!in_array($course->idnumber, $extras)) {
+                $extras[] = $course->idnumber;
             }
         }
-        $extras = array_filter($extras);
         establish_secondary_DB_connection();
         // Fetch metadata (id, title) for the courses.
         $result = array();
-        foreach ($extras as $course) {
-            $courseinfo = get_course_by_veranstid(intval($course));
+        foreach ($extras as $lsfcourse) {
+            $courseinfo = get_course_by_veranstid(intval($lsfcourse));
             $result[] = array(
                 'title' => $courseinfo->titel,
-                'id' => trim($courseinfo->veranstnr) . ' ' . trim($courseinfo->semestertxt));
+                'id' => trim($courseinfo->veranstnr) . ' ' . trim($courseinfo->semestertxt),
+                'lsf_id' => $lsfcourse);
         }
         close_secondary_DB_connection();
         $this->lsfcourses = $result;
         return $this->lsfcourses;
     }
 
-    private function init_soap_client() {
-        $this->soapclient = new \SoapClient(get_config('block_evasys_sync', 'evasys_wsdl_url'), [
-            'trace' => 1,
-            'exceptions' => 0,
-            'location' => get_config('block_evasys_sync', 'evasys_soap_url')
-        ]);
-
-        $headerbody = new \SoapVar([
-            new \SoapVar(get_config('block_evasys_sync', 'evasys_username'), XSD_STRING, null, null, 'Login', null),
-            new \SoapVar(get_config('block_evasys_sync', 'evasys_password'), XSD_STRING, null, null, 'Password', null),
-        ], SOAP_ENC_OBJECT);
-        $header = new \SOAPHEADER('soap', 'Header', $headerbody);
-        $this->soapclient->__setSoapHeaders($header);
-    }
-
     private function get_course_information() {
         $result = [];
         foreach ($this->get_courses_from_lsf() as $course) {
-            $soapresult = $this->soapclient->GetCourse($course['id'], 'PUBLIC', true, true);
+            $soapresult = $this->evasysapi->get_course($course['id']);
             if (is_soap_fault($soapresult)) {
                 // This happens e.g. if there is no corresponding course in EvaSys.
                 return null;
@@ -142,15 +119,6 @@ class evasys_synchronizer {
         return $enrichedsurveys;
     }
 
-    public function get_all_surveys() {
-        // Gets all surveys from the associated evasys courses.
-        $surveys = [];
-        foreach ($this->lsfcourses as $course) {
-            $surveys = array_merge($surveys, $this->get_surveys($course['id']));
-        }
-        return $surveys;
-    }
-
     public function get_course_name($coursekey) {
         if (isset($this->courseinformation[$coursekey])) {
             return $this->courseinformation[$coursekey]->m_sCourseTitle;
@@ -178,10 +146,6 @@ class evasys_synchronizer {
         $enrichedsurvey->formName = $this->get_form_name($rawsurvey->m_nFrmid);
         $enrichedsurvey->formIdPub = $this->get_public_formid($rawsurvey->m_nFrmid);
         $enrichedsurvey->formId = $rawsurvey->m_nFrmid;
-        $start = $rawsurvey->m_oPeriod->m_sStartDate;
-        $end = $rawsurvey->m_oPeriod->m_sEndDate;
-        $enrichedsurvey->startDate = $start;
-        $enrichedsurvey->endDate = $end;
         return $enrichedsurvey;
     }
 
@@ -194,13 +158,13 @@ class evasys_synchronizer {
     }
 
     private function get_public_formid($formid) {
-        $soapresult = $this->soapclient->GetForm($formid, 'INTERNAL', false);
+        $soapresult = $this->evasysapi->get_form($formid);
         $formidpub = $soapresult->FormName;
         return $formidpub;
     }
 
     private function get_form_name($formid) {
-        $soapresult = $this->soapclient->GetForm($formid, 'INTERNAL', false);
+        $soapresult = $this->evasysapi->get_form($formid);
         $formname = $soapresult->FormTitle;
         return $formname;
     }
@@ -252,19 +216,19 @@ class evasys_synchronizer {
         $personlist = new \SoapVar($students, SOAP_ENC_OBJECT, null, null, 'PersonList', null);
         $this->courseinformation = $this->get_course_information();
         foreach ($this->courseinformation as $course) {
-            $soapresult = $this->soapclient->InsertParticipants($personlist, $course->m_sPubCourseId, 'PUBLIC', false);
-            $course = $this->soapclient->GetCourse($course->m_sPubCourseId, 'PUBLIC', true, true); // Update usercount.
+            $soapresult = $this->evasysapi->insert_participants($personlist, $course->m_sPubCourseId);
+            $course = $this->evasysapi->get_course($course->m_sPubCourseId); // Update usercount.
             $usercountnow = $course->m_nCountStud;
             // The m_aSurveys element might be an empty object!
             if (!empty((array) $course->m_oSurveyHolder->m_aSurveys)) {
                 if (is_array($course->m_oSurveyHolder->m_aSurveys->Surveys)) {
                     foreach ($course->m_oSurveyHolder->m_aSurveys->Surveys as $survey) {
                         $id = $survey->m_nSurveyId;
-                        $this->soapclient->GetPswdsBySurvey($id, $usercountnow, 1, true, false);
+                        $this->evasysapi->create_passwords($id, $usercountnow);
                     }
                 } else {
                     $id = $course->m_oSurveyHolder->m_aSurveys->Surveys->m_nSurveyId;
-                    $this->soapclient->GetPswdsBySurvey($id, $usercountnow, 1, true, false); // Create new TAN's.
+                    $this->evasysapi->create_passwords($id, $usercountnow); // Create new TAN's.
                 }
             }
             if (is_soap_fault($soapresult)) {

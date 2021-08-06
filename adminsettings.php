@@ -70,8 +70,7 @@ if (has_capability('moodle/site:config', context_system::instance())) {
             }
             $persistent = new \block_evasys_sync\user_cat_allocation(0, $record);
             $persistent->create();
-
-            redirect($PAGE->url);
+            // redirect($PAGE->url);
             exit();
         } else if (isset($data->submitbutton)) {
             if (isset($data->evasys_wsdl_url)) {

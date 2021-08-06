@@ -46,6 +46,7 @@ $string['standard_period'] = "Standard evaluationperiod:";
 $string['different_period'] = "Exceptional evaluationperiod:";
 $string['activate_nonstandard_time'] = "Alter evaluationperiod for special courses";
 $string['time_set'] = "Standard evaluationperiod set";
+$string['evasys_sync:modifymapping'] = "Map and unmap Evasys courses to moodle courses.";
 
 // Multi allocation strings.
 
@@ -64,7 +65,7 @@ $string['startevaluationnow'] = 'Start evaluation now';
 $string['requestagain'] = 'Request or invite again';
 $string['title_send_success'] = "Evaluation started";
 $string['content_send_success'] = '{$a->sent} of {$a->total} emails have been send. <br />'.
-                                  '{$a->queued} jobs have been queued';
+    '{$a->queued} jobs have been queued';
 $string['send_error'] = "There was an error while trying to send emails. Please contact Your local support, or send the Emails manually via EvaSys";
 
 // Form strings.
@@ -103,7 +104,7 @@ $string['content_uptodate'] = "Your evaluation coordinator has already been inst
 $string['confirm_box'] = "OK";
 
 $string['direct_already'] = "You have already sent invitations to all students.".
-                            "No new invitations have been send";
+    "No new invitations have been send";
 
 $string['direct_title_info'] = "Invitation already complete";
 $string['title_send_rejected'] = "Invalid Date";
@@ -226,3 +227,8 @@ $string['endondate'] = 'until';
 // Notices.
 $string['evalperiodsetnotice'] = 'Evaluationperiod has been set';
 $string['emailsentnotice'] = 'Evaluation has been requested';
+$string['warning_invalid_idnumber'] = "The hard linked evasys-course is invalid!";
+$string['warning_invalid_extra'] = "One of the dynamically mapped evasys-courses is invalid";
+$string['warning_not_all_closed'] = "There are some open surveys, but all surveys should be closed.";
+$string['warning_not_all_open'] = "There are some closed surveys, but all surveys should be open.";
+$string['warning_inconsistent_modes'] = "This evaluation was already started in another mode";

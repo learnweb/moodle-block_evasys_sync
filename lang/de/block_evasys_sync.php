@@ -47,6 +47,7 @@ $string['activate_standard_time'] = "Standardzeitraum verwenden";
 $string['standard_period'] = "Standard-Evaluationszeitraum:";
 $string['different_period'] = "Abweichender Evaluationszeitraum:";
 $string['time_set'] = "Standard-Evaluationszeitraum gesetzt";
+$string['evasys_sync:modifymapping'] = "Zugeordnete Evasys-Kurse bearbeiten";
 
 // Multi allocation strings.
 
@@ -65,7 +66,7 @@ $string['startevaluationnow'] = 'Evaluation sofort beginnen';
 $string['requestagain'] = 'Erneut einladen oder beauftragen';
 $string['title_send_success'] = "Evaluation erfolgreich gestartet";
 $string['content_send_success'] = 'Es wurden {$a->sent} von {$a->total} Einladungsmails versendet. <br />' .
-                                  '{$a->queued} Evaluationsperioden wurden festgelegt.';
+    '{$a->queued} Evaluationsperioden wurden festgelegt.';
 $string['title_send_failure'] = "Fehler beim Versand";
 $string['send_error'] = "Es gab einen Fehler beim automatischen Versenden, bitte kontaktieren Sie Ihren Support, oder benutzen Sie den manuellen Versand von EvaSys";
 $string['not_enough_dates'] = "Bitte geben Sie Daten für ALLE Umfragen an!";
@@ -118,15 +119,15 @@ $string['title_uptodate'] = "Evaluation bereits beauftragt";
 $string['title_failure']  = "Evaluation nicht beauftragt";
 
 $string['content_success'] = "Sie haben die Evaluation erfolgreich beantragt.<br />" .
-                             "!!!DIE EVALUATION HAT NOCH NICHT BEGONNEN!!!<br />" .
-                             "Sie müssen nichts weiter tun, ".
-                             "Ihr*e Evaluationsbeauftragte*r wird nach den Richtlinien Ihres Fachbereichs weiter verfahren.";
+    "!!!DIE EVALUATION HAT NOCH NICHT BEGONNEN!!!<br />" .
+    "Sie müssen nichts weiter tun, ".
+    "Ihr*e Evaluationsbeauftragte*r wird nach den Richtlinien Ihres Fachbereichs weiter verfahren.";
 
 $string['content_uptodate'] = "Ihr*e Evaluationsbeauftragte*r hat bereist einen Auftrag zum Durchführen der Evaluation von Ihnen erhalten.<br />" .
-                              "Für Fragen zum Status Ihrer Evaluation kontaktieren Sie bitte Ihre*n Evaluationsbeauftragte*n.";
+    "Für Fragen zum Status Ihrer Evaluation kontaktieren Sie bitte Ihre*n Evaluationsbeauftragte*n.";
 
 $string['content_failure'] = "Leider konnte die Evaluation nicht beauftragt werden.<br />" .
-                             "Bitte wenden Sie sich an den Support.";
+    "Bitte wenden Sie sich an den Support.";
 
 $string['confirm_box'] = "Verstanden";
 $string['content_confirm_reactivate_automated_closed'] = 'Sind Sie sicher, dass Sie die Evaluation erneut beginnen möchten?';
@@ -217,3 +218,8 @@ $string['endondate'] = 'bis';
 // Notices.
 $string['evalperiodsetnotice'] = 'Evaluationszeitraum gesetzt';
 $string['emailsentnotice'] = 'Evaluation beauftragt';
+$string['warning_invalid_idnumber'] = "Der fest zugeordnete Evasys-kurs ist ungültig!";
+$string['warning_invalid_extra'] = "Einer der zugeordneten Evasys-kurse ist ungültig";
+$string['warning_not_all_closed'] = "Einige Umfragen sind geöffnet, aber alle Umfragen sollten geschlossen sein.";
+$string['warning_not_all_open'] = "Einige Umfragen sind geschlossen, aber alle Umfragen sollten offen sein.";
+$string['warning_inconsistent_modes'] = "Diese Evaluation wurde bereits in einem anderen Modus gestartet";

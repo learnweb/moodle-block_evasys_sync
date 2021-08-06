@@ -64,3 +64,181 @@ Nach Klick auf obigen Button wird eine Übersicht über Befragungen angezeigt, d
 
 In diesem Fall sind keine Befragungen vorbereitet. Falls Befragungen vorhanden sind, wird zusätzlich ein Button angezeigt, der zur Übertragung der Teilnehmerliste dient:  
 ![Screenshot: Mit Evaluationen](https://cloud.githubusercontent.com/assets/432117/21343860/1d4ce964-c699-11e6-8cd9-2b20f3155153.png)
+
+## Tests
+
+Die Funktionsweise des Blocks wird durch Behattests sichergestellt.
+
+##### Tests durchführen:
+Um die Test durchzuführen führen sie:
+`php moodle/admin/tool/behat/cli/run.php --tags="@block_evasys_sync"` aus. <br>
+Mehr Infos dazu in der [Dokumentation](https://docs.moodle.org/dev/Running_acceptance_test)
+
+##### Neue Tests schreiben:
+- Diese Plugin verfügt über einen Behattest Generator, zu finden in `evasys_sync/tests/behat/generator` <br>
+- Der Generator ist zweigeteilt. Um bestehende Schritte zu ändern reicht es die entsprechende Schrittdefiniton in `steps.py` zu finden und zu ändern.
+- Um neue Schritte zu definieren, muss ein entsprechender Schritt in `steps.py` angelegt werden, und die entsprechenden parameter in `generator.py` als key im `OPTIONS dict` angelegt werden. zudem muss in den verwendeten methoden der Parameter hinzugefügt werden. <br>
+Logischerweise muss der neue Schritt auch in `behat_block_evasys_sync` definiert werden sofern es kein Standardschritt ist.
+
+######Generator
+Der generelle Aufbau des Generators ist wie folgt:
+<br>`steps.py`:
+- direkte Texterzeugende Methoden sollten hier definiert werden.
+- Für einfache Schritte die nur von einem Parameter abhängen können `dicts` benutzt werden.
+- Bennenungskonventionen:
+    * `dicts`: <i>type</i>_<i>chechname_with_underscores</i>
+    * `functions`: <i>type</i>_<i>chechnamewithoutunderscores</i>
+- _type_ richtet sich nach der Funktion des zurückgegebenen Texts im Context des Behat tests:
+    * `description`: Der zurückgegebene Text ist für die Scenariobeschreibung.
+    * `step`: Der zurückgegebene Text legt die Umgebung des Tests fest.
+    * `check`: Der zurückgegebene Text ist eine Überprüfung der erzeugten Seite.
+    
+<br>`generator.py`:
+- 4 hauptmethoden die für die übergebenen Parameter entsprechende Texte zurückgeben:
+    * `get_checks` Gibt alle Checks aus
+    * `get_scenario` Gibt alle Umgebungsfestlegenden Texte zurück
+    * `get_combi_description` Gibt die Beschreibung eines Szenarios auch für eine mehrfachbelegung von parametern zurück
+    * `get_postcondensing_checks` Gibt die Checks die beim verkleinern der Szenarien nicht berücksichtigt werden sollen Zurück.
+    
+Der generator erzeutgt zunächst aus allen in `OPTIONS` festgelegten Parametern das Karthesische Produkt. <br>
+Danach werden für jede Option die Checks berechnet. 
+Alle Optionen mit gleichem Check werden darauf überprüft ob sie durch das abändern eines
+Parameters mit einer der anderen Optionen übereinstimmen. Wenn Ja wird angenommen, dass der Parameter nicht relevant für den Ausgang ist und die 2 Tests zusammengefasst.
+
+######Mockingklassen:
+Die Rückgaben des Evasys und LSF system werden für die Tests gemockt.<br>
+Dies geschiet in den Dateien `lsf_api_mock_testable.php` sowie in der unterklasse `evasys_api_testable` in `evasys_api.php`
+<br>
+Die relationen sehen dabei wie folgt aus:<br>
+`lsfid` &rarr; `(veranstnr, semestertext)` = `evasyskennung` <br>
+Die daten werden als JSON array im `summary` Feld der `course` Tabelle gespeichert. Dabei haben die Daten folgende Form: <br>
+`stdClass()->evacourses => array()`
+<details name="evavardump">
+    <summary>Single Evacourse vardump</summary>
+    
+    object(stdClass)[281]
+      public 'valid' => boolean true
+      public 'veranstnr' => int 0
+      public 'semestertxt' => string 'WS 2017/18' (length=10)
+      public 'studentcount' => int 100
+      public 'title' => string 'DynamicSurvey0' (length=14)
+      public 'surveys' => 
+        array (size=1)
+          0 => 
+            object(stdClass)[282]
+              public 'num' => int 0
+              public 'formid' => int 1
+              public 'is_open' => string 't' (length=1)
+              public 'form_count' => int 20
+              public 'pswd_count' => int 200
+</details>
+
+Das `stdClass->evacourses` Array sollte dabei für eine lsfid die entsprechende Datenstruktur [siehe vardump](#evavardump) zurückliefern.
+<br>
+Die gemockte lsfapi gibt lediglich `semestertext` und `veranstnr` zurück da die restlichen Werte nicht behötigt werden <br>
+Auch die gemockte evasysapi gibt lediglich benutzte Werte zurück und füllt den Rest mit dummys. Sollte ein neuer Wert benötigt werden, so muss dieser hier eingefügt werden. <br>
+Hier sind dafür Vardumps bereitgestellt, (evasys Struktur ändert sich je nachdem ob der Kurs eine oder mehrere Umfragen besitzt!!!):
+<details>
+<summary>Evasys Kurs Vardump</summary>
+
+    object(stdClass)[402]
+        public 'm_nCourseId' => int 166410
+        public 'm_sProgramOfStudy' => string '' (length=0)
+        public 'm_sCourseTitle' => string 'AutoMultiSurvey' (length=15)
+        public 'm_sRoom' => string '' (length=0)
+        public 'm_nCourseType' => int 1
+        public 'm_sPubCourseId' => string '1002 WS 2018/19' (length=15)
+        public 'm_sExternalId' => string '' (length=0)
+        public 'm_nCountStud' => int 2
+        public 'm_sCustomFieldsJSON' => string '{}' (length=2)
+        public 'm_nUserId' => int 73350
+        public 'm_nFbid' => int 338
+        public 'm_nPeriodId' => int 40
+        public 'm_aoParticipants' =>
+          object(stdClass)[404]
+        public 'm_aoSecondaryInstructors' =>
+          object(stdClass)[401]
+        public 'm_oSurveyHolder' =>
+          object(stdClass)[411]
+            public 'm_aSurveys' =>
+                object(stdClass)[412]
+                  public 'Surveys' =>
+            
+</details>
+<details>
+<summary>Vardump von einem Kurs mit nur eimer Umfrage</summary>
+
+    public 'm_aSurveys' =>
+            object(stdClass)[412]
+                public 'Surveys' =>
+                    object(stdClass)[413]
+                        public 'm_nSurveyId' => int 330416933
+                        public 'm_nState' => int 0
+                        public 'm_sTitle' => string 'AutoMultiSurvey' (length=15)
+                        public 'm_cType' => string 'o' (length=1)
+                        public 'm_nFrmid' => int 832
+                        public 'm_nStuid' => int 34763
+                        public 'm_nVerid' => int 166410
+                        public 'm_nOpenState' => int 1
+                        public 'm_nFormCount' => int 0
+                        public 'm_nPswdCount' => int 2
+                        public 'm_sLastDataCollectionDate' => string '' (length=0)
+                        public 'm_nPageLinkOffset' => int 0
+                        public 'm_sMaskTan' => string '' (length=0)
+                        public 'm_nMaskState' => int 0
+                        public 'm_oPeriod' =>
+                            object(stdClass)[414]
+                                public 'm_nPeriodId' => int 40
+                                public 'm_sTitel' => string 'WS 2018/19' (length=10)
+                                public 'm_sStartDate' => string '2018-10-01' (length=10)
+                                public 'm_sEndDate' => string '2019-03-31' (length=10)
+</details>
+
+<details>
+<summary>Vardump von einem Kurs mit mehreren Umfragen</summary>
+
+    public 'm_aSurveys' =>
+                object(stdClass)[412]
+                    public 'Surveys' =>
+                        array (size=2)
+                          0 =>
+                            object(stdClass)[409]
+                              public 'm_nSurveyId' => int 330416933
+                              public 'm_nState' => int 0
+                              public 'm_sTitle' => string 'AutoMultiSurvey' (length=15)
+                              public 'm_cType' => string 'o' (length=1)
+                              public 'm_nFrmid' => int 832
+                              public 'm_nStuid' => int 34763
+                              public 'm_nVerid' => int 166410
+                              public 'm_nOpenState' => int 1
+                              public 'm_nFormCount' => int 0
+                              public 'm_nPswdCount' => int 2
+                              public 'm_sLastDataCollectionDate' => string '' (length=0)
+                              public 'm_nPageLinkOffset' => int 0
+                              public 'm_sMaskTan' => string '' (length=0)
+                              public 'm_nMaskState' => int 0
+                              public 'm_oPeriod' =>
+                                object(stdClass)[410]
+                                  ...
+                          1 =>
+                            object(stdClass)[411]
+                              public 'm_nSurveyId' => int 2114887341
+                              public 'm_nState' => int 0
+                              public 'm_sTitle' => string 'AutoMultiSurvey' (length=15)
+                              public 'm_cType' => string 'o' (length=1)
+                              public 'm_nFrmid' => int 784
+                              public 'm_nStuid' => int 34763
+                              public 'm_nVerid' => int 166410
+                              public 'm_nOpenState' => int 1
+                              public 'm_nFormCount' => int 0
+                              public 'm_nPswdCount' => int 2
+                              public 'm_sLastDataCollectionDate' => string '' (length=0)
+                              public 'm_nPageLinkOffset' => int 0
+                              public 'm_sMaskTan' => string '' (length=0)
+                              public 'm_nMaskState' => int 0
+                              public 'm_oPeriod' =>
+                                object(stdClass)[410]
+</details>
+
+Letztlich ist noch zu bemerken, dass für über die `idnumber` verknüpfte Kurse immer ein Sommersemester als `semestertext` gewählt werden sollte,
+entsprechend für über die Mappingfunktion verknüpfte Kurse ein Wintersemester, um gleiche Evasyskennungen zu vermeiden.

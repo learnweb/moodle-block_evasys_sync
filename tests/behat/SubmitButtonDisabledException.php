@@ -14,14 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace behat_block_evasys_sync;
+class SubmitButtonDisabledException extends \Exception
+{
 
-defined('MOODLE_INTERNAL') || die();
-
-$plugin->component = 'block_evasys_sync';
-$plugin->version = 2020230410;  // YYYYMMDDHH (year, month, day, 24-hr time).
-$plugin->requires = 2017111300; // YYYmoYMMDDHH (This is the release version for Moodle 2.0).
-$plugin->maturity = MATURITY_RC;
-
-$plugin->dependencies = array(
-    'local_lsf_unification' => 2013090304,   // The lsf_unification module is needed for retrieving the lsf id.
-);
+}
