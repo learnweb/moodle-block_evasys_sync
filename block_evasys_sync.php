@@ -34,6 +34,7 @@ class block_evasys_sync extends block_base{
      */
     public function get_content() {
         global $OUTPUT;
+
         $evasyssynccheck = optional_param('evasyssynccheck', 0, PARAM_BOOL);
         $status = optional_param('status', "", PARAM_TEXT);
 

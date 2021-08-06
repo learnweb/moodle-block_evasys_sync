@@ -7,7 +7,7 @@ define(['jquery', 'core/notification', 'core/str'], function($, notification, st
             {'key' : 'confirm_box', component: 'block_evasys_sync'},
         ]).done(function(s) {
                 notification.alert(s[0], s[1], s[2]);
-            }
+        }
         ).fail(notification.exception);
     };
 
@@ -18,7 +18,7 @@ define(['jquery', 'core/notification', 'core/str'], function($, notification, st
             {'key' : 'confirm_box', component: 'block_evasys_sync'},
         ]).done(function(s) {
                 notification.alert(s[0], s[1], s[2]);
-            }
+        }
         ).fail(notification.exception);
     };
 
@@ -29,7 +29,7 @@ define(['jquery', 'core/notification', 'core/str'], function($, notification, st
             {'key' : 'confirm_box', component: 'block_evasys_sync'},
         ]).done(function(s) {
                 notification.alert(s[0], s[1], s[2]);
-            }
+        }
         ).fail(notification.exception);
     };
 
@@ -40,7 +40,7 @@ define(['jquery', 'core/notification', 'core/str'], function($, notification, st
             {'key' : 'confirm_box', component: 'block_evasys_sync'},
         ]).done(function(s) {
                 notification.alert(s[0], s[1], s[2]);
-            }
+        }
         ).fail(notification.exception);
     };
 
