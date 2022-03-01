@@ -17,7 +17,7 @@
 namespace block_evasys_sync;
 
 defined('MOODLE_INTERNAL') || die();
-require_once($CFG->dirroot . "/local/lsf_unification/lib_his.php");
+
 require_once($CFG->libdir . '/adminlib.php');
 require_once($CFG->dirroot . '/course/lib.php');
 /**
@@ -55,27 +55,16 @@ class evasys_inviter {
             $extras = [];
         }
         $extras = array_filter($extras);
-        establish_secondary_DB_connection();
-        // Fetch the Evasysids for the courses.
-        $relevantcourses = array();
-        foreach ($extras as $course) {
-            $courseinfo = get_course_by_veranstid(intval($course));
-            if (!is_object($courseinfo)) {
-                throw new \Exception('Cannot sync: Connection to LSF could not be established. Please try again later.');
-            }
-            $relevantcourses[] = trim($courseinfo->veranstnr) . ' ' . trim($courseinfo->semestertxt);
-        }
-        // Maybe add entry via the $course->idnumber.
+
+	// Maybe add entry via the $course->idnumber.
         $course = get_course($courseid);
         if ($course->idnumber) {
-            $courseinfo = get_course_by_veranstid(intval($course->idnumber));
-            $maincourse = trim($courseinfo->veranstnr) . ' ' . trim($courseinfo->semestertxt);
+            $maincourse = $course->idnumber;
         }
-        if (!in_array($maincourse, $relevantcourses)) {
-            $relevantcourses[] = $maincourse;
+        if (!in_array($maincourse, $extras)) {
+            $extras[] = $maincourse;
         }
-        close_secondary_DB_connection();
-        return $relevantcourses;
+        return $extras;
     }
 
     /**

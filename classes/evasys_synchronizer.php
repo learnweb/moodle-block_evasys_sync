@@ -18,7 +18,6 @@ namespace block_evasys_sync;
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->dirroot . "/local/lsf_unification/lib_his.php");
 require_once($CFG->libdir . '/adminlib.php');
 require_once($CFG->dirroot . '/course/lib.php');
 
@@ -27,7 +26,7 @@ class evasys_synchronizer {
     protected $soapclient;
     private $blockcontext;
     private $courseinformation;
-    private $lsfcourses;
+    private $evasyscourses;
 
     public function __construct($courseid) {
         $this->courseid = $courseid;
@@ -36,26 +35,20 @@ class evasys_synchronizer {
         $this->courseinformation = $this->get_course_information();
     }
 
-    public function get_courses_from_lsf() {
+    public function get_allocated_courses() {
         global $DB;
-        if ($this->lsfcourses !== null) {
-            return $this->lsfcourses;
+
+        if ($this->evasyscourses !== null) {
+            return $this->evasyscourses;
         }
         $course = get_course($this->courseid);
 
-        // Fetch veranstnr from LSF view.
         if ($course->idnumber) {
-            establish_secondary_DB_connection();
-            $lsfentry = get_course_by_veranstid(intval($course->idnumber));
-            close_secondary_DB_connection();
-
-            if (!is_object($lsfentry)) {
-                throw new \Exception('Cannot sync: Connection to LSF could not be established. Please try again later.');
-            }
-            $maincourse = trim($lsfentry->veranstid);
+            $maincourse = $course->idnumber;
         }
         // Fetch persistent object id.
         $pid = $DB->get_field('block_evasys_sync_courses', 'id', array('course' => $this->courseid));
+
         // Get all associated courses.
         if (!$pid === false) {
             $extras = new \block_evasys_sync\course_evasys_courses_allocation($pid);
@@ -70,18 +63,8 @@ class evasys_synchronizer {
             }
         }
         $extras = array_filter($extras);
-        establish_secondary_DB_connection();
-        // Fetch metadata (id, title) for the courses.
-        $result = array();
-        foreach ($extras as $course) {
-            $courseinfo = get_course_by_veranstid(intval($course));
-            $result[] = array(
-                'title' => $courseinfo->titel,
-                'id' => trim($courseinfo->veranstnr) . ' ' . trim($courseinfo->semestertxt));
-        }
-        close_secondary_DB_connection();
-        $this->lsfcourses = $result;
-        return $this->lsfcourses;
+        $this->evasyscourses = $extras;
+        return $this->evasyscourses;
     }
 
     private function init_soap_client() {
@@ -101,15 +84,16 @@ class evasys_synchronizer {
 
     private function get_course_information() {
         $result = [];
-        foreach ($this->get_courses_from_lsf() as $course) {
-            $soapresult = $this->soapclient->GetCourse($course['id'], 'PUBLIC', true, true);
+        foreach ($this->get_allocated_courses() as $course) {
+            $soapresult = $this->soapclient->GetCourse($course, 'PUBLIC', true, true);
             if (is_soap_fault($soapresult)) {
+                //var_dump("soap verbindung nicht funktioniert");
                 // This happens e.g. if there is no corresponding course in EvaSys.
                 return null;
             }
-            $result[$course['id']] = $soapresult;
+	    $result[$course] = $soapresult;
         }
-        return $result;
+	return $result;
     }
 
     /**
@@ -145,7 +129,7 @@ class evasys_synchronizer {
     public function get_all_surveys() {
         // Gets all surveys from the associated evasys courses.
         $surveys = [];
-        foreach ($this->lsfcourses as $course) {
+        foreach ($this->evasyscourses as $course) {
             $surveys = array_merge($surveys, $this->get_surveys($course['id']));
         }
         return $surveys;

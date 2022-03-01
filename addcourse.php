@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 require_once('../../config.php');
-require_once('classes/add_course_form.php');
+//require_once('classes/add_course_form.php');
 $id = required_param('id', PARAM_INT);
 
 require_course_login($id);
@@ -26,9 +26,15 @@ $PAGE->set_context(context_course::instance($id));
 $PAGE->set_title(get_string('add_course_header', 'block_evasys_sync'));
 
 $record = $DB->get_record('block_evasys_sync_courseeval', array('course' => $id));
-if ($record !== false and ($record->state > \block_evasys_sync\course_evaluation_allocation::STATE_AUTO_NOTOPENED) and !is_siteadmin()) {
+if ($record !== false and ($record->state > \block_evasys_sync\course_evaluation_allocation::STATE_AUTO_NOTOPENED) and
+    !is_siteadmin() or !get_config('block_evasys_sync', 'default_his_connection')) {
     echo $OUTPUT->header();
     echo get_string('forbidden', 'block_evasys_sync');
+    echo $OUTPUT->footer();
+    return;
+} else if(!array_key_exists('lsf_unification', core_plugin_manager::instance()->get_plugins_of_type('local'))){
+    echo $OUTPUT->header();
+    throw new \moodle_exception('nohisconnection_error', 'block_evasys_sync');
     echo $OUTPUT->footer();
     return;
 }

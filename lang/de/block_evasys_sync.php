@@ -55,6 +55,7 @@ $string['add_course_header'] = "Wählen Sie die LSF-Veranstaltungen, die gemeins
 $string['coursename'] = "Kursname";
 $string['associated'] = "zugeordnet";
 $string['forbidden'] = "Die Aktion ist im aktuellen Status des Kurses nicht zulässig";
+$string['hisconnection_error'] = "Um diese Funktion nutzen zu können, muss das lokale Plugin lsf_unification installiert werden";
 $string['maincoursepredefined'] = 'Vordefinierte Zuordnung.';
 $string['maincoursepredefined_help'] = 'Dieser LSF-Kurs ist fest zugeordnet, da dies der entsprechende Learnweb-Kurs ist. Falls Sie dies für nicht korrekt halten, wenden Sie sich bitte an den Learnweb-Support.';
 
@@ -154,6 +155,10 @@ $string['settings_soap_url'] = 'EvaSys SOAP URL';
 $string['settings_wsdl_url'] = 'EvaSys WSDL URL';
 $string['settings_moodleuser'] = 'Standard Nutzer-ID des Benachrichtigungsempfängers nach Sync';
 $string['settings_mode'] = 'Standardmodus für Kategorien';
+$string['his_connection'] = 'Aktiviere Mehrfach-Evaluationen (Achtung, externes Plugin notwendig!)';
+$string['his_connection_help'] = 'Optionales Feature, dass es ermöglicht einem Kurs mehrere evasys Evaluationen zuzuordnen.
+Dazu wird ein externes lokale Plugin lsf_unification (https://github.com/learnweb/his_unification) und 
+eine Anbindung an das CMS Software HIS LSF benötigt um weitere Veranstaltungen von den verantwortlichen Lehrenden zu identifizieren.';
 $string['settings_moodleuser_select'] = 'Kurskategorien';
 $string['settings_cc_select'] = 'Kurskategorie auswählen';
 $string['settings_cc_user'] = 'Nutzer-ID des Empfängers für die gewählte Kurskategorie';
