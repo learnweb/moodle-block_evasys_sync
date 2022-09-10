@@ -58,4 +58,8 @@ $capabilities = array(
           'manager' => CAP_ALLOW,
       ),
   ),
+  'block/evasys_sync:managecourses' => array(
+      'captype' => 'write',
+      'contextlevel' => CONTEXT_COURSECAT
+  )
 );

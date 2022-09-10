@@ -237,5 +237,12 @@ function xmldb_block_evasys_sync_upgrade ($oldversion) {
         upgrade_block_savepoint(true, 2019203100, 'evasys_sync');
     }
 
+    if ($oldversion < 2022091000) {
+        require_once(__DIR__ . '/install.php');
+        xmldb_block_evasys_sync_create_role();
+        // Evasys_sync savepoint reached.
+        upgrade_block_savepoint(true, 2022091000, 'evasys_sync');
+    }
+
     return true;
 }
