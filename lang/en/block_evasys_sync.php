@@ -232,3 +232,5 @@ $string['endondate'] = 'until';
 // Notices.
 $string['evalperiodsetnotice'] = 'Evaluationperiod has been set';
 $string['emailsentnotice'] = 'Evaluation has been requested';
+
+$string['apply'] = 'Apply';

@@ -26,8 +26,8 @@ $PAGE->set_context(context_course::instance($id));
 $PAGE->set_title(get_string('add_course_header', 'block_evasys_sync'));
 
 $record = $DB->get_record('block_evasys_sync_courseeval', array('course' => $id));
-if ($record !== false and ($record->state > \block_evasys_sync\course_evaluation_allocation::STATE_AUTO_NOTOPENED) and
-    !is_siteadmin() or !get_config('block_evasys_sync', 'default_his_connection')) {
+if ($record !== false and (($record->state > \block_evasys_sync\course_evaluation_allocation::STATE_AUTO_NOTOPENED) and
+    !is_siteadmin() or !get_config('block_evasys_sync', 'default_his_connection'))) {
     echo $OUTPUT->header();
     echo get_string('forbidden', 'block_evasys_sync');
     echo $OUTPUT->footer();

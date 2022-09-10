@@ -222,3 +222,5 @@ $string['endondate'] = 'bis';
 // Notices.
 $string['evalperiodsetnotice'] = 'Evaluationszeitraum gesetzt';
 $string['emailsentnotice'] = 'Evaluation beauftragt';
+
+$string['apply'] = 'Anwenden';
