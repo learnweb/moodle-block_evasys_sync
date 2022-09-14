@@ -23,6 +23,10 @@ $courseid = required_param('courseid', PARAM_INT);
 require_login($courseid);
 require_sesskey();
 
+$PAGE->set_url('/blocks/evasys_sync/sync.php');
+$PAGE->set_context(context_course::instance($courseid));
+require_capability('block/evasys_sync:synchronize', $PAGE->context);
+
 $returnurl = new moodle_url($CFG->wwwroot . '/course/view.php');
 $returnurl->param('id', $courseid);
 $returnurl->param('evasyssynccheck', 1);
@@ -85,12 +89,6 @@ try {
     notice(get_string('syncnotpossible', 'block_evasys_sync'), $returnurl);
     exit();
 }
-
-$PAGE->set_url('/blocks/evasys_sync/sync.php');
-$DB->get_record('course', array('id' => $courseid), 'id', MUST_EXIST);
-
-$PAGE->set_context(context_course::instance($courseid));
-require_capability('block/evasys_sync:synchronize', context_course::instance($courseid));
 
 try {
     if (count_enrolled_users(context_course::instance($courseid), 'block/evasys_sync:mayevaluate') == 0) {
