@@ -14,10 +14,23 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace block_evasys_sync;
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->component = 'block_evasys_sync';
-$plugin->version = 2022092400;  // YYYYMMDDHH (year, month, day, 24-hr time).
-$plugin->requires = 2017111300; // YYYYMMDDHH (This is the release version for Moodle 2.0).
-$plugin->maturity = MATURITY_RC;
+/**
+ * Class with constants for tables
+ * @package block_evasys_sync
+ * @copyright 2022 Justus Dieckmann WWU
+ */
+class dbtables {
+
+    const CATEGORIES = 'block_evasys_sync_categories';
+    const EVAL_REQUESTS = 'block_evasys_sync_ereq';
+    const EVAL_REQUESTS_COURSES = 'block_evasys_sync_ereq_cours';
+    const EVAL_REQUESTS_VERANSTS = 'block_evasys_sync_ereq_veran';
+    const EVAL = 'block_evasys_sync_eval';
+    const EVAL_COURSES = 'block_evasys_sync_eval_cours';
+    const EVAL_VERANSTS = 'block_evasys_sync_eval_veran';
+
+}
