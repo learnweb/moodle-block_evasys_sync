@@ -225,8 +225,9 @@ $string['December'] = 'December';
 
 
 // From...to.
-$string['evaluationperiod'] = 'Evaluation period:';
-$string['startondate'] = 'Planned period from';
+$string['evaluationperiod'] = 'Evaluation period';
+$string['evaluationperiod_for'] = 'Evaluation period for "{$a}"';
+$string['startondate'] = 'From';
 $string['endondate'] = 'until';
 
 // Notices.
@@ -234,3 +235,11 @@ $string['evalperiodsetnotice'] = 'Evaluationperiod has been set';
 $string['emailsentnotice'] = 'Evaluation has been requested';
 
 $string['apply'] = 'Apply';
+
+$string['useoneevalperiod'] = 'Use same evaluation period for all evaluations';
+$string['eval_additional_lsfcourses'] = 'I want multiple (lsf) course units to be evaluated.';
+$string['eval_additional_courses'] = 'I want students from multiple (Learnweb) courses to evaluate this class.';
+$string['course_units'] = 'Course units';
+$string['use_default_evalperiod'] = 'Use the default evaluation period:<br>{$a}';
+$string['err_endbeforestart'] = 'The end date is before the start date';
+$string['dont_evaluate_course'] = 'This course should NOT be evaluated';

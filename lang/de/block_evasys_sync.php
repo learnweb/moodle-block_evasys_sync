@@ -215,8 +215,9 @@ $string['November'] = 'November';
 $string['December'] = 'Dezember';
 
 // From...to.
-$string['evaluationperiod'] = 'Evaluationszeitraum:';
-$string['startondate'] = 'Zeitraum planen von';
+$string['evaluationperiod'] = 'Evaluationszeitraum';
+$string['evaluationperiod_for'] = 'Evaluationszeitraum für "{$a}"';
+$string['startondate'] = 'Von';
 $string['endondate'] = 'bis';
 
 // Notices.
@@ -224,3 +225,11 @@ $string['evalperiodsetnotice'] = 'Evaluationszeitraum gesetzt';
 $string['emailsentnotice'] = 'Evaluation beauftragt';
 
 $string['apply'] = 'Anwenden';
+
+$string['useoneevalperiod'] = 'Den gleichen Evaluationszeitraum für alle Veranstaltungen nutzen';
+$string['eval_additional_lsfcourses'] = 'Ich möchte mehrere Veranstaltungen auf einmal evaluieren lassen';
+$string['eval_additional_courses'] = 'Ich möchte, dass Studierende mehrerer (Learnweb-)Kurse zusammen diese Veranstaltung evaluieren';
+$string['course_units'] = 'Veranstaltungen';
+$string['use_default_evalperiod'] = 'Den Standardevaluationszeitraum verwenden:<br>{$a}';
+$string['err_endbeforestart'] = 'Der Endzeitpunkt liegt vor dem Startzeitpunkt';
+$string['dont_evaluate_course'] = 'Dieser Kurs soll NICHT evaluiert werden';
