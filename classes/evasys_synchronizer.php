@@ -30,7 +30,7 @@ class evasys_synchronizer {
 
     public function __construct($courseid) {
         $this->courseid = $courseid;
-        $this->init_soap_client();
+        $this->soapclient = evasys_soap_client::get();
         $this->blockcontext = \context_course::instance($courseid); // TODO Course context or block context? Check caps.
         $this->courseinformation = $this->get_course_information();
     }
@@ -67,21 +67,6 @@ class evasys_synchronizer {
         return $this->evasyscourses;
     }
 
-    private function init_soap_client() {
-        $this->soapclient = new \SoapClient(get_config('block_evasys_sync', 'evasys_wsdl_url'), [
-            'trace' => 1,
-            'exceptions' => 0,
-            'location' => get_config('block_evasys_sync', 'evasys_soap_url')
-        ]);
-
-        $headerbody = new \SoapVar([
-            new \SoapVar(get_config('block_evasys_sync', 'evasys_username'), XSD_STRING, null, null, 'Login', null),
-            new \SoapVar(get_config('block_evasys_sync', 'evasys_password'), XSD_STRING, null, null, 'Password', null),
-        ], SOAP_ENC_OBJECT);
-        $header = new \SOAPHEADER('soap', 'Header', $headerbody);
-        $this->soapclient->__setSoapHeaders($header);
-    }
-
     private function get_course_information() {
         $result = [];
         foreach ($this->get_allocated_courses() as $course) {
@@ -101,7 +86,7 @@ class evasys_synchronizer {
      * @return array of surveys with additional information
      */
     public function get_surveys($courseid) {
-        if ($this->courseinformation[$courseid] === null) {
+        if (!isset($this->courseinformation[$courseid]) || $this->courseinformation[$courseid] === null) {
             return array();
         }
         if (!isset($this->courseinformation[$courseid]->m_oSurveyHolder->m_aSurveys->Surveys)) {
@@ -190,7 +175,8 @@ class evasys_synchronizer {
     }
 
     public function get_amount_participants($courseid) {
-        if ($this->courseinformation[$courseid] === null || !property_exists($this->courseinformation[$courseid]->m_aoParticipants, "Persons")) {
+        if (!isset($this->courseinformation[$courseid]) || $this->courseinformation[$courseid] === null
+            || !property_exists($this->courseinformation[$courseid]->m_aoParticipants, "Persons")) {
             return 0;
         }
         if (is_object($this->courseinformation[$courseid]->m_aoParticipants->Persons)) {
