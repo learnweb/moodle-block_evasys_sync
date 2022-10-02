@@ -57,4 +57,12 @@ class course_manager_filter_form extends moodleform {
         $this->add_action_buttons(true, get_string('apply', 'block_evasys_sync'));
     }
 
+    public function get_data() {
+        $data = parent::get_data();
+        if ($data) {
+            $data->semester = $data->customfield_semester;
+        }
+        return $data;
+    }
+
 }

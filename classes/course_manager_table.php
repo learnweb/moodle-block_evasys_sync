@@ -47,14 +47,27 @@ class course_manager_table extends \table_sql {
 
         $fields = 'c.id as courseid, c.fullname as coursename, ' .
             'cfd.intvalue as semester, ' .
-            'ce.state as evalstate, ce.startdate as evalstart, ce.enddate as evalend ';
+            'evreq.id as erequestid, evreq.state, evreq.shouldevaluate, ' .
+            'evreqccount.coursecount, ' .
+            'evreqvcount.veranstcount, ' .
+            'evreqv.veranstid, evreqv.veransttitle, evreqv.starttime, evreqv.endtime';
 
         $semesterfield = $DB->get_record('customfield_field',
-            ['shortname' => 'semester', 'type' => 'semester']) ?: -1;
+            ['shortname' => 'semester', 'type' => 'semester'], '*', MUST_EXIST);
 
         $from = '{course} c ' .
             'LEFT JOIN {customfield_data} cfd ON cfd.instanceid = c.id AND cfd.fieldid = :semesterfieldid ' .
-            'LEFT JOIN {block_evasys_sync_courseeval} ce ON ce.course = c.id ';
+            'LEFT JOIN {' . dbtables::EVAL_REQUESTS_COURSES . '} evreqc ON evreqc.courseid = c.id ' .
+            'LEFT JOIN {' . dbtables::EVAL_REQUESTS . '} evreq ON evreqc.erequestid = evreq.id ' .
+            'LEFT JOIN (' .
+                'SELECT erequestid, COUNT(courseid) as coursecount FROM {' . dbtables::EVAL_REQUESTS_COURSES . '} ' .
+                'GROUP BY erequestid' .
+            ') evreqccount ON evreqccount.erequestid = evreq.id ' .
+            'LEFT JOIN (' .
+                'SELECT erequestid, MIN(id) as minveranstid, COUNT(veranstid) as veranstcount FROM {' . dbtables::EVAL_REQUESTS_VERANSTS . '} ' .
+                'GROUP BY erequestid' .
+            ') evreqvcount ON evreqvcount.erequestid = evreq.id ' .
+            'LEFT JOIN {' . dbtables::EVAL_REQUESTS_VERANSTS . '} evreqv ON evreqv.id = evreqvcount.minveranstid';
         $params = ['semesterfieldid' => $semesterfield->id];
         $where = ['TRUE'];
 
@@ -77,16 +90,32 @@ class course_manager_table extends \table_sql {
 
         $this->set_sql($fields, $from, $where, $params);
         $this->column_nosort = ['tools'];
-        $this->define_columns(['coursename', 'teacher', 'tools']);
+        $this->define_columns(['course', 'teacher', 'requestinfo', 'tools']);
         $this->define_headers([
-                get_string('coursename', 'block_evasys_sync'),
+                get_string('course'),
                 get_string('teachers'),
+                get_string('status'),
                 ''
         ]);
     }
 
-    public function col_coursename($row) {
-        return \html_writer::link(course_get_url($row->courseid), $row->coursename);
+    public function col_course($row) {
+        global $DB;
+        $output = \html_writer::link(course_get_url($row->courseid), $row->coursename);
+        if (!$row->coursecount || $row->coursecount == 1) {
+            return $output;
+        }
+
+        $othercourses = $DB->get_records_sql('SELECT c.id, c.fullname FROM {course} c ' .
+        'JOIN {' . dbtables::EVAL_REQUESTS_COURSES . '} evreqc ON evreqc.courseid = c.id ' .
+        'WHERE evreqc.erequestid = :erequestid', ['erequestid' => $row->erequestid]);
+        foreach ($othercourses as $othercourse) {
+            if ($othercourse->id == $row->courseid) {
+                continue;
+            }
+            $output .= '<br>' . \html_writer::link(course_get_url($othercourse->id), $othercourse->fullname, ['class' => 'ml-3 small']);
+        }
+        return $output;
     }
 
     public function col_teacher($row) {
@@ -97,27 +126,52 @@ class course_manager_table extends \table_sql {
         return join(', ', $users);
     }
 
+    public function col_requestinfo($row) {
+        global $DB;
+
+        if (!$row->erequestid) {
+            return '';
+        }
+        $output = '';
+        if ($row->state == 0) {
+            $output .= 'Pending your approval:<br>';
+        } else {
+            $output .= 'Pending the teachers approval:<br>';
+        }
+        if (!$row->shouldevaluate) {
+            $output .= 'Should not be evalutated!';
+            return $output;
+        }
+
+        if ($row->veranstcount > 1) {
+            $evaluations = $DB->get_records(dbtables::EVAL_REQUESTS_VERANSTS, ['erequestid' => $row->erequestid]);
+        } else {
+            $evaluations = [$row];
+        }
+
+        foreach ($evaluations as $evaluation) {
+            $output .= $evaluation->veransttitle . '<br><span class="d-inline-block small ml-3">' .
+             userdate($evaluation->starttime) . ' - ' . userdate($evaluation->endtime) . '</span><br>';
+        }
+
+        return $output;
+    }
+
     /**
      * Render tools column.
      *
      * @param object $row Row data.
-     * @return string pluginname of the subplugin
+     * @return string
      */
     public function col_tools($row) {
         global $PAGE, $OUTPUT;
-        return '';
-        $params = array(
-                'action' => 'delete',
-                'cid' => $row->courseid,
-                'sesskey' => sesskey()
-        );
-
-        if ($this->workflow) {
-            $params['workflow'] = $this->workflow;
+        if (!$row->erequestid) {
+            return '';
         }
-
-        $button = new \single_button(new \moodle_url($PAGE->url, $params),
-                get_string('delete_delay', 'tool_lifecycle'));
-        return $OUTPUT->render($button);
+        if ($row->state == 0) {
+            return $OUTPUT->render(new \single_button(new moodle_url(''), get_string('approve'), 'post', true)).
+                \html_writer::link(new moodle_url(''), get_string('details'), ['class' => 'ml-2 btn btn-secondary']);
+        }
+        return '';
     }
 }

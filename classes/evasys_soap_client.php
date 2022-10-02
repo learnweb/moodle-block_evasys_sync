@@ -45,7 +45,7 @@ class evasys_soap_client {
             new \SoapVar(get_config('block_evasys_sync', 'evasys_username'), XSD_STRING, null, null, 'Login', null),
             new \SoapVar(get_config('block_evasys_sync', 'evasys_password'), XSD_STRING, null, null, 'Password', null),
         ], SOAP_ENC_OBJECT);
-        $header = new \SOAPHEADER('soap', 'Header', $headerbody);
+        $header = new \SoapHeader('soap', 'Header', $headerbody);
         $soapclient->__setSoapHeaders($header);
         return $soapclient;
     }

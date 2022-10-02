@@ -22,8 +22,6 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-use block_evasys_sync\dbtables;
-
 require_once(__DIR__ . '/../../config.php');
 global $DB, $OUTPUT, $PAGE, $CFG;
 require_once($CFG->libdir . '/form/datetimeselector.php');
@@ -43,7 +41,7 @@ echo $OUTPUT->header();
 $mform = new \block_evasys_sync\request_evaluation_form($course, $PAGE->url);
 
 if ($data = $mform->get_simplified_data()) {
-    echo json_encode($data);
+    $data->save();
 }
 
 $mform->display();

@@ -273,8 +273,8 @@ class request_evaluation_form extends moodleform {
         if (!$formdata) {
             return null;
         }
-        $data = new \stdClass();
-        $data->donotevaluate = $formdata->donotevaluate ?? false;
+        $data = new eval_request();
+        $data->shouldevaluate = !($formdata->donotevaluate ?? false);
         $data->courses = $formdata->courses;
         $data->evaluations = [];
         $defaultstart = $this->defaulttimeframe && ($formdata->usedefaultevalperiod ?? false) ? $this->defaulttimeframe['start'] : (
