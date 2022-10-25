@@ -15,82 +15,51 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Course overview for evasys course managers.
+ * Overview for evasys course managers.
  *
  * @package block_evasys_sync
  * @copyright 2022 Justus Dieckmann WWU
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use block_evasys_sync\evalcat_manager;
+
 require_once(__DIR__ . '/../../config.php');
-global $DB, $USER, $OUTPUT, $PAGE;
+global $CFG, $OUTPUT, $PAGE;
+require_once($CFG->libdir . '/tablelib.php');
 
 require_login();
 
-if (has_capability('block/evasys_sync:managecourses', context_system::instance())) {
-    // No filter if user has system-wide capability.
-    $catids = null;
-} else {
-    // Gets course categories the user can manage.
-    list ($contextlimitsql, $contextlimitparams) = \core\access\get_user_capability_course_helper::get_sql(
-        $USER->id, 'block/evasys_sync:managecourses');
-    if (!$contextlimitsql) {
-        // No capability in any context => No permission to use this page.
-        throw new coding_exception('You do not have the permission to manage courses in any course category!');
-    }
-
-    $directcatids = $DB->get_field_sql("
-        SELECT c.id
-          FROM {course_categories} c
-          JOIN {context} x ON c.id = x.instanceid AND x.contextlevel = ?
-        WHERE $contextlimitsql", array_merge([CONTEXT_COURSECAT], $contextlimitparams));
-
-    $catids = [];
-
-    foreach($directcatids as $directcatid) {
-        $catids[] = $directcatid;
-        $catids = array_merge($catids, core_course_category::get($directcatid)->get_all_children_ids());
-    }
+$usercats = evalcat_manager::get_instance()->get_user_categories();
+if (count($usercats) === 0) {
+    throw new coding_exception('You do not have permission to manage any course evaluations!');
+} else if (count($usercats) === 1) {
+    redirect(new moodle_url('/blocks/evasys_sync/managecategory.php', ['id' => $usercats[0]]));
 }
 
 $PAGE->set_url(new moodle_url('/blocks/evasys_sync/manageroverview.php'));
 $PAGE->set_context(context_system::instance());
 $PAGE->set_title(get_string('evasys_sync', 'block_evasys_sync'));
 
-$cachekey = 'manageroverview';
-$cache = cache::make('block_evasys_sync', 'mformdata');
-$mform = new \block_evasys_sync\course_manager_filter_form();
+$categories = evalcat_manager::get_instance()->get_categories();
 
-if ($data = $mform->get_data()) {
-    $cache->set($cachekey, $data);
-    redirect($PAGE->url);
-} else if ($mform->is_cancelled()) {
-    $cache->delete($cachekey);
-    redirect($PAGE->url);
-}
-
-$data = $cache->get($cachekey);
-
-if ($data) {
-    $mform->set_data($data);
-} else {
-    $data = new stdClass();
-    if ($field = $DB->get_record('customfield_field', array('shortname' => 'semester', 'type' => 'semester'))) {
-        $fieldcontroller = \core_customfield\field_controller::create($field->id);
-        $datacontroller = \core_customfield\data_controller::create(0, null, $fieldcontroller);
-        $data->semester = $datacontroller->get_default_value();
-    }
-    $data->coursename = '';
-}
-
-$table = new \block_evasys_sync\course_manager_table($catids, $data->semester ?? null,
-    $data->coursename ?? null);
-$table->define_baseurl($PAGE->url);
+$table = new flexible_table('block_evasys_sync-manageroverview');
 
 echo $OUTPUT->header();
 
-$mform->display();
+$table->define_headers(['']);
+$table->define_columns(['column']);
+$table->define_baseurl($PAGE->url);
 
-$table->out(48, false);
+$table->setup();
+
+foreach ($usercats as $usercat) {
+    $table->add_data([
+            html_writer::link(new moodle_url('/blocks/evasys_sync/managecategory.php', ['id' => $usercat]),
+                    core_course_category::get($usercat)->name)
+    ]);
+}
+
+$table->finish_output();
 
 echo $OUTPUT->footer();

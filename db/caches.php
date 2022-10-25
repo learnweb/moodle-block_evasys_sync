@@ -28,5 +28,13 @@ $definitions = array(
         'mformdata' => array(
                 'mode' => cache_store::MODE_SESSION,
                 'simplekeys' => true
-        )
+        ),
+        'user' => [
+            'mode' => cache_store::MODE_SESSION,
+            'simplekeys' => true
+        ],
+        'cats' => [
+            'mode' => cache_store::MODE_APPLICATION,
+            'simplekeys' => true
+        ]
 );

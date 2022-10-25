@@ -73,7 +73,7 @@ class course_manager_table extends \table_sql {
 
         if ($categoryids != null) {
             list($insql, $inparams) = $DB->get_in_or_equal($categoryids, SQL_PARAMS_NAMED);
-            $where[] = "c.categoryid $insql";
+            $where[] = "c.category $insql";
             $params = array_merge($params, $inparams);
         }
 
