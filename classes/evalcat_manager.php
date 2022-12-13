@@ -43,7 +43,7 @@ class evalcat_manager {
     }
 
     private function load_categories() {
-        $records = user_cat_allocation::get_records();
+        $records = evasys_category::get_records();
 
         $categories = [];
         foreach ($records as $record) {

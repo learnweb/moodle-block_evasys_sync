@@ -36,7 +36,7 @@ if (has_capability('moodle/site:config', context_system::instance())) {
 
     if (!empty($delid) && !empty($confirm)) {
         // Course category user is deleted.
-        $persistent = new \block_evasys_sync\user_cat_allocation($delid);
+        $persistent = new \block_evasys_sync\evasys_category($delid);
         $persistent->delete();
 
         redirect($PAGE->url);
@@ -68,7 +68,8 @@ if (has_capability('moodle/site:config', context_system::instance())) {
             } else {
                 $record->category_mode = 0;
             }
-            $persistent = new \block_evasys_sync\user_cat_allocation(0, $record);
+            $record->mode_flags = 0;
+            $persistent = new \block_evasys_sync\evasys_category(0, $record);
             $persistent->create();
 
             redirect($PAGE->url);
@@ -101,7 +102,7 @@ if (has_capability('moodle/site:config', context_system::instance())) {
                 set_config('default_his_connection', 0, 'block_evasys_sync');
             }
 
-            $records = \block_evasys_sync\user_cat_allocation::get_records();
+            $records = \block_evasys_sync\evasys_category::get_records();
             foreach ($records as $allocation) {
                 $newvalue = 'category_' . $allocation->get('id');
                 $oldvalue = $allocation->get('userid');

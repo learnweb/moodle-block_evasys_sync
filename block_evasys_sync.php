@@ -77,17 +77,11 @@ class block_evasys_sync extends block_base{
             }
             return $this->content;
         }
-        $ismodeautomated = (bool)\block_evasys_sync\evasys_inviter::getmode($this->page->course->category);
-        // If the teacher can start the evaluation directly, we'll want to run some javascript initialization.
-        if ($ismodeautomated) {
-            $this->page->requires->js_call_amd('block_evasys_sync/invite_manager', 'init');
-        } else {
-            $categoryhasstandardtime = \block_evasys_sync\evasys_synchronizer::get_standard_timemode($this->page->course->category);
+        $categoryhasstandardtime = \block_evasys_sync\evasys_synchronizer::get_standard_timemode($this->page->course->category);
 
-            // Only use standardtime js if no record exists.
-            if (!$record) {
-                $this->page->requires->js_call_amd('block_evasys_sync/standardtime', 'init');
-            }
+        // Only use standardtime js if no record exists.
+        if (!$record) {
+            $this->page->requires->js_call_amd('block_evasys_sync/standardtime', 'init');
         }
         $evasyssynchronizer = new \block_evasys_sync\evasys_synchronizer($this->page->course->id);
         try {
@@ -98,12 +92,7 @@ class block_evasys_sync extends block_base{
             return $this->content;
         }
 
-        if ($ismodeautomated) {
-            $href = new moodle_url('/course/view.php',
-                                   array('id' => $this->page->course->id, "evasyssynccheck" => true));
-        } else {
-            $href = new moodle_url('/blocks/evasys_sync/sync.php');
-        }
+        $href = new moodle_url('/blocks/evasys_sync/sync.php');
 
         // Initialize data for mustache template.
         $startdisabled = false;
@@ -130,33 +119,20 @@ class block_evasys_sync extends block_base{
                 // If the persistenceclass exists and the state is manual an email must have been sent.
                 $emailsentnotice = true;
             }
-            if ($state == course_evaluation_allocation::STATE_AUTO_NOTOPENED) {
-                // If the persistenceclass exists and the state is automatic and not opened
-                // the period must have been set.
-                $periodsetnotice = true;
-            }
-            if ($state >= course_evaluation_allocation::STATE_AUTO_OPENED || $nostudents) {
-                // If the course was already opened, disable the start date. If there are no students disable all controls.
-                $startdisabled = true;
-            }
-            if ($state == course_evaluation_allocation::STATE_AUTO_CLOSED || $nostudents) {
-                // If the course was already closed, disable the end date. If there are no students disable all controls.
-                $enddisabled = true;
-            }
             // If there is a record the period has been set at least once.
             // Set start and end to match the period that had been set.
             $start = $record->get('startdate');
             $end = $record->get('enddate');
             $recordhasstandardtime = $record->get('usestandardtime');
         } else {
-            if (!$ismodeautomated && $categoryhasstandardtime) {
+            if ($categoryhasstandardtime) {
                 $start = $categoryhasstandardtime['start'];
                 $end = $categoryhasstandardtime['end'];
                 $recordhasstandardtime = true;
             }
         }
         // This javascript module sets the start and end fields to the correct values.
-        $jsmodestring = $ismodeautomated ? 'automated' : 'manual';
+        $jsmodestring = 'manual';
         $jsmodestring .= $enddisabled ? '_closed' : '_open';
         $this->page->requires->js_call_amd('block_evasys_sync/initialize', 'init', array($start, $end, $jsmodestring));
 
@@ -212,7 +188,7 @@ class block_evasys_sync extends block_base{
             $courses[] = $course;
         }
 
-        $standardttimemode = (!$ismodeautomated && $recordhasstandardtime && !$record);
+        $standardttimemode = ($recordhasstandardtime && !$record);
         $hisconnection = get_config('block_evasys_sync', 'default_his_connection');
 
         // Create the data object for the mustache table.
@@ -224,10 +200,10 @@ class block_evasys_sync extends block_base{
             /* In case of the manual workflow, we can start synchronisation also, if no surveys are registered, yet.
             * In case of the automated workflow, we require surveys
             * in order to be able to automatically trigger the evaluation. */
-            'showcontrols' => ($hassurveys || !$ismodeautomated) && count($evasyscourses) > 0 && !$invalidcourses,
-            'usestandardtimelayout' => (!$ismodeautomated && $recordhasstandardtime && !$record),
+            'showcontrols' => ($hassurveys) && count($evasyscourses) > 0 && !$invalidcourses,
+            'usestandardtimelayout' => ($recordhasstandardtime && !$record),
             // Choose mode.
-            'direct' => $ismodeautomated,
+            'direct' => false,
             'startdisabled' => $startdisabled || $standardttimemode,
             'enddisabled' => $enddisabled || $standardttimemode,
             'onlyend' => $startdisabled && !$standardttimemode,

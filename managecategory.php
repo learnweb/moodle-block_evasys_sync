@@ -71,6 +71,8 @@ $table->define_baseurl($PAGE->url);
 
 echo $OUTPUT->header();
 
+echo html_writer::tag('h2', $category->name, ['class' => 'mb-4']);
+
 $mform->display();
 
 $table->out(48, false);

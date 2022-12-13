@@ -466,6 +466,18 @@ function xmldb_block_evasys_sync_upgrade ($oldversion) {
             $dbman->drop_table($table);
         }
 
+        /// Edit block_evasys_sync_categories ///
+
+        // Define field mode_flags to be added to block_evasys_sync_categories.
+        $table = new xmldb_table('block_evasys_sync_categories');
+        $field = new xmldb_field('mode_flags', XMLDB_TYPE_INTEGER, '11', null, XMLDB_NOTNULL, null, '0', 'category_mode');
+
+        // Conditionally launch add field mode_flags.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+
         // Evasys_sync savepoint reached.
         upgrade_block_savepoint(true, 2022092400, 'evasys_sync');
     }

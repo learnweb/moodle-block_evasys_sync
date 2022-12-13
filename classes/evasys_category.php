@@ -34,9 +34,14 @@ use core\persistent;
  * @copyright 2017 Tamara Gunkel
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class user_cat_allocation extends persistent {
+class evasys_category extends persistent {
 
     const TABLE = 'block_evasys_sync_categories';
+
+    const MASK_TEACHER_CAN_REQUEST_EVALUATION = 1 << 0;
+    const MASK_EVALUATION_REQUEST_NEEDS_APPROVAL = 1 << 1;
+    const MASK_TEACHER_CAN_CHANGE_EVALUATION  = 1 << 2;
+    const MASK_EVALUATION_CHANGE_NEEDS_APPROVAL = 1 << 3;
 
     /**
      * Return the definition of the properties of this model.
@@ -57,6 +62,9 @@ class user_cat_allocation extends persistent {
                 'type' => PARAM_INT,
                 'message' => new \lang_string('invalidmode', 'block_evasys_sync')
             ),
+            'mode_flags' => array(
+                'type' => PARAM_INT
+            ),
             'standard_time_start' => array (
                 'type' => PARAM_INT,
                 'message' => new \lang_string('invalid_standard_time_mode', 'block_evasys_sync'),
@@ -72,6 +80,23 @@ class user_cat_allocation extends persistent {
         );
     }
 
+    public static function for_course($course): ?evasys_category {
+        $record = evasys_category::get_record(['course_category' => $course->category]);
+        if ($record) {
+            return $record;
+        }
+        // Loop through parents.
+        $parents = \core_course_category::get($course->category)->get_parents();
+        for ($i = count($parents) - 1; $i >= 0; $i--) {
+            $record = evasys_category::get_record(['course_category' => $parents[$i]]);
+            // Stop if a parent has been assigned a custom record.
+            if ($record) {
+                return $record;
+            }
+        }
+        return null;
+    }
+
     /**
      * Validate the user ID.
      *
@@ -83,5 +108,9 @@ class user_cat_allocation extends persistent {
             return new \lang_string('invaliduserid', 'error');
         }
         return true;
+    }
+
+    public function can_teacher_request_evaluation() : bool {
+        return $this->get('mode_flags') & self::MASK_TEACHER_CAN_REQUEST_EVALUATION;
     }
 }

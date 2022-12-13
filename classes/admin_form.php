@@ -225,7 +225,7 @@ class admin_form extends moodleform {
      * @return array
      */
     private function getrecords() {
-        $records = \block_evasys_sync\user_cat_allocation::get_records();
+        $records = \block_evasys_sync\evasys_category::get_records();
         return $records;
     }
 
@@ -282,7 +282,7 @@ class admin_form extends moodleform {
         $errors = parent::validation($data, $files);
 
         // Validate user ids.
-        $records = \block_evasys_sync\user_cat_allocation::get_records();
+        $records = \block_evasys_sync\evasys_category::get_records();
         foreach ($records as $allocation) {
 
             $newvalue = 'category_' . $allocation->get('id');

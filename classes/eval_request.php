@@ -86,7 +86,7 @@ class eval_request {
         return $evalrequest;
     }
 
-    public static function get_evasyscategory_for($course) {
+    private static function get_evasyscategory_for($course) {
         global $DB;
 
         $record = $DB->get_record('block_evasys_sync_categories', array('course_category' => $course->category));
@@ -103,7 +103,6 @@ class eval_request {
             }
         }
         return null;
-
     }
 
     private function update_generated_fields() {
@@ -118,7 +117,7 @@ class eval_request {
             $this->courseid = $this->courses[0];
         }
         if (!isset($this->evasyscategoryid)) {
-            $this->evasyscategoryid = self::get_evasyscategory_for(get_course($this->courseid))->id ?? null;
+            $this->evasyscategoryid = evasys_category::for_course(get_course($this->courseid))->get('id') ?? null;
         }
     }
 
