@@ -51,9 +51,6 @@ class course_manager_filter_form extends moodleform {
             $datacontroller->instance_form_definition($mform);
         }
 
-        $mform->addElement('text', 'coursename', get_string('coursename', 'block_evasys_sync'));
-        $mform->setType('coursename', PARAM_TEXT);
-
         $this->add_action_buttons(true, get_string('apply', 'block_evasys_sync'));
     }
 
