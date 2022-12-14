@@ -176,7 +176,7 @@ $string['addcat'] = 'Add Category';
 $string['delete_confirm'] = 'Are you sure you want to delete the user for this course category?';
 $string['auto_mode'] = 'Automatic mode';
 $string['standard_time_mode'] = "Offer standard period of time";
-$string['activate_standard_time'] = "Use standard timeframe.";
+$string['activate_standard_time'] = "Define default evaluation period";
 $string['edit_time'] = "Edit standard timeframe";
 $string['save_failure'] = "Error saving";
 $string['usetimecheckbox'] = "Use standard timeframe";
@@ -243,3 +243,14 @@ $string['course_units'] = 'Course units';
 $string['use_default_evalperiod'] = 'Use the default evaluation period:<br>{$a}';
 $string['err_endbeforestart'] = 'The end date is before the start date';
 $string['dont_evaluate_course'] = 'This course should NOT be evaluated';
+
+$string['standart_time_start'] = 'Start of default evaluation period';
+$string['standart_time_end'] = 'End of default evaluation period';
+
+$string['teacher_can_request_evaluation'] = 'Teachers can request evaluation';
+$string['teacher_evaluation_request_needs_approval'] = 'Teacher\'s evaluation request needs approval from you';
+
+$string['teacher_can_change_evaluation'] = 'Teachers can change existing evaluation';
+$string['teacher_evaluation_change_needs_approval'] = 'Teacher\'s evaluation change needs approval from you';
+
+$string['evasys_settings_for'] = 'Evasys settings for {$a}';

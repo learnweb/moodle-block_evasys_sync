@@ -81,12 +81,16 @@ class evasys_category extends persistent {
     }
 
     public static function for_course($course): ?evasys_category {
-        $record = evasys_category::get_record(['course_category' => $course->category]);
+        return self::for_category($course->category);
+    }
+
+    public static function for_category($categoryid): ?evasys_category {
+        $record = evasys_category::get_record(['course_category' => $categoryid]);
         if ($record) {
             return $record;
         }
         // Loop through parents.
-        $parents = \core_course_category::get($course->category)->get_parents();
+        $parents = \core_course_category::get($categoryid)->get_parents();
         for ($i = count($parents) - 1; $i >= 0; $i--) {
             $record = evasys_category::get_record(['course_category' => $parents[$i]]);
             // Stop if a parent has been assigned a custom record.

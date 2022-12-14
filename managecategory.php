@@ -31,7 +31,7 @@ $id = required_param('id', PARAM_INT);
 
 $category = core_course_category::get($id);
 
-$PAGE->set_url(new moodle_url('/blocks/evasys_sync/manageroverview.php'));
+$PAGE->set_url(new moodle_url('/blocks/evasys_sync/managecategory.php', ['id' => $id]));
 $PAGE->set_context($category->get_context());
 $PAGE->set_title(get_string('evasys_sync', 'block_evasys_sync'));
 
@@ -39,7 +39,7 @@ require_capability('block/evasys_sync:managecourses', $PAGE->context);
 
 $cachekey = 'manageroverview';
 $cache = cache::make('block_evasys_sync', 'mformdata');
-$mform = new \block_evasys_sync\course_manager_filter_form();
+$mform = new \block_evasys_sync\course_manager_filter_form($PAGE->url);
 
 if ($data = $mform->get_data()) {
     $cache->set($cachekey, $data);
@@ -71,7 +71,18 @@ $table->define_baseurl($PAGE->url);
 
 echo $OUTPUT->header();
 
-echo html_writer::tag('h2', $category->name, ['class' => 'mb-4']);
+echo $OUTPUT->box_start('generalbox border p-3 mb-3');
+
+echo html_writer::tag('h2', $category->name);
+
+echo html_writer::start_div('text-muted');
+echo html_writer::span('No default evaluation period set.') . '<br>';
+echo html_writer::span('Teachers can plan an evaluation <b>with</b> your approval.') . '<br>';
+echo html_writer::span('Teachers can change an existing evaluation <b>without</b> your approval.') . '<br>';
+echo html_writer::end_div() . '<br>';
+echo html_writer::link(new moodle_url('/blocks/evasys_sync/editcategory.php', ['id' => $id]), get_string('edit'));
+
+echo $OUTPUT->box_end();
 
 $mform->display();
 
