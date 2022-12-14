@@ -80,29 +80,20 @@ class eval_request {
             $eval->title = $evalrecord->veransttitle;
             $eval->start = $evalrecord->starttime;
             $eval->end = $evalrecord->endtime;
-            $evaluations[$eval->veranstid] = $eval;
+            $evaluations[$eval->lsfid] = $eval;
         }
         $evalrequest->evaluations = $evaluations;
         return $evalrequest;
     }
 
-    private static function get_evasyscategory_for($course) {
+    public static function for_course($courseid): ?eval_request {
         global $DB;
-
-        $record = $DB->get_record('block_evasys_sync_categories', array('course_category' => $course->category));
-        if ($record) {
-            return $record;
+        $id = $DB->get_field(dbtables::EVAL_REQUESTS_COURSES, 'erequestid', ['courseid' => $courseid]);
+        if ($id) {
+            return self::from_id($id);
+        } else {
+            return null;
         }
-        // Loop through parents.
-        $parents = \core_course_category::get($course->category)->get_parents();
-        for ($i = count($parents) - 1; $i >= 0; $i--) {
-            $record = $DB->get_record('block_evasys_sync_categories', array('course_category' => $parents[$i]));
-            // Stop if a parent has been assigned a custom record.
-            if ($record) {
-                return $record;
-            }
-        }
-        return null;
     }
 
     private function update_generated_fields() {

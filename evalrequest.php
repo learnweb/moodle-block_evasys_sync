@@ -40,8 +40,13 @@ require_capability('block/evasys_sync:synchronize', $PAGE->context);
 echo $OUTPUT->header();
 $mform = new \block_evasys_sync\request_evaluation_form($course, $PAGE->url);
 
+if ($mform->is_cancelled()) {
+    redirect(course_get_url($course));
+}
+
 if ($data = $mform->get_simplified_data()) {
     $data->save();
+    redirect(course_get_url($course));
 }
 
 $mform->display();

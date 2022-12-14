@@ -69,6 +69,10 @@ $table = new \block_evasys_sync\course_manager_table($catids, $data->semester ??
         $data->coursename ?? null);
 $table->define_baseurl($PAGE->url);
 
+$categorynode = $PAGE->navigation->find($category->id, navigation_node::TYPE_CATEGORY);
+$evasysnode = $categorynode->add('Manage Evasys', new moodle_url('/blocks/evasys_sync/managecategory.php', ['id' => $category->id]));
+$evasysnode->make_active();
+
 echo $OUTPUT->header();
 
 echo $OUTPUT->box_start('generalbox border p-3 mb-3');

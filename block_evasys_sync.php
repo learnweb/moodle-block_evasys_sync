@@ -51,30 +51,27 @@ class block_evasys_sync extends block_base{
             return $this->content;
         }
 
-        // If there has been a status in the url, show the prompt.
-        $this->display_status($status);
-
-        // Get the evasys-persistenceclass for the current course if it exists.
-        // The persistencelass only gets created when the teacher sets the evaluation period or sends an email to the coordinator.
-        $record = course_evaluation_allocation::get_record_by_course($this->page->course->id, false);
+        $evalrequest = \block_evasys_sync\eval_request::for_course($this->page->course->id);
 
         // If we are not in sync mode, we display either the course mapping or the check status button.
         if ($evasyssynccheck !== 1) {
-            $inlsf = !empty($this->page->course->idnumber);
-            $hasextras = \block_evasys_sync\course_evasys_courses_allocation::record_exists_select(
-                "course = {$this->page->course->id} AND NOT evasyscourses = ''");
+            if ($evalrequest) {
+                $this->content->text .= '<p>Request pending approval: </p><pre>' . json_encode($evalrequest, JSON_PRETTY_PRINT) . '</pre>';
+                $this->content->text .= html_writer::link(
+                    new moodle_url('/blocks/evasys_sync/evalrequest.php', ['cid' => $this->page->course->id]),
+                    'Change evaluation request', ['class' => 'btn btn-secondary']
+                );
+            } else {
+                $this->content->text .= '<p>No evaluation planned.</p>';
+                $this->content->text .= html_writer::link(
+                    new moodle_url('/blocks/evasys_sync/evalrequest.php', ['cid' => $this->page->course->id]),
+                    'Request evaluation', ['class' => 'btn btn-primary']
+                );
+            }
 
             // Display the check status button.
-            if ($inlsf or $hasextras) {
-                $href = new moodle_url('/course/view.php', array('id' => $this->page->course->id, "evasyssynccheck" => true));
-                $this->content->text .= $OUTPUT->single_button($href, get_string('checkstatus', 'block_evasys_sync'), 'get');
-            } else {
-                // Display the course mapping.
-                $this->content->text .= $OUTPUT->render_from_template("block_evasys_sync/coursemapping", array(
-                    "courseid" => $this->page->course->id,
-                    "sesskey" => sesskey()
-                ));
-            }
+            // $href = new moodle_url('/course/view.php', array('id' => $this->page->course->id, "evasyssynccheck" => true));
+            // $this->content->text .= $OUTPUT->single_button($href, get_string('checkstatus', 'block_evasys_sync'), 'get');
             return $this->content;
         }
         $categoryhasstandardtime = \block_evasys_sync\evasys_synchronizer::get_standard_timemode($this->page->course->category);
