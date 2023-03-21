@@ -38,7 +38,7 @@ $PAGE->set_heading(get_string('evasys_sync', 'block_evasys_sync'));
 
 require_capability('block/evasys_sync:synchronize', $PAGE->context);
 echo $OUTPUT->header();
-$mform = new \block_evasys_sync\request_evaluation_form($course, $PAGE->url);
+$mform = new \block_evasys_sync\local\form\request_evaluation_form($course, $PAGE->url);
 
 if ($mform->is_cancelled()) {
     redirect(course_get_url($course));

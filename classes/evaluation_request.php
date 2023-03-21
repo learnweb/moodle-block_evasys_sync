@@ -23,7 +23,7 @@ defined('MOODLE_INTERNAL') || die();
  * @package block_evasys_sync
  * @copyright 2022 Justus Dieckmann WWU
  */
-class eval_request {
+class evaluation_request {
 
     /** @var int|null ID of request. */
     public $id = null;
@@ -50,9 +50,9 @@ class eval_request {
 
     public int $usermodified;
 
-    public static function from_id(int $id): eval_request {
+    public static function from_id(int $id): evaluation_request {
         global $DB;
-        $evalrequest = new eval_request();
+        $evalrequest = new evaluation_request();
         $record = $DB->get_record(dbtables::EVAL_REQUESTS, [
             'id' => $id
         ]);
@@ -86,7 +86,7 @@ class eval_request {
         return $evalrequest;
     }
 
-    public static function for_course($courseid): ?eval_request {
+    public static function for_course($courseid): ?evaluation_request {
         global $DB;
         $id = $DB->get_field(dbtables::EVAL_REQUESTS_COURSES, 'erequestid', ['courseid' => $courseid]);
         if ($id) {

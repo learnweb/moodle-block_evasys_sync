@@ -21,8 +21,10 @@
  * @copyright  2022 Justus Dieckmann WWU
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-namespace block_evasys_sync;
+namespace block_evasys_sync\local\form;
 
+use block_evasys_sync\evaluation_request;
+use block_evasys_sync\evasys_synchronizer;
 use moodleform;
 
 defined('MOODLE_INTERNAL') || die;
@@ -273,7 +275,7 @@ class request_evaluation_form extends moodleform {
         if (!$formdata) {
             return null;
         }
-        $data = new eval_request();
+        $data = new evaluation_request();
         $data->shouldevaluate = !($formdata->donotevaluate ?? false);
         $data->courses = $formdata->courses;
         $data->evaluations = [];

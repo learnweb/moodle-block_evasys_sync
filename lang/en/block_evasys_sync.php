@@ -248,9 +248,13 @@ $string['standart_time_start'] = 'Start of default evaluation period';
 $string['standart_time_end'] = 'End of default evaluation period';
 
 $string['teacher_can_request_evaluation'] = 'Teachers can request evaluation';
-$string['teacher_evaluation_request_needs_approval'] = 'Teacher\'s evaluation request needs approval from you';
-
+$string['teacher_evaluation_request_needs_approval'] = 'Teacher\'s evaluation requests needs approval from you';
+$string['automatic_task_creation'] = 'Planned tasks are created automatically in EvaSys';
 $string['teacher_can_change_evaluation'] = 'Teachers can change existing evaluation';
-$string['teacher_evaluation_change_needs_approval'] = 'Teacher\'s evaluation change needs approval from you';
+$string['teacher_evaluation_change_needs_approval'] = 'Teacher\'s evaluation changes needs approval from you';
 
 $string['evasys_settings_for'] = 'Evasys settings for {$a}';
+$string['no_default_period_set'] = 'No default evaluation period has been set.';
+$string['default_period_set_from_to'] = 'The default evaluation period has been set from <b>{$a->start}</b> to <b>{$a->end}</b>.';
+$string['teachers_can_request_evaluation'] = 'Teachers <b>can</b> request an evaluation.';
+$string['teachers_cannot_request_evaluation'] = 'Teachers <b>cannot</b> request an evaluation';

@@ -51,7 +51,7 @@ class block_evasys_sync extends block_base{
             return $this->content;
         }
 
-        $evalrequest = \block_evasys_sync\eval_request::for_course($this->page->course->id);
+        $evalrequest = \block_evasys_sync\evaluation_request::for_course($this->page->course->id);
 
         // If we are not in sync mode, we display either the course mapping or the check status button.
         if ($evasyssynccheck !== 1) {

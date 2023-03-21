@@ -43,14 +43,17 @@ if (!$evasyscat) {
     throw new coding_exception('No evasys category found for that course cat id!');
 }
 
-$mform = new \block_evasys_sync\evasys_category_edit_form($PAGE->url);
+$mform = new \block_evasys_sync\local\form\evasys_category_edit_form($evasyscat->get('id'), $PAGE->url);
+
+$returnurl = new moodle_url('/blocks/evasys_sync/managecategory.php', ['id' => $id]);
 
 if ($mform->is_cancelled()) {
-    redirect(new moodle_url('/blocks/evasys_sync/managecategory.php', ['id' => $id]));
+    redirect($returnurl);
 }
 
-if ($data = $mform->get_data()) {
-    // TODO Save and load.
+if ($newcat = $mform->get_data_transformed()) {
+    $newcat->save();
+    redirect($returnurl);
 }
 
 echo $OUTPUT->header();

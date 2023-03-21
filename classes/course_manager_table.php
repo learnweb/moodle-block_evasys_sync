@@ -56,8 +56,8 @@ class course_manager_table extends \table_sql {
             ['shortname' => 'semester', 'type' => 'semester'], '*', MUST_EXIST);
 
         $from = '{course} c ' .
-            'LEFT JOIN {customfield_data} cfd ON cfd.instanceid = c.id AND cfd.fieldid = :semesterfieldid ' .
-            'LEFT JOIN {' . dbtables::EVAL_REQUESTS_COURSES . '} evreqc ON evreqc.courseid = c.id ' .
+            'JOIN {customfield_data} cfd ON cfd.instanceid = c.id AND cfd.fieldid = :semesterfieldid ' .
+            'JOIN {' . dbtables::EVAL_REQUESTS_COURSES . '} evreqc ON evreqc.courseid = c.id ' .
             'LEFT JOIN {' . dbtables::EVAL_REQUESTS . '} evreq ON evreqc.erequestid = evreq.id ' .
             'LEFT JOIN (' .
                 'SELECT erequestid, COUNT(courseid) as coursecount FROM {' . dbtables::EVAL_REQUESTS_COURSES . '} ' .

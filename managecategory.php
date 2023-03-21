@@ -30,6 +30,7 @@ require_login();
 $id = required_param('id', PARAM_INT);
 
 $category = core_course_category::get($id);
+$evasyscategory = \block_evasys_sync\evasys_category::for_category($id);
 
 $PAGE->set_url(new moodle_url('/blocks/evasys_sync/managecategory.php', ['id' => $id]));
 $PAGE->set_context($category->get_context());
@@ -77,18 +78,9 @@ $courseamounts = $DB->get_record_sql('SELECT COUNT(evalc.id) as evalcourses, COU
 
 echo $OUTPUT->header();
 
-echo $OUTPUT->box_start('generalbox border p-3 mb-3');
-
-echo html_writer::tag('h2', $category->name);
-
-echo html_writer::start_div('text-muted');
-echo html_writer::span('No default evaluation period set.') . '<br>';
-echo html_writer::span('Teachers can plan an evaluation <b>with</b> your approval.') . '<br>';
-echo html_writer::span('Teachers can change an existing evaluation <b>without</b> your approval.') . '<br>';
-echo html_writer::end_div() . '<br>';
-echo html_writer::link(new moodle_url('/blocks/evasys_sync/editcategory.php', ['id' => $id]), get_string('edit'));
-
-echo $OUTPUT->box_end();
+/* @var \block_evasys_sync\output\renderer $renderer  */
+$renderer = $PAGE->get_renderer('block_evasys_sync');
+$renderer->print_evasys_category_header($evasyscategory);
 
 echo $OUTPUT->render_from_template('core/search_input', [
         'action' => (new moodle_url('/blocks/evasys_sync/coursesearch.php', ['id' => $category->id]))->out(false),
