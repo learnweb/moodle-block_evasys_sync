@@ -85,7 +85,7 @@ class evaluation {
             $eval->start = $evalrecord->starttime;
             $eval->end = $evalrecord->endtime;
             $eval->state = $evalrecord->state;
-            $eval->usermodified = $evalrecord->modified;
+            $eval->usermodified = $evalrecord->usermodified;
             $eval->timecreated = $evalrecord->timecreated;
             $eval->timemodified = $evalrecord->timemodified;
             $evaluations[$eval->lsfid] = $eval;
@@ -96,7 +96,7 @@ class evaluation {
 
     public static function for_course($courseid): ?evaluation {
         global $DB;
-        $id = $DB->get_field(dbtables::EVAL_REQUESTS_COURSES, 'erequestid', ['courseid' => $courseid]);
+        $id = $DB->get_field(dbtables::EVAL_COURSES, 'evalid', ['courseid' => $courseid]);
         if ($id) {
             return self::from_id($id);
         } else {

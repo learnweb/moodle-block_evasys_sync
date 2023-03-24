@@ -93,6 +93,16 @@ $string['alert_email_body'] = 'Sehr geehrte*r Evaluationskoordinator*in, ' . "\n
     'Mit freundlichen Grüßen' . "\n" .
     'Ihr Learnweb-Support';
 
+$string['teacher_inform_email_subject'] = '{$a->coursename}: Evaluation geplant';
+$string['teacher_inform_email_body'] = 'Sehr geehrter Mensch,
+
+die Evaluation für Ihren Learnweb-Kurs "{$a->coursename}" wurde von {$a->start} bis ${a->end} geplant. Bitte geben Sie wenn möglich den Studierenden innerhalb Ihrer Veranstaltung die Gelegenheit, die Evaluation auszufüllen. 
+
+Falls der Zeitraum für Ihren Kurs unpassend ist, melden sie sich bei {$a->evasyscoordnator}
+
+Mit freundlichen Grüßen
+Ihr Learnweb-Support';
+
 // New invite strings.
 $string['title_success'] = "Erfolgreich";
 $string['content_success_invite'] = "Die Evaluation wurde erfolgreich gestartet";

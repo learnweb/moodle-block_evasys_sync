@@ -371,6 +371,8 @@ function xmldb_block_evasys_sync_upgrade ($oldversion) {
 
         /// Migrate data. ///
 
+        $transaction = $DB->start_delegated_transaction();
+
         $recordset = $DB->get_recordset_sql(
             'SELECT ce.*, c.idnumber, ec.evasyscourses FROM {block_evasys_sync_courseeval} ce ' .
             'JOIN {course} c ON ce.course = c.id ' .
@@ -431,7 +433,7 @@ function xmldb_block_evasys_sync_upgrade ($oldversion) {
             foreach($veransts as $veranst) {
                 if (!isset($existingveranst[$veranst])) {
                     // TODO soap, get course info with title + maybe state.
-                    $id = $DB->insert_record('block_evasys_sync_eval', [
+                    $id = $DB->insert_record(dbtables::EVAL_VERANSTS, [
                         'evalid' => $evalid,
                         'veranstid' => $veranst,
                         'veransttitle' => null, // TODO thing.
@@ -447,6 +449,8 @@ function xmldb_block_evasys_sync_upgrade ($oldversion) {
             }
             $recordset->next();
         }
+
+        $transaction->allow_commit();
 
         /// Drop old tables. ///
 
@@ -470,7 +474,7 @@ function xmldb_block_evasys_sync_upgrade ($oldversion) {
 
         // Define field mode_flags to be added to block_evasys_sync_categories.
         $table = new xmldb_table('block_evasys_sync_categories');
-        $field = new xmldb_field('mode_flags', XMLDB_TYPE_INTEGER, '11', null, XMLDB_NOTNULL, null, '0', 'category_mode');
+        $field = new xmldb_field('mode_flags', XMLDB_TYPE_INTEGER, '11', null, XMLDB_NOTNULL, null, '1', 'category_mode');
 
         // Conditionally launch add field mode_flags.
         if (!$dbman->field_exists($table, $field)) {

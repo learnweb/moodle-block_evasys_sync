@@ -91,7 +91,7 @@ class evasys_category_edit_form extends moodleform {
         }
         $mform->setDefault('teacher_can_request_evaluation', $this->evasys_category->can_teacher_request_evaluation());
         $mform->setDefault('teacher_evaluation_request_needs_approval', $this->evasys_category->teacher_evaluation_request_needs_approval());
-        $mform->setDefault('automatic_task_creation', $this->evasys_category->has_automatic_task_creation());
+        $mform->setDefault('automatic_task_creation', $this->evasys_category->is_automatic());
 
         $this->add_action_buttons();
     }

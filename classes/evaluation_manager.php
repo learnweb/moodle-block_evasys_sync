@@ -16,6 +16,8 @@
 
 namespace block_evasys_sync;
 
+use block_evasys_sync\local\entity\evaluation_state;
+
 /**
  * Manager for evaluations.
  *
@@ -38,6 +40,59 @@ class evaluation_manager {
         $request = evaluation_request::from_id($evalrequestid);
         $evaluation = evaluation::from_eval_request($request);
         $evaluation->save();
+    }
+
+    public static function set_default_evaluation_for($courseids, evasys_category $category) {
+        global $DB;
+        $childids = \core_course_category::get($category->get('course_category'))->get_all_children_ids();
+        $childids[] = $category->get('course_category');
+        $errors = [];
+        foreach ($courseids as $courseid) {
+            $course = get_course($courseid, false);
+            if (!in_array($course->category, $childids)) {
+                $errors[$course->id] = 'Not in the evasys_category!';
+                continue;
+            }
+            if (!isset($course->idnumber)) {
+                $errors[$course->id] = 'Course does not have an idnumber!';
+            }
+            if ($DB->record_exists(dbtables::EVAL_COURSES, ['courseid' => $course->id])) {
+                $errors[$course->id] = 'Evaluation already exists!';
+                continue;
+            }
+            if ($DB->record_exists(dbtables::EVAL_REQUESTS_COURSES, ['courseid' => $course->id])) {
+                $errors[$course->id] = 'Evaluation request already exists!';
+                continue;
+            }
+
+            $synchronizer = new evasys_synchronizer($course->id);
+            $title = $synchronizer->get_course_name($course->idnumber);
+
+            if ($title === null) {
+                $errors[$course->id] = 'Course does not exist in EvaSys!';
+                continue;
+            }
+
+            $evaluation = new evaluation();
+            $evaluation->initialcourse = $course->id;
+            $evaluation->courses = [$course->id];
+
+            $evaluation->evaluations = [$course->idnumber =>
+                    (object)[
+                        'lsfid' => $course->idnumber,
+                        'title' => $title,
+                        'start' => $category->get('start'),
+                        'end' => $category->get('end'),
+                        'state' => evaluation_state::MANUAL,
+                    ]
+            ];
+
+            $synchronizer->sync_students();
+
+            // TODO Send mail.
+
+            $evaluation->save();
+        }
     }
 
 }

@@ -41,8 +41,8 @@ class evasys_category extends persistent {
     const MASK_TEACHER_CAN_REQUEST_EVALUATION = 1 << 0;
     const MASK_EVALUATION_REQUEST_NEEDS_APPROVAL = 1 << 1;
     const MASK_AUTOMATIC_TASK_CREATION = 1 << 2;
-    const MASK_TEACHER_CAN_CHANGE_EVALUATION  = 1 << 2;
-    const MASK_EVALUATION_CHANGE_NEEDS_APPROVAL = 1 << 3;
+    const MASK_TEACHER_CAN_CHANGE_EVALUATION  = 1 << 3;
+    const MASK_EVALUATION_CHANGE_NEEDS_APPROVAL = 1 << 4;
 
     /**
      * Return the definition of the properties of this model.
@@ -123,7 +123,7 @@ class evasys_category extends persistent {
         return $this->get('mode_flags') & self::MASK_EVALUATION_REQUEST_NEEDS_APPROVAL;
     }
 
-    public function has_automatic_task_creation() : bool {
+    public function is_automatic() : bool {
         return $this->get('mode_flags') & self::MASK_AUTOMATIC_TASK_CREATION;
     }
 }

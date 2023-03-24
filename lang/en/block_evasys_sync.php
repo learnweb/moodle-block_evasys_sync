@@ -253,8 +253,16 @@ $string['automatic_task_creation'] = 'Planned tasks are created automatically in
 $string['teacher_can_change_evaluation'] = 'Teachers can change existing evaluation';
 $string['teacher_evaluation_change_needs_approval'] = 'Teacher\'s evaluation changes needs approval from you';
 
+$string['search_for_courses'] = 'Search for courses';
+
 $string['evasys_settings_for'] = 'Evasys settings for {$a}';
 $string['no_default_period_set'] = 'No default evaluation period has been set.';
 $string['default_period_set_from_to'] = 'The default evaluation period has been set from <b>{$a->start}</b> to <b>{$a->end}</b>.';
 $string['teachers_can_request_evaluation'] = 'Teachers <b>can</b> request an evaluation.';
 $string['teachers_cannot_request_evaluation'] = 'Teachers <b>cannot</b> request an evaluation';
+
+$string['courses_with_errors'] = 'Courses with errors!';
+$string['courses_with_requests'] = 'Courses with pending requests';
+$string['courses_with_automatic_evals'] = 'Courses with automatic evaluations';
+$string['courses_with_manual_evals'] = 'Courses with manual evaluations';
+$string['courses_without_evals'] = 'Courses without evaluations';

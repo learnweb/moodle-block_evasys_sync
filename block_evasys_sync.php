@@ -35,7 +35,6 @@ class block_evasys_sync extends block_base{
     public function get_content() {
         global $OUTPUT;
         $evasyssynccheck = optional_param('evasyssynccheck', 0, PARAM_BOOL);
-        $status = optional_param('status', "", PARAM_TEXT);
 
         // There should never be content, so if there is, we want to output that.
         if ($this->content !== null) {
@@ -52,9 +51,17 @@ class block_evasys_sync extends block_base{
         }
 
         $evalrequest = \block_evasys_sync\evaluation_request::for_course($this->page->course->id);
+        $evaluations = \block_evasys_sync\evaluation::for_course($this->page->course->id);
+
+        $stringformat = get_string('strftimedatetime', 'langconfig');
 
         // If we are not in sync mode, we display either the course mapping or the check status button.
         if ($evasyssynccheck !== 1) {
+            if ($evaluations) {
+                foreach ($evaluations->evaluations as $evaluation) {
+                    $this->content->text .= userdate($evaluation->start, $stringformat) . ' - ' . userdate($evaluation->end, $stringformat) . '<br>';
+                }
+            }
             if ($evalrequest) {
                 $this->content->text .= '<p>Request pending approval: </p><pre>' . json_encode($evalrequest, JSON_PRETTY_PRINT) . '</pre>';
                 $this->content->text .= html_writer::link(

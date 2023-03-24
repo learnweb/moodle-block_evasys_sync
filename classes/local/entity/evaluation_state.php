@@ -16,6 +16,8 @@
 
 namespace block_evasys_sync\local\entity;
 
+use block_evasys_sync\evaluation;
+
 defined('MOODLE_INTERNAL') || die();
 
 /**
@@ -30,5 +32,13 @@ class evaluation_state {
     public const SYNCHRONIZED = 2;
     public const RUNNING = 3;
     public const FINISHED = 4;
+    public const MANUAL = 5;
+    public const MANUAL_VERIFIED = 6;
+
+    public const MANUAL_STATES = [self::MANUAL, self::MANUAL_VERIFIED];
+
+    public function is_manual(\stdClass $evaluation) {
+        return in_array($evaluation->state, self::MANUAL_STATES);
+    }
 
 }

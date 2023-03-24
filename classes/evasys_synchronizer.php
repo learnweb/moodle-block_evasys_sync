@@ -72,7 +72,7 @@ class evasys_synchronizer {
         foreach ($this->get_allocated_courses() as $course) {
             $soapresult = $this->soapclient->GetCourse($course, 'PUBLIC', true, true);
             if (is_soap_fault($soapresult)) {
-                //var_dump("soap verbindung nicht funktioniert");
+                // var_dump("soap verbindung nicht funktioniert");
                 // This happens e.g. if there is no corresponding course in EvaSys.
                 return null;
             }
@@ -125,6 +125,13 @@ class evasys_synchronizer {
             return $this->courseinformation[$coursekey]->m_sCourseTitle;
         }
         return "Unknown";
+    }
+
+    public function get_raw_course_name(int $courseid): ?string {
+        if (isset($this->courseinformation[$courseid])) {
+            return $this->courseinformation[$courseid]->m_sCourseTitle;
+        }
+        return null;
     }
 
     public function get_course_id($coursekey) {
@@ -196,7 +203,7 @@ class evasys_synchronizer {
         $enrolledusers = get_users_by_capability($this->blockcontext, 'block/evasys_sync:mayevaluate');
 
         foreach ($enrolledusers as $user) {
-            $emailadresses[] = $user->username . "@uni-muenster.de";
+            $emailadresses[] = $user->email;
         }
 
         return $emailadresses;

@@ -22,6 +22,9 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use block_evasys_sync\dbtables;
+use block_evasys_sync\local\entity\evaluation_state;
+
 require_once(__DIR__ . '/../../config.php');
 global $DB, $USER, $OUTPUT, $PAGE;
 
@@ -69,11 +72,22 @@ $categorynode = $PAGE->navigation->find($category->id, navigation_node::TYPE_CAT
 $evasysnode = $categorynode->add('Evaluations', new moodle_url('/blocks/evasys_sync/managecategory.php', ['id' => $category->id]));
 $evasysnode->add(\customfield_semester\data_controller::get_name_for_semester($data->semester))->make_active();
 
-$courseamounts = $DB->get_record_sql('SELECT COUNT(evalc.id) as evalcourses, COUNT(ereqc.id) as requestcourses, (COUNT(*) - COUNT(COALESCE(ereqc.id, evalc.id))) as remainingcourses FROM {course} c '  .
+list($inmanualsql, $params) = $DB->get_in_or_equal(evaluation_state::MANUAL_STATES, SQL_PARAMS_NAMED);
+list($incatsql, $incatparams) = $DB->get_in_or_equal($catids, SQL_PARAMS_NAMED);
+$params = array_merge($params, $incatparams);
+
+$courseamounts = $DB->get_record_sql('SELECT (COUNT(evalc.id) - COUNT(evalmanualc.id)) as autoevalcourses, COUNT(evalmanualc.id) as manualevalcourses, COUNT(ereqc.id) as requestcourses, (COUNT(*) - COUNT(COALESCE(ereqc.id, evalc.id))) as remainingcourses FROM {course} c '  .
         'JOIN {customfield_data} cfd ON cfd.instanceid = c.id AND cfd.fieldid = :semesterfieldid ' .
-        'LEFT JOIN {' . \block_evasys_sync\dbtables::EVAL_REQUESTS_COURSES . '} ereqc ON ereqc.courseid = c.id ' .
-        'LEFT JOIN {' . \block_evasys_sync\dbtables::EVAL_COURSES . '} evalc ON evalc.courseid = c.id ' .
-        "WHERE cfd.intvalue = :semester AND c.idnumber <> ''", ['semesterfieldid' => $field->id, 'semester' => $data->semester]
+        'LEFT JOIN {' . dbtables::EVAL_REQUESTS_COURSES . '} ereqc ON ereqc.courseid = c.id ' .
+        'LEFT JOIN {' . dbtables::EVAL_COURSES . '} evalc ON evalc.courseid = c.id ' .
+        'LEFT JOIN (
+            SELECT c1.courseid, c1.id FROM {' . dbtables::EVAL_COURSES . '} c1
+            JOIN {' . dbtables::EVAL_VERANSTS . '} evalver1 ON evalver1.evalid = c1.evalid ' .
+            "WHERE evalver1.state $inmanualsql " .
+        ') evalmanualc ON evalmanualc.courseid = c.id ' .
+        "WHERE cfd.intvalue = :semester AND " .
+        "c.idnumber <> '' AND " .
+        "c.category $incatsql ", array_merge(['semesterfieldid' => $field->id, 'semester' => $data->semester], $params)
 );
 
 echo $OUTPUT->header();
@@ -88,7 +102,7 @@ echo $OUTPUT->render_from_template('core/search_input', [
         'inputname' => 'search',
         'extraclasses' => 'mb-3',
         'inform' => false,
-        'searchstring' => 'Search for courses'
+        'searchstring' => get_string('search_for_courses', 'block_evasys_sync')
 ]);
 
 $mform->display();
@@ -101,19 +115,30 @@ $table->define_baseurl($PAGE->url);
 
 $table->setup();
 
-$table->add_data([
+if ($evasyscategory->is_automatic() || $courseamounts->requestcourses) {
+    $table->add_data([
         html_writer::link(new moodle_url('/blocks/evasys_sync/managecategory_requests.php', ['id' => $id]),
-                'Courses with pending requests'), $courseamounts->requestcourses
-]);
+                get_string('courses_with_requests', 'block_evasys_sync')), $courseamounts->requestcourses
+    ]);
+}
+
+if ($evasyscategory->is_automatic() || $courseamounts->autoevalcourses) {
+    $table->add_data([
+        html_writer::link(new moodle_url('/blocks/evasys_sync/managecategory_auto.php', ['id' => $id]),
+                get_string('courses_with_auto_evals', 'block_evasys_sync')), $courseamounts->autoevalcourses
+    ]);
+}
+
+if (!$evasyscategory->is_automatic() || $courseamounts->manualevalcourses) {
+    $table->add_data([
+        html_writer::link(new moodle_url('/blocks/evasys_sync/managecategory_manual.php', ['id' => $id]),
+                get_string('courses_with_manual_evals', 'block_evasys_sync')), $courseamounts->manualevalcourses
+    ]);
+}
 
 $table->add_data([
-        html_writer::link(new moodle_url('/blocks/evasys_sync/managecategory.php', ['id' => $id]),
-                'Courses with (planned) evaluations'), $courseamounts->evalcourses
-]);
-
-$table->add_data([
-        html_writer::link(new moodle_url('/blocks/evasys_sync/managecategory.php', ['id' => $id]),
-                'Courses without evaluations or evaluation requests'), $courseamounts->remainingcourses
+        html_writer::link(new moodle_url('/blocks/evasys_sync/managecategory_remaining.php', ['id' => $id]),
+                get_string('courses_without_evals', 'block_evasys_sync')), $courseamounts->remainingcourses
 ]);
 
 $table->finish_output();

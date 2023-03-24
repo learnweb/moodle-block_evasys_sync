@@ -69,8 +69,25 @@ class renderer extends \plugin_renderer_base {
         } else {
             echo html_writer::span(get_string('no_default_period_set', 'block_evasys_sync')) . '<br>';
         }
-        // echo html_writer::span('Teachers can plan an evaluation <b>with</b> your approval.') . '<br>';
-        // echo html_writer::span('Teachers can change an existing evaluation <b>without</b> your approval.') . '<br>';
+        if ($evasys_category->is_automatic()) {
+            echo html_writer::span('Evaluations are created <b>automatically</b>.');
+            if ($evasys_category->can_teacher_request_evaluation()) {
+                if ($evasys_category->teacher_evaluation_request_needs_approval()) {
+                    echo 'Evaluations requested by teachers are created <b>after</a> your approval.' . '<br>';
+                } else {
+                    echo 'Teacher can create evaluations <b>without</b> your approval.' . '<br>';
+                }
+            } else {
+                echo html_writer::span('Teachers <b>cannot</b> request evaluations.') . '<br>';
+            }
+        } else {
+            echo html_writer::span('Evaluations have to be created <b>manually</b>.') . '<br>';
+            if ($evasys_category->can_teacher_request_evaluation()) {
+                echo html_writer::span('Teachers <b>can</b> request evaluations.') . '<br>';
+            } else {
+                echo html_writer::span('Teachers <b>cannot</b> request evaluations.') . '<br>';
+            }
+        }
         echo html_writer::end_div() . '<br>';
         echo html_writer::link(new \moodle_url('/blocks/evasys_sync/editcategory.php', ['id' => $catid]), get_string('edit'));
 
