@@ -39,14 +39,16 @@ require_once($CFG->libdir . '/tablelib.php');
 class remaining_courses_table extends \table_sql {
 
     private int $teacherroleid;
+    private evasys_category $evasyscategory;
 
     /**
      * Constructor for course_manager_table.
      */
-    public function __construct($categoryids, $semester, $coursefullname = null) {
+    public function __construct($categoryids, $semester, evasys_category $evasyscategory, $coursefullname = null) {
         parent::__construct('block_evasys_sync-course_manager_table');
-        global $DB;
+        global $DB, $PAGE, $OUTPUT;
 
+        $this->evasyscategory = $evasyscategory;
         $this->teacherroleid = $DB->get_record('role', ['shortname' => 'editingteacher'])->id;
 
         $fields = 'c.id as courseid, c.fullname as coursename, cfd.intvalue as semester';
@@ -79,16 +81,40 @@ class remaining_courses_table extends \table_sql {
         $where = join(" AND ", $where);
 
         $this->set_sql($fields, $from, $where, $params);
-        $this->column_nosort = ['tools'];
-        $this->define_columns(['course', 'teacher', 'tools']);
+        $this->column_nosort = ['select', 'teacher', 'tools'];
+        $this->define_columns(['select', 'courseid', 'teacher', 'tools']);
         $this->define_headers([
+                $OUTPUT->render(new \core\output\checkbox_toggleall('evasys-remaining', true, [
+                        'id' => 'select-all-evasys-remaining',
+                        'name' => 'select-all-evasys-remaining',
+                        'label' => get_string('selectall'),
+                        'labelclasses' => 'sr-only',
+                        'classes' => 'm-1',
+                        'checked' => false,
+                ])),
                 get_string('course'),
                 get_string('teachers'),
                 ''
         ]);
+
+        $PAGE->requires->js_call_amd('block_evasys_sync/tablebulkactions', 'init');
     }
 
-    public function col_course($row) {
+    public function col_select($row) {
+        global $OUTPUT;
+        $checkbox = new \core\output\checkbox_toggleall('evasys-remaining', false, [
+                'classes' => 'usercheckbox m-1',
+                'id' => 'evasys-remaining' . $row->courseid,
+                'name' => 'bulkcheckbox-select',
+                'value' => $row->courseid,
+                'checked' => false,
+                'label' => get_string('selectitem', 'moodle', $row->courseid),
+                'labelclasses' => 'accesshide',
+        ]);
+        return $OUTPUT->render($checkbox);
+    }
+
+    public function col_courseid($row) {
         return \html_writer::link(course_get_url($row->courseid), $row->coursename);
     }
 
@@ -108,6 +134,35 @@ class remaining_courses_table extends \table_sql {
      */
     public function col_tools($row) {
         global $PAGE, $OUTPUT;
-        return '';
+        if (!$this->evasyscategory->default_period_set()) {
+            return '';
+        }
+        return $OUTPUT->render(new \single_button(new moodle_url($PAGE->url, ['action' => 'seteval', 'ids[]' => $row->courseid]),
+                get_string('set_default_eval', 'block_evasys_sync')));
+    }
+
+    /**
+     * Hook that can be overridden in child classes to wrap a table in a form
+     * for example. Called only when there is data to display and not
+     * downloading.
+     */
+    public function wrap_html_finish() {
+        global $OUTPUT;
+        parent::wrap_html_finish();
+        echo "<br>";
+
+        if (!$this->evasyscategory->default_period_set()) {
+            return;
+        }
+
+        echo $OUTPUT->render(new \single_button(new moodle_url(''),
+                get_string('set_default_eval_for_selected', 'block_evasys_sync'), 'post', false,
+                ['data-evasys-action' => 'seteval']
+        ));
+
+        /*echo $OUTPUT->render(new \single_button(new moodle_url(''),
+                get_string('set_default_eval_for_all', 'block_evasys_sync'), 'post', false,
+                ['data-evasys-action' => 'sseteval', 'data_evasys-forall' => 1]
+        ));*/
     }
 }

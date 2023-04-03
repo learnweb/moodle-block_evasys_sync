@@ -126,4 +126,8 @@ class evasys_category extends persistent {
     public function is_automatic() : bool {
         return $this->get('mode_flags') & self::MASK_AUTOMATIC_TASK_CREATION;
     }
+
+    public function default_period_set(): bool {
+        return $this->get('standard_time_start') && $this->get('standard_time_end');
+    }
 }

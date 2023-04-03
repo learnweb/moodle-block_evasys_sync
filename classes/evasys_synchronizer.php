@@ -43,27 +43,11 @@ class evasys_synchronizer {
         }
         $course = get_course($this->courseid);
 
-        if ($course->idnumber) {
-            $maincourse = $course->idnumber;
-        }
-        // Fetch persistent object id.
-        $pid = $DB->get_field('block_evasys_sync_courses', 'id', array('course' => $this->courseid));
+        $this->evasyscourses = [];
 
-        // Get all associated courses.
-        if (!$pid === false) {
-            $extras = new \block_evasys_sync\course_evasys_courses_allocation($pid);
-            $extras = explode('#', $extras->get('evasyscourses'));
-        } else {
-            $extras = [];
+        if ($course->idnumber) {
+            $this->evasyscourses = [$course->idnumber];
         }
-        // If noone has associated the course itself, we force that.
-        if (isset($maincourse) && !empty($maincourse)) {
-            if (!in_array($maincourse, $extras)) {
-                $extras[] = $maincourse;
-            }
-        }
-        $extras = array_filter($extras);
-        $this->evasyscourses = $extras;
         return $this->evasyscourses;
     }
 

@@ -45,6 +45,21 @@ $cache = cache::make('block_evasys_sync', 'mformdata');
 
 $data = $cache->get($cachekey);
 
+$action = optional_param('action', null, PARAM_ALPHAEXT);
+if ($action === 'seteval') {
+    require_sesskey();
+    $courses = required_param_array('ids', PARAM_INT);
+    $errors = \block_evasys_sync\evaluation_manager::set_default_evaluation_for($courses, $evasyscategory);
+    if ($errors) {
+        $erroroutput = '';
+        foreach ($errors as $courseid => $error) {
+            $erroroutput .= $courseid . ': ' . $error . '<br>';
+        }
+        \core\notification::error($erroroutput);
+    }
+    redirect($PAGE->url);
+}
+
 $field = $DB->get_record('customfield_field', array('shortname' => 'semester', 'type' => 'semester'), '*', MUST_EXIST);
 $fieldcontroller = \core_customfield\field_controller::create($field->id);
 $datacontroller = \core_customfield\data_controller::create(0, null, $fieldcontroller);
@@ -56,7 +71,7 @@ if (!$data) {
 
 $catids = array_merge($category->get_all_children_ids(), [$category->id]);
 
-$table = new remaining_courses_table($catids, $data->semester ?? null, $data->coursename ?? null);
+$table = new remaining_courses_table($catids, $data->semester ?? null, $evasyscategory, $data->coursename ?? null);
 $table->define_baseurl($PAGE->url);
 
 $categorynode = $PAGE->navigation->find($category->id, navigation_node::TYPE_CATEGORY);

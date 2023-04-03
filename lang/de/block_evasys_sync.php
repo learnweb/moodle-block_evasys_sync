@@ -243,3 +243,14 @@ $string['course_units'] = 'Veranstaltungen';
 $string['use_default_evalperiod'] = 'Den Standardevaluationszeitraum verwenden:<br>{$a}';
 $string['err_endbeforestart'] = 'Der Endzeitpunkt liegt vor dem Startzeitpunkt';
 $string['dont_evaluate_course'] = 'Dieser Kurs soll NICHT evaluiert werden';
+$string['notify_teacher_email_subject'] = '{$a->courseshort}: Eine Evaluation wurde für Ihren Kurs geplant.';
+$string['notify_teacher_email_body'] = 'Sehr geehrte*r Lehrende*r,
+
+eine Evaluation wurde für Ihren Kurs {$a->coursefull}
+von {$a->start} bis {$a->end}
+geplant.
+
+Falls Sie Probleme mit dem Zeitraum der Evaluation haben, wenden Sie sich bitte an Ihre*n Evaluationskoordinator*in {$a->coordinator}.
+
+Mit freundlichen Grüßen,
+Ihr Learnweb-Support';

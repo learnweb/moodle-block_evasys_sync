@@ -43,10 +43,11 @@ class evaluation_manager {
     }
 
     public static function set_default_evaluation_for($courseids, evasys_category $category) {
-        global $DB;
+        global $DB, $USER;
         $childids = \core_course_category::get($category->get('course_category'))->get_all_children_ids();
         $childids[] = $category->get('course_category');
         $errors = [];
+        $coordinatoruser = \core_user::get_user($category->get('userid'));
         foreach ($courseids as $courseid) {
             $course = get_course($courseid, false);
             if (!in_array($course->category, $childids)) {
@@ -66,7 +67,7 @@ class evaluation_manager {
             }
 
             $synchronizer = new evasys_synchronizer($course->id);
-            $title = $synchronizer->get_course_name($course->idnumber);
+            $title = $synchronizer->get_raw_course_name($course->idnumber);
 
             if ($title === null) {
                 $errors[$course->id] = 'Course does not exist in EvaSys!';
@@ -81,18 +82,33 @@ class evaluation_manager {
                     (object)[
                         'lsfid' => $course->idnumber,
                         'title' => $title,
-                        'start' => $category->get('start'),
-                        'end' => $category->get('end'),
+                        'start' => $category->get('standard_time_start'),
+                        'end' => $category->get('standard_time_end'),
                         'state' => evaluation_state::MANUAL,
                     ]
             ];
 
             $synchronizer->sync_students();
+            $teacherroleid = $DB->get_record('role', ['shortname' => 'editingteacher'])->id;
+            $teachers = get_role_users($teacherroleid, \context_course::instance($course->id));
 
-            // TODO Send mail.
+            $data = new \stdClass();
+            $data->coordinator = fullname($coordinatoruser);
+            $data->start = userdate($category->get('standard_time_start'));
+            $data->end = userdate($category->get('standard_time_end'));
+            $data->courseshort = $course->shortname;
+            $data->coursefull = $course->fullname;
+
+            foreach ($teachers as $teacher) {
+                email_to_user($teacher, $coordinatoruser,
+                        get_string('notify_teacher_email_subject', 'block_evasys_sync', $data),
+                        get_string('notify_teacher_email_body', 'block_evasys_sync', $data)
+                );
+            }
 
             $evaluation->save();
         }
+        return $errors;
     }
 
 }

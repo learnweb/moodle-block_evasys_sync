@@ -60,7 +60,7 @@ export function init() {
             } else {
                 checkboxes.forEach((c) => {
                     if (c.checked) {
-                        data.push({k: 'id[]', v: c.value});
+                        data.push({k: 'ids[]', v: c.value});
                     }
                 });
                 redirectPost(window.location, data);

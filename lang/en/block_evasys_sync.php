@@ -266,3 +266,19 @@ $string['courses_with_requests'] = 'Courses with pending requests';
 $string['courses_with_automatic_evals'] = 'Courses with automatic evaluations';
 $string['courses_with_manual_evals'] = 'Courses with manual evaluations';
 $string['courses_without_evals'] = 'Courses without evaluations';
+
+$string['set_default_eval'] = 'Set default evaluation';
+$string['set_default_eval_for_selected'] = 'Set default evaluation for selected';
+$string['set_default_eval_for_all'] = 'Set default evaluation for all';
+
+$string['notify_teacher_email_subject'] = '{$a->courseshort}: A evaluation was planned for your course.';
+$string['notify_teacher_email_body'] = 'Dear teacher,
+
+an evaluation was planned for your course {$a->coursefull}
+from {$a->start}
+to {$a->end}.
+
+If this evaluation doesn\'t suit you at all, please contact your evasys coordinator {$a->coordinator}.
+
+Sincerely,
+Your Learnweb-Support';
