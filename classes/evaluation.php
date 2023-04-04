@@ -43,7 +43,7 @@ class evaluation {
         $evaluation = new evaluation();
         $evaluation->courses = $request->courses;
         $evaluation->evaluations = [];
-        $evaluation->initialcourse = $request->courseid;
+        $evaluation->initialcourse = $request->courseid ?? $request->courses[0];
         $time = time();
         foreach ($request->evaluations as $evalrequest) {
             $eval = new \stdClass();

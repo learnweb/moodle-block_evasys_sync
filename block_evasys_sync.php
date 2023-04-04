@@ -61,8 +61,7 @@ class block_evasys_sync extends block_base{
                 foreach ($evaluations->evaluations as $evaluation) {
                     $this->content->text .= userdate($evaluation->start, $stringformat) . ' - ' . userdate($evaluation->end, $stringformat) . '<br>';
                 }
-            }
-            if ($evalrequest) {
+            } else if ($evalrequest) {
                 $this->content->text .= '<p>Request pending approval: </p><pre>' . json_encode($evalrequest, JSON_PRETTY_PRINT) . '</pre>';
                 $this->content->text .= html_writer::link(
                     new moodle_url('/blocks/evasys_sync/evalrequest.php', ['cid' => $this->page->course->id]),
@@ -72,7 +71,7 @@ class block_evasys_sync extends block_base{
                 $this->content->text .= '<p>No evaluation planned.</p>';
                 $this->content->text .= html_writer::link(
                     new moodle_url('/blocks/evasys_sync/evalrequest.php', ['cid' => $this->page->course->id]),
-                    'Request evaluation', ['class' => 'btn btn-primary']
+                    get_string('request_eval', 'block_evasys_sync'), ['class' => 'btn btn-primary']
                 );
             }
 

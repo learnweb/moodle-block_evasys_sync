@@ -282,3 +282,5 @@ If this evaluation doesn\'t suit you at all, please contact your evasys coordina
 
 Sincerely,
 Your Learnweb-Support';
+
+$string['request_eval'] = 'Request evaluation';

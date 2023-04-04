@@ -111,4 +111,68 @@ class evaluation_manager {
         return $errors;
     }
 
+    public static function insert_participants_for_evaluation(evaluation $evaluation) {
+        $personlist = [];
+        $errors = [];
+        $soapclient = evasys_soap_client::get();
+        foreach ($evaluation->courses as $courseid) {
+            $courseusers = get_users_by_capability(\context_course::instance($courseid), 'block/evasys_sync:mayevaluate');
+            foreach ($courseusers as $courseuser) {
+                $personlist[$courseuser->id] = new \SoapVar([
+                        new \SoapVar($courseuser->email, XSD_STRING, null, null, 'm_sIdentifier', null),
+                        new \SoapVar($courseuser->email, XSD_STRING, null, null, 'm_sEmail', null),
+                ], SOAP_ENC_OBJECT, null, null, 'Persons', null);
+            }
+        }
+        $personlist = array_values($personlist);
+
+        foreach ($evaluation->evaluations as $eval) {
+            $soapresult = $soapclient->InsertParticipants($personlist, $eval->lsfid, 'PUBLIC', false);
+
+            if (is_soap_fault($soapresult)) {
+                $errors[$eval->lsfid] = 'Could not insert participants for courses ' . json_encode($evaluation->courses);
+                continue;
+            }
+
+            $course = $soapclient->GetCourse($eval->lsfid, 'PUBLIC', true, true); // Update usercount.
+            $usercountnow = $course->m_nCountStud;
+            // The m_aSurveys element might be an empty object!
+            if (!empty((array) $course->m_oSurveyHolder->m_aSurveys)) {
+                if (is_array($course->m_oSurveyHolder->m_aSurveys->Surveys)) {
+                    foreach ($course->m_oSurveyHolder->m_aSurveys->Surveys as $survey) {
+                        $id = $survey->m_nSurveyId;
+                        $soapclient->GetPswdsBySurvey($id, $usercountnow, 1, true, false); // Create new TANs.
+                    }
+                } else {
+                    $id = $course->m_oSurveyHolder->m_aSurveys->Surveys->m_nSurveyId;
+                    $soapclient->GetPswdsBySurvey($id, $usercountnow, 1, true, false); // Create new TANs.
+                }
+            }
+        }
+        return $errors;
+    }
+
+    public static function notify_evasys_coordinator_for_evaluation(evaluation $evaluation) {
+        global $USER;
+        $course = get_course($evaluation->courses[0]);
+        $evasyscategory = evasys_category::for_course($course);
+        $userto = \core_user::get_user($evasyscategory->get('userid'));
+
+        $notiftext = "Sehr geehrte*r Evaluationskoordinator*in,\n\n" .
+                "Dies ist eine automatisch generierte Mail, ausgelöst dadurch, dass ein*e Dozent*in die Evaluation " .
+                "der nachfolgenden Veranstaltung beantragt hat.\n".
+                "Bitte passen Sie die Evaluationszeiträume dem untenstehenden Wunsch an.\n";
+
+        foreach ($evaluation->evaluations as $eval) {
+            $notiftext .= "Veranstaltung: $eval->title\n" .
+                    "ID: $eval->lsfid\n" .
+                    "Evaluationszeitraum: " . userdate($eval->start) . " - " . userdate($eval->end) . "\n\n";
+        }
+
+        $notiftext .= "Mit freundlichen Grüßen\n";
+        $notiftext .= "Learnweb-Support";
+
+        email_to_user($userto, $USER, "Evaluation für $course->fullname beantragt", $notiftext);
+    }
+
 }

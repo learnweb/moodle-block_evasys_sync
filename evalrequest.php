@@ -45,8 +45,28 @@ if ($mform->is_cancelled()) {
 }
 
 if ($data = $mform->get_simplified_data()) {
-    $data->save();
-    redirect(course_get_url($course));
+    $evasyscategory = \block_evasys_sync\evasys_category::for_course($course);
+    if (!$evasyscategory->can_teacher_request_evaluation()) {
+        throw new Exception('Teachers cannot request evaluations!');
+    }
+    if ($evasyscategory->is_automatic()) {
+        throw new Exception('Not yet implemented!'); // TODO automatic.
+    } else {
+        $evaluation = \block_evasys_sync\evaluation::from_eval_request($data);
+        $errors = \block_evasys_sync\evaluation_manager::insert_participants_for_evaluation($evaluation);
+        if ($errors) {
+            $erroroutput = '';
+            foreach ($errors as $courseid => $error) {
+                $erroroutput .= $courseid . ': ' . $error . '<br>';
+            }
+            \core\notification::error($erroroutput);
+        } else {
+            \block_evasys_sync\evaluation_manager::notify_evasys_coordinator_for_evaluation($evaluation);
+            $evaluation->save();
+            redirect(course_get_url($course));
+        }
+    }
+
 }
 
 $mform->display();
