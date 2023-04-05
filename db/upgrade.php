@@ -443,16 +443,14 @@ function xmldb_block_evasys_sync_upgrade ($oldversion) {
                         if (is_numeric($veranst)) {
                             $lsfinfo = get_courses_by_veranstids([$veranst]);
                             if (isset($lsfinfo[$veranst]->titel)) {
-                                $title = $lsfinfo[$veranst]->titel;
+                                $title = mb_convert_encoding($lsfinfo[$veranst]->titel, "UTF-8");
                             }
                         }
-                    } catch (Exception $e) {
-
-                    }
+                    } catch (Exception $e) {}
                     $id = $DB->insert_record(dbtables::EVAL_VERANSTS, [
                         'evalid' => $evalid,
                         'veranstid' => $veranst,
-                        'veransttitle' => $title,
+                        'veransttitle' => $title ?: null,
                         'starttime' => $record->startdate,
                         'endtime' => $record->enddate,
                         'state' => evaluation_state::MANUAL,
