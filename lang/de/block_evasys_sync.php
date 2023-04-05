@@ -93,16 +93,6 @@ $string['alert_email_body'] = 'Sehr geehrte*r Evaluationskoordinator*in, ' . "\n
     'Mit freundlichen Grüßen' . "\n" .
     'Ihr Learnweb-Support';
 
-$string['teacher_inform_email_subject'] = '{$a->coursename}: Evaluation geplant';
-$string['teacher_inform_email_body'] = 'Sehr geehrter Mensch,
-
-die Evaluation für Ihren Learnweb-Kurs "{$a->coursename}" wurde von {$a->start} bis ${a->end} geplant. Bitte geben Sie wenn möglich den Studierenden innerhalb Ihrer Veranstaltung die Gelegenheit, die Evaluation auszufüllen. 
-
-Falls der Zeitraum für Ihren Kurs unpassend ist, melden sie sich bei {$a->evasyscoordnator}
-
-Mit freundlichen Grüßen
-Ihr Learnweb-Support';
-
 // New invite strings.
 $string['title_success'] = "Erfolgreich";
 $string['content_success_invite'] = "Die Evaluation wurde erfolgreich gestartet";
@@ -229,6 +219,8 @@ $string['evaluationperiod'] = 'Evaluationszeitraum';
 $string['evaluationperiod_for'] = 'Evaluationszeitraum für "{$a}"';
 $string['startondate'] = 'Von';
 $string['endondate'] = 'bis';
+$string['evaluations'] = 'Evaluationen';
+$string['title'] = 'Titel';
 
 // Notices.
 $string['evalperiodsetnotice'] = 'Evaluationszeitraum gesetzt';
@@ -243,6 +235,34 @@ $string['course_units'] = 'Veranstaltungen';
 $string['use_default_evalperiod'] = 'Den Standardevaluationszeitraum verwenden:<br>{$a}';
 $string['err_endbeforestart'] = 'Der Endzeitpunkt liegt vor dem Startzeitpunkt';
 $string['dont_evaluate_course'] = 'Dieser Kurs soll NICHT evaluiert werden';
+
+$string['standart_time_start'] = 'Start des Standardevaluationszeitraums';
+$string['standart_time_end'] = 'Ende des Standardevaluationszeitraums';
+
+$string['teacher_can_request_evaluation'] = 'Lehrende können Evaluationen beantragen';
+$string['teacher_evaluation_request_needs_approval'] = 'Evaluationsanträge von Lehrenden müssen von Ihnen bestätigt werden';
+$string['automatic_task_creation'] = 'Geplante Vorgänge werden automatisch in EvaSys erstellt.';
+$string['teacher_can_change_evaluation'] = 'Lehrende können bestehende Evaluationen verändern';
+$string['teacher_evaluation_change_needs_approval'] = 'Änderungen an bestehenden Evaluationen müssen von Ihnen bestätigt werden';
+
+$string['search_for_courses'] = 'Nach Kursen suchen';
+
+$string['evasys_settings_for'] = 'Evasys-Einstellungen für {$a}';
+$string['no_default_period_set'] = 'Es wurde kein Standardevaluationszeitraum festgelegt.';
+$string['default_period_set_from_to'] = 'Der Standardevaluationszeitraum wurde von <b>{$a->start}</b> bis <b>{$a->end}</b> gesetzt.';
+$string['teachers_can_request_evaluation'] = 'Lehrende <b>können</b> Evaluationen beantragen.';
+$string['teachers_cannot_request_evaluation'] = 'Lehrende können <b>keine</b> Evaluationen beantragen.';
+
+$string['courses_with_errors'] = 'Kurse mit Fehlern!';
+$string['courses_with_requests'] = 'Kurse mit ausstehenden Evaluationsanträgen';
+$string['courses_with_automatic_evals'] = 'Kurse mit automatischen Evaluationen';
+$string['courses_with_manual_evals'] = 'Kurse mit manuellen Evaluationen';
+$string['courses_without_evals'] = 'Kurse ohne Evaluationen';
+
+$string['set_default_eval'] = 'Standardevaluation planen';
+$string['set_default_eval_for_selected'] = 'Standardevaluation für alle ausgewählten planen';
+$string['set_default_eval_for_all'] = 'Standardevaluation für alle Kurse planen';
+
 $string['notify_teacher_email_subject'] = '{$a->courseshort}: Eine Evaluation wurde für Ihren Kurs geplant.';
 $string['notify_teacher_email_body'] = 'Sehr geehrte*r Lehrende*r,
 

@@ -229,6 +229,8 @@ $string['evaluationperiod'] = 'Evaluation period';
 $string['evaluationperiod_for'] = 'Evaluation period for "{$a}"';
 $string['startondate'] = 'From';
 $string['endondate'] = 'until';
+$string['evaluations'] = 'Evaluations';
+$string['title'] = 'Title';
 
 // Notices.
 $string['evalperiodsetnotice'] = 'Evaluationperiod has been set';

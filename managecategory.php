@@ -96,14 +96,15 @@ echo $OUTPUT->header();
 $renderer = $PAGE->get_renderer('block_evasys_sync');
 $renderer->print_evasys_category_header($evasyscategory);
 
-echo $OUTPUT->render_from_template('core/search_input', [
+// TODO course search
+/*echo $OUTPUT->render_from_template('core/search_input', [
         'action' => (new moodle_url('/blocks/evasys_sync/coursesearch.php', ['id' => $category->id]))->out(false),
         'uniqid' => 'block_evasys_sync-search-courses',
         'inputname' => 'search',
         'extraclasses' => 'mb-3',
         'inform' => false,
         'searchstring' => get_string('search_for_courses', 'block_evasys_sync')
-]);
+]);*/
 
 $mform->display();
 
@@ -131,7 +132,7 @@ if ($evasyscategory->is_automatic() || $courseamounts->autoevalcourses) {
 
 if (!$evasyscategory->is_automatic() || $courseamounts->manualevalcourses) {
     $table->add_data([
-        html_writer::link(new moodle_url('/blocks/evasys_sync/managecategory_manual.php', ['id' => $id]),
+        html_writer::link(null, // TODO manual evaluations table!
                 get_string('courses_with_manual_evals', 'block_evasys_sync')), $courseamounts->manualevalcourses
     ]);
 }

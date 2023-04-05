@@ -69,12 +69,13 @@ class evasys_category_edit_form extends moodleform {
                 get_string('teacher_can_request_evaluation', 'block_evasys_sync'));
         $mform->setDefault('teacher_can_request_evaluation', true);
 
-        $mform->addElement('checkbox', 'teacher_evaluation_request_needs_approval',
+        // TODO automatic
+        /*$mform->addElement('checkbox', 'teacher_evaluation_request_needs_approval',
                 get_string('teacher_evaluation_request_needs_approval', 'block_evasys_sync'));
         $mform->disabledIf('teacher_evaluation_request_needs_approval', 'teacher_can_request_evaluation');
 
         $mform->addElement('checkbox', 'automatic_task_creation',
-            get_string('automatic_task_creation', 'block_evasys_sync'));
+            get_string('automatic_task_creation', 'block_evasys_sync'));*/
 
         /*$mform->addElement('checkbox', 'teacher_can_change_evaluation',
                 get_string('teacher_can_change_evaluation', 'block_evasys_sync'));
@@ -90,8 +91,8 @@ class evasys_category_edit_form extends moodleform {
             $mform->setDefault('standard_time_end', $this->evasys_category->get('standard_time_end'));
         }
         $mform->setDefault('teacher_can_request_evaluation', $this->evasys_category->can_teacher_request_evaluation());
-        $mform->setDefault('teacher_evaluation_request_needs_approval', $this->evasys_category->teacher_evaluation_request_needs_approval());
-        $mform->setDefault('automatic_task_creation', $this->evasys_category->is_automatic());
+        // $mform->setDefault('teacher_evaluation_request_needs_approval', $this->evasys_category->teacher_evaluation_request_needs_approval());
+        // $mform->setDefault('automatic_task_creation', $this->evasys_category->is_automatic());
 
         $this->add_action_buttons();
     }
@@ -100,6 +101,8 @@ class evasys_category_edit_form extends moodleform {
         if (!$data = $this->get_data()) {
             return null;
         }
+
+        $usestandardtime = $data->activate_standard_time ?? false;
 
         $evasyscat = new evasys_category($this->evasys_category->get('id'));
         $flags = 0;
@@ -113,8 +116,8 @@ class evasys_category_edit_form extends moodleform {
             $flags |= evasys_category::MASK_AUTOMATIC_TASK_CREATION;
         }
         $evasyscat->set_many([
-            'standard_time_start' => $data->standard_time_start,
-            'standard_time_end' => $data->standard_time_end,
+            'standard_time_start' => $usestandardtime ? $data->standard_time_start : null,
+            'standard_time_end' => $usestandardtime ? $data->standard_time_end : null,
             'mode_flags' => $flags
         ]);
         return $evasyscat;
@@ -122,7 +125,8 @@ class evasys_category_edit_form extends moodleform {
 
     public function validation($data, $files) {
         $errors = [];
-        if ($data['standard_time_start'] >= $data['standard_time_end']) {
+        if (isset($data['activate_standard_time']) && $data['activate_standard_time'] &&
+                $data['standard_time_start'] >= $data['standard_time_end']) {
             $errors['standard_time_end'] = get_string('err_endbeforestart', 'block_evasys_sync');
         }
         return $errors;

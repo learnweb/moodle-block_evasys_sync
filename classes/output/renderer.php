@@ -70,7 +70,7 @@ class renderer extends \plugin_renderer_base {
             echo html_writer::span(get_string('no_default_period_set', 'block_evasys_sync')) . '<br>';
         }
         if ($evasys_category->is_automatic()) {
-            echo html_writer::span('Evaluations are created <b>automatically</b>.');
+            /*echo html_writer::span('Evaluations are created <b>automatically</b>.');
             if ($evasys_category->can_teacher_request_evaluation()) {
                 if ($evasys_category->teacher_evaluation_request_needs_approval()) {
                     echo 'Evaluations requested by teachers are created <b>after</a> your approval.' . '<br>';
@@ -79,13 +79,13 @@ class renderer extends \plugin_renderer_base {
                 }
             } else {
                 echo html_writer::span('Teachers <b>cannot</b> request evaluations.') . '<br>';
-            }
+            }*/
         } else {
-            echo html_writer::span('Evaluations have to be created <b>manually</b>.') . '<br>';
+            // echo html_writer::span('Evaluations have to be created <b>manually</b>.') . '<br>';
             if ($evasys_category->can_teacher_request_evaluation()) {
-                echo html_writer::span('Teachers <b>can</b> request evaluations.') . '<br>';
+                echo html_writer::span(get_string('teachers_can_request_evaluation', 'block_evasys_sync')) . '<br>';
             } else {
-                echo html_writer::span('Teachers <b>cannot</b> request evaluations.') . '<br>';
+                echo html_writer::span(get_string('teachers_cannot_request_evaluation', 'block_evasys_sync')) . '<br>';
             }
         }
         echo html_writer::end_div() . '<br>';

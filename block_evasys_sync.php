@@ -52,180 +52,34 @@ class block_evasys_sync extends block_base{
 
         $evalrequest = \block_evasys_sync\evaluation_request::for_course($this->page->course->id);
         $evaluations = \block_evasys_sync\evaluation::for_course($this->page->course->id);
+        $evasyscategory = \block_evasys_sync\evasys_category::for_course($this->page->course);
 
         $stringformat = get_string('strftimedatetime', 'langconfig');
 
-        // If we are not in sync mode, we display either the course mapping or the check status button.
-        if ($evasyssynccheck !== 1) {
-            if ($evaluations) {
-                foreach ($evaluations->evaluations as $evaluation) {
-                    $this->content->text .= userdate($evaluation->start, $stringformat) . ' - ' . userdate($evaluation->end, $stringformat) . '<br>';
-                }
-            } else if ($evalrequest) {
-                $this->content->text .= '<p>Request pending approval: </p><pre>' . json_encode($evalrequest, JSON_PRETTY_PRINT) . '</pre>';
-                $this->content->text .= html_writer::link(
-                    new moodle_url('/blocks/evasys_sync/evalrequest.php', ['cid' => $this->page->course->id]),
-                    'Change evaluation request', ['class' => 'btn btn-secondary']
-                );
-            } else {
-                $this->content->text .= '<p>No evaluation planned.</p>';
+        if ($evaluations) {
+            $this->content->text .= html_writer::tag('h5', get_string('evaluations', 'block_evasys_sync'));
+            foreach ($evaluations->evaluations as $evaluation) {
+                $this->content->text .= html_writer::tag('p', '<b>' . $evaluation->title . '</b><br>' .
+                        get_string('startondate', 'block_evasys_sync') . ': ' . userdate($evaluation->start, $stringformat) . '<br>' .
+                        get_string('endondate', 'block_evasys_sync') . ': ' . userdate($evaluation->end, $stringformat));
+            }
+        } else if ($evalrequest) {
+            $this->content->text .= '<p>Request pending approval: </p><pre>' . json_encode($evalrequest, JSON_PRETTY_PRINT) . '</pre>';
+            $this->content->text .= html_writer::link(
+                new moodle_url('/blocks/evasys_sync/evalrequest.php', ['cid' => $this->page->course->id]),
+                'Change evaluation request', ['class' => 'btn btn-secondary']
+            );
+        } else {
+            $this->content->text .= html_writer::tag('p', get_string('no_eval_planned', 'block_evasys_sync'));
+            if ($evasyscategory->can_teacher_request_evaluation()) {
                 $this->content->text .= html_writer::link(
                     new moodle_url('/blocks/evasys_sync/evalrequest.php', ['cid' => $this->page->course->id]),
                     get_string('request_eval', 'block_evasys_sync'), ['class' => 'btn btn-primary']
                 );
-            }
-
-            // Display the check status button.
-            // $href = new moodle_url('/course/view.php', array('id' => $this->page->course->id, "evasyssynccheck" => true));
-            // $this->content->text .= $OUTPUT->single_button($href, get_string('checkstatus', 'block_evasys_sync'), 'get');
-            return $this->content;
-        }
-        $categoryhasstandardtime = \block_evasys_sync\evasys_synchronizer::get_standard_timemode($this->page->course->category);
-
-        // Only use standardtime js if no record exists.
-        if (!$record) {
-            $this->page->requires->js_call_amd('block_evasys_sync/standardtime', 'init');
-        }
-        $evasyssynchronizer = new \block_evasys_sync\evasys_synchronizer($this->page->course->id);
-        try {
-            $evasyscourses = $evasyssynchronizer->get_allocated_courses();
-        } catch (Exception $exception) {
-            \core\notification::warning(get_string('syncnotpossible', 'block_evasys_sync'));
-            $this->content->text .= html_writer::div(get_string('syncnotpossible', 'block_evasys_sync'));
-            return $this->content;
-        }
-
-        $href = new moodle_url('/blocks/evasys_sync/sync.php');
-
-        // Initialize data for mustache template.
-        $startdisabled = false;
-        $enddisabled = false;
-        $emailsentnotice = false;
-        $periodsetnotice = false;
-
-        // Set start to today and end to a week from now.
-        $start = time();
-        $oneweeklater = $time = new \DateTime();
-        $oneweeklater->add(new \DateInterval("P7D"));
-        $end = $oneweeklater->getTimestamp();
-
-        // See if there are any students that can evaluate.
-        // If there are no students we disable all controls.
-        $nostudents = (count_enrolled_users(
-                context_course::instance($this->page->course->id), 'block/evasys_sync:mayevaluate') == 0);
-
-        $recordhasstandardtime = false;
-
-        if ($record !== false) {
-            $state = $record->get('state');
-            if ($state == course_evaluation_allocation::STATE_MANUAL) {
-                // If the persistenceclass exists and the state is manual an email must have been sent.
-                $emailsentnotice = true;
-            }
-            // If there is a record the period has been set at least once.
-            // Set start and end to match the period that had been set.
-            $start = $record->get('startdate');
-            $end = $record->get('enddate');
-            $recordhasstandardtime = $record->get('usestandardtime');
-        } else {
-            if ($categoryhasstandardtime) {
-                $start = $categoryhasstandardtime['start'];
-                $end = $categoryhasstandardtime['end'];
-                $recordhasstandardtime = true;
+            } else {
+                $this->content->text .= html_writer::tag('p', get_string('evaluation_will_be_created_for_you', 'block_evasys_sync'));
             }
         }
-        // This javascript module sets the start and end fields to the correct values.
-        $jsmodestring = 'manual';
-        $jsmodestring .= $enddisabled ? '_closed' : '_open';
-        $this->page->requires->js_call_amd('block_evasys_sync/initialize', 'init', array($start, $end, $jsmodestring));
-
-        // Initialize variables to pass to mustache.
-        $courses = array();
-        $hassurveys = false;
-        $startoption = ($startdisabled xor $enddisabled);
-        $warning = false;
-        $invalidcourses = false;
-        // Query course data (put in function).
-        foreach ($evasyscourses as $evasyscourseinfo) {
-            $course = array();
-            $course['evasyscoursetitle'] = $evasyssynchronizer->get_course_name($evasyscourseinfo);
-            $course['technicalid'] = $evasyssynchronizer->get_course_id($evasyscourseinfo);
-            $course['evasyscourseid'] = $evasyscourseinfo;
-            $course['c_participants'] = format_string($evasyssynchronizer->get_amount_participants($evasyscourseinfo));
-            $rawsurveys = $evasyssynchronizer->get_surveys($evasyscourseinfo);
-            $surveys = array();
-            foreach ($rawsurveys as $rawsurvey) {
-                $survey = array();
-                $survey['formName'] = format_string($rawsurvey->formName);
-                $survey['surveystatus'] = get_string('surveystatus' . $rawsurvey->surveyStatus, 'block_evasys_sync');
-                $survey['amountOfCompleteForms'] = format_string($rawsurvey->amountOfCompletedForms);
-                if ($record !== false && $record->get('state') == course_evaluation_allocation::STATE_AUTO_CLOSED &&
-                    $rawsurvey->surveyStatus == 'open') {
-                    // If the evaluation has ended as far as we know, but there are still open evaluations output a warning...
-                    // and enable all controls.
-                    $warning = true;
-                    $startdisabled = false;
-                    $enddisabled = false;
-                }
-                if (($record === false || $record->get('state') == course_evaluation_allocation::STATE_MANUAL) &&
-                    $rawsurvey->surveyStatus == 'closed') {
-                    // In case of a manual evaluation get the status of the evaluation by...
-                    // checking whether the evaluations are closed.
-                    $emailsentnotice = false;
-                    $startdisabled = true;
-                    $enddisabled = true;
-                    $startoption = true;
-                }
-
-                // Append this survey.
-                $surveys[] = $survey;
-                $hassurveys = true;
-            }
-            // If any course has an unkown technical id, we don't want to allow synchronization.
-            if ($course['technicalid'] == "Unknown") {
-                $invalidcourses = true;
-            }
-
-            $course['surveys'] = $surveys;
-            // Append this course.
-            $courses[] = $course;
-        }
-
-        $standardttimemode = ($recordhasstandardtime && !$record);
-        $hisconnection = get_config('block_evasys_sync', 'default_his_connection');
-
-        // Create the data object for the mustache table.
-        $data = array(
-            'href' => $href,
-            'sesskey' => sesskey(),
-            'courseid' => $this->page->course->id,
-            'courses' => $courses,
-            /* In case of the manual workflow, we can start synchronisation also, if no surveys are registered, yet.
-            * In case of the automated workflow, we require surveys
-            * in order to be able to automatically trigger the evaluation. */
-            'showcontrols' => ($hassurveys) && count($evasyscourses) > 0 && !$invalidcourses,
-            'usestandardtimelayout' => ($recordhasstandardtime && !$record),
-            // Choose mode.
-            'direct' => false,
-            'startdisabled' => $startdisabled || $standardttimemode,
-            'enddisabled' => $enddisabled || $standardttimemode,
-            'onlyend' => $startdisabled && !$standardttimemode,
-            'disablesubmit' => $enddisabled,
-            // If the evaluation hasn't ended yet, display option to restart it.
-            'startoption' => $startoption,
-            // Only allow coursemapping before starting an evaluation.
-            'coursemappingenabled' => $hisconnection and (!$startdisabled or is_siteadmin()),
-            'nostudents' => $nostudents,
-            'emailsentnotice' => $emailsentnotice,
-            'evaluationperiodsetnotice' => $periodsetnotice,
-            // Defines if an lsf course is already mapped to the moodle course.
-            'optional' => !empty($evasyscourses),
-            // Outputs a warning that there are open course when there shouldn't.
-            'warning' => $warning
-        );
-
-        $this->content->text .= $OUTPUT->render_from_template("block_evasys_sync/block", $data);
-        $this->content->footer = '';
         return $this->content;
     }
 
