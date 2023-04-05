@@ -29,6 +29,7 @@
  */
 
 use block_evasys_sync\dbtables;
+use block_evasys_sync\local\entity\evaluation_state;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -354,6 +355,8 @@ function xmldb_block_evasys_sync_upgrade ($oldversion) {
         $table->add_field('starttime', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
         $table->add_field('endtime', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
         $table->add_field('state', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('lastsynctime', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
+        $table->add_field('adddata', XMLDB_TYPE_TEXT, null, null, null, null, null);
         $table->add_field('usermodified', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
         $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
         $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
@@ -439,7 +442,7 @@ function xmldb_block_evasys_sync_upgrade ($oldversion) {
                         'veransttitle' => null, // TODO thing.
                         'starttime' => $record->startdate,
                         'endtime' => $record->enddate,
-                        'state' => $record->state, // TODO correct?
+                        'state' => evaluation_state::MANUAL,
                         'usermodified' => $record->usermodified,
                         'timecreated' => $record->timecreated,
                         'timemodified' => $record->timemodified
@@ -474,13 +477,38 @@ function xmldb_block_evasys_sync_upgrade ($oldversion) {
 
         // Define field mode_flags to be added to block_evasys_sync_categories.
         $table = new xmldb_table('block_evasys_sync_categories');
-        $field = new xmldb_field('mode_flags', XMLDB_TYPE_INTEGER, '11', null, XMLDB_NOTNULL, null, '1', 'category_mode');
+        $field = new xmldb_field('mode_flags', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '1', 'category_mode');
 
         // Conditionally launch add field mode_flags.
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
 
+        // Define table block_evasys_sync_errors to be created.
+        $table = new xmldb_table('block_evasys_sync_errors');
+
+        // Adding fields to table block_evasys_sync_errors.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('courseid', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
+        $table->add_field('lsfid', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
+        $table->add_field('evasyscategoryid', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
+        $table->add_field('text', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null, null);
+        $table->add_field('type', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('timehandled', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
+        $table->add_field('usermodified', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+
+        // Adding keys to table block_evasys_sync_errors.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+        $table->add_key('usermodified', XMLDB_KEY_FOREIGN, ['usermodified'], 'user', ['id']);
+        $table->add_key('courseid_frk', XMLDB_KEY_FOREIGN, ['courseid'], 'course', ['id']);
+        $table->add_key('evasyscategoryid_frk', XMLDB_KEY_FOREIGN, ['evasyscategoryid'], 'block_evasys_sync_categories', ['id']);
+
+        // Conditionally launch create table for block_evasys_sync_errors.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
 
         // Evasys_sync savepoint reached.
         upgrade_block_savepoint(true, 2022092400, 'evasys_sync');
