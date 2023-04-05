@@ -294,7 +294,7 @@ class request_evaluation_form extends moodleform {
             $endkey = "evaltimeend_$lsfcourseid";
             $data->evaluations[$lsfcourseid] = (object) [
                 'lsfid' => $lsfcourseid,
-                'title' => $this->lsfcourses[$lsfcourseid],
+                'title' => $this->lsfcourses[$lsfcourseid] ?? null,
                 'start' => $defaultstart ?? $formdata->$startkey,
                 'end' => $defaultend ?? $formdata->$endkey
             ];

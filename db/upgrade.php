@@ -296,7 +296,7 @@ function xmldb_block_evasys_sync_upgrade ($oldversion) {
         // Adding fields to table block_evasys_sync_ereq_veran.
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
         $table->add_field('erequestid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
-        $table->add_field('veranstid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('veranstid', XMLDB_TYPE_CHAR, '30', null, XMLDB_NOTNULL, null, null);
         $table->add_field('veransttitle', XMLDB_TYPE_TEXT, null, null, null, null, null);
         $table->add_field('starttime', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
         $table->add_field('endtime', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
@@ -304,7 +304,6 @@ function xmldb_block_evasys_sync_upgrade ($oldversion) {
         // Adding keys to table block_evasys_sync_ereq_veran.
         $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
         $table->add_key('erequestid', XMLDB_KEY_FOREIGN, ['erequestid'], 'block_evasys_sync_ereq', ['id']);
-        $table->add_key('veranstid', XMLDB_KEY_UNIQUE, ['veranstid']);
 
         // Conditionally launch create table for block_evasys_sync_ereq_veran.
         if (!$dbman->table_exists($table)) {
@@ -350,7 +349,7 @@ function xmldb_block_evasys_sync_upgrade ($oldversion) {
         // Adding fields to table block_evasys_sync_eval_veran.
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
         $table->add_field('evalid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
-        $table->add_field('veranstid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('veranstid', XMLDB_TYPE_CHAR, '30', null, XMLDB_NOTNULL, null, null);
         $table->add_field('veransttitle', XMLDB_TYPE_TEXT, null, null, null, null, null);
         $table->add_field('starttime', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
         $table->add_field('endtime', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
@@ -364,7 +363,6 @@ function xmldb_block_evasys_sync_upgrade ($oldversion) {
         // Adding keys to table block_evasys_sync_eval_veran.
         $table->add_key('id', XMLDB_KEY_PRIMARY, ['id']);
         $table->add_key('evalid', XMLDB_KEY_FOREIGN, ['evalid'], 'block_evasys_sync_eval', ['id']);
-        $table->add_key('veranstid', XMLDB_KEY_UNIQUE, ['veranstid']);
         $table->add_key('usermodified', XMLDB_KEY_FOREIGN, ['usermodified'], 'user', ['id']);
 
         // Conditionally launch create table for block_evasys_sync_eval_veran.
@@ -375,6 +373,10 @@ function xmldb_block_evasys_sync_upgrade ($oldversion) {
         /// Migrate data. ///
 
         $transaction = $DB->start_delegated_transaction();
+
+        global $CFG;
+        require_once($CFG->dirroot . '/local/lsf_unification/lib_his.php');
+        establish_secondary_DB_connection();
 
         $recordset = $DB->get_recordset_sql(
             'SELECT ce.*, c.idnumber, ec.evasyscourses FROM {block_evasys_sync_courseeval} ce ' .
@@ -433,13 +435,24 @@ function xmldb_block_evasys_sync_upgrade ($oldversion) {
                 'evalid' => $evalid,
                 'courseid' => $record->course
             ]);
+
             foreach($veransts as $veranst) {
                 if (!isset($existingveranst[$veranst])) {
-                    // TODO soap, get course info with title + maybe state.
+                    $title = null;
+                    try {
+                        if (is_numeric($veranst)) {
+                            $lsfinfo = get_courses_by_veranstids([$veranst]);
+                            if (isset($lsfinfo[$veranst]->titel)) {
+                                $title = $lsfinfo[$veranst]->titel;
+                            }
+                        }
+                    } catch (Exception $e) {
+
+                    }
                     $id = $DB->insert_record(dbtables::EVAL_VERANSTS, [
                         'evalid' => $evalid,
                         'veranstid' => $veranst,
-                        'veransttitle' => null, // TODO thing.
+                        'veransttitle' => $title,
                         'starttime' => $record->startdate,
                         'endtime' => $record->enddate,
                         'state' => evaluation_state::MANUAL,
@@ -452,6 +465,8 @@ function xmldb_block_evasys_sync_upgrade ($oldversion) {
             }
             $recordset->next();
         }
+
+        close_secondary_DB_connection();
 
         $transaction->allow_commit();
 
