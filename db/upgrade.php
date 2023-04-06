@@ -396,6 +396,9 @@ function xmldb_block_evasys_sync_upgrade ($oldversion) {
                 $veransts[] = $record->idnumber;
             }
 
+            if (!$veransts) {
+                continue;
+            }
             // Check if any veranstaltungen already exist in the database.
             list($insql, $inparams) = $DB->get_in_or_equal($veransts);
             $evalgroups = $DB->get_fieldset_sql(
@@ -410,26 +413,28 @@ function xmldb_block_evasys_sync_upgrade ($oldversion) {
             } else {
                 // If true, merge all evaluation groups with veranstaltungen of this course into the one.
                 $evalid = array_shift($evalgroups);
-                list($insql, $inparams) = $DB->get_in_or_equal($evalgroups, SQL_PARAMS_NAMED);
-                $inparams['evalid'] = $evalid;
-                $DB->execute(
-                    'UPDATE {' . dbtables::EVAL_COURSES . '} ' .
-                    'SET evalid = :evalid ' .
-                    'WHERE evalid ' . $insql,
-                    $inparams
-                );
-                $DB->execute(
-                    'UPDATE {' . dbtables::EVAL_VERANSTS . '} ' .
-                    'SET evalid = :evalid ' .
-                    'WHERE evalid ' . $insql,
-                    $inparams
-                );
-                unset($inparams['evalid']);
-                $DB->execute(
-                    'DELETE FROM {' . dbtables::EVAL . '} ' .
-                    'WHERE id ' . $insql,
-                    $inparams
-                );
+                if ($evalgroups) {
+                    list($insql, $inparams) = $DB->get_in_or_equal($evalgroups, SQL_PARAMS_NAMED);
+                    $inparams['evalid'] = $evalid;
+                    $DB->execute(
+                        'UPDATE {' . dbtables::EVAL_COURSES . '} ' .
+                        'SET evalid = :evalid ' .
+                        'WHERE evalid ' . $insql,
+                        $inparams
+                    );
+                    $DB->execute(
+                        'UPDATE {' . dbtables::EVAL_VERANSTS . '} ' .
+                        'SET evalid = :evalid ' .
+                        'WHERE evalid ' . $insql,
+                        $inparams
+                    );
+                    unset($inparams['evalid']);
+                    $DB->execute(
+                        'DELETE FROM {' . dbtables::EVAL . '} ' .
+                        'WHERE id ' . $insql,
+                        $inparams
+                    );
+                }
             }
             $DB->insert_record(dbtables::EVAL_COURSES, [
                 'evalid' => $evalid,
