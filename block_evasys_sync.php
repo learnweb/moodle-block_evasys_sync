@@ -50,9 +50,13 @@ class block_evasys_sync extends block_base{
             return $this->content;
         }
 
+        $evasyscategory = \block_evasys_sync\evasys_category::for_course($this->page->course);
+        if (!$evasyscategory) {
+            return $this->content;
+        }
+
         $evalrequest = \block_evasys_sync\evaluation_request::for_course($this->page->course->id);
         $evaluations = \block_evasys_sync\evaluation::for_course($this->page->course->id);
-        $evasyscategory = \block_evasys_sync\evasys_category::for_course($this->page->course);
 
         $stringformat = get_string('strftimedatetime', 'langconfig');
 
