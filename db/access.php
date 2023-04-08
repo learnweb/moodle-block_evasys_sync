@@ -61,5 +61,13 @@ $capabilities = array(
   'block/evasys_sync:managecourses' => array(
       'captype' => 'write',
       'contextlevel' => CONTEXT_COURSECAT
-  )
+  ),
+  'block/evasys_sync:teacherforcourse' => [
+      'contextlevel' => CONTEXT_COURSE,
+      'captype' => 'read',
+      'archetypes' => [
+          'editingteacher' => CAP_ALLOW,
+          'manager' => CAP_PREVENT
+      ]
+  ]
 );

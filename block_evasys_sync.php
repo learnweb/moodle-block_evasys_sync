@@ -14,8 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-use block_evasys_sync\course_evaluation_allocation;
-
 defined('MOODLE_INTERNAL') || die();
 
 class block_evasys_sync extends block_base{
@@ -34,9 +32,8 @@ class block_evasys_sync extends block_base{
      */
     public function get_content() {
         global $OUTPUT;
-        $evasyssynccheck = optional_param('evasyssynccheck', 0, PARAM_BOOL);
 
-        // There should never be content, so if there is, we want to output that.
+        // Return cached content if there is any.
         if ($this->content !== null) {
             return $this->content;
         }

@@ -41,6 +41,8 @@ $PAGE->set_url(new moodle_url('/blocks/evasys_sync/manageroverview.php'));
 $PAGE->set_context(context_system::instance());
 $PAGE->set_title(get_string('evasys_sync', 'block_evasys_sync'));
 
+$PAGE->navigation->add('EvaSys', new moodle_url('/blocks/evasys_sync/manageroverview.php'));
+
 $categories = evalcat_manager::get_instance()->get_categories();
 
 $table = new flexible_table('block_evasys_sync-manageroverview');

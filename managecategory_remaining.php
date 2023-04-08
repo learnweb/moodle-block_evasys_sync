@@ -23,6 +23,7 @@
  */
 
 use block_evasys_sync\remaining_courses_table;
+use customfield_semester\data_controller;
 
 require_once(__DIR__ . '/../../config.php');
 global $DB, $USER, $OUTPUT, $PAGE;
@@ -35,10 +36,10 @@ $category = core_course_category::get($id);
 $evasyscategory = \block_evasys_sync\evasys_category::for_category($id);
 
 $PAGE->set_url(new moodle_url('/blocks/evasys_sync/managecategory_remaining.php', ['id' => $id]));
-$PAGE->set_context($category->get_context());
+$PAGE->set_context(context_system::instance());
 $PAGE->set_title(get_string('evasys_sync', 'block_evasys_sync'));
 
-require_capability('block/evasys_sync:managecourses', $PAGE->context);
+require_capability('block/evasys_sync:managecourses', $category->get_context());
 
 $cachekey = 'manageroverview';
 $cache = cache::make('block_evasys_sync', 'mformdata');
@@ -74,10 +75,11 @@ $catids = array_merge($category->get_all_children_ids(), [$category->id]);
 $table = new remaining_courses_table($catids, $data->semester ?? null, $evasyscategory, $data->coursename ?? null);
 $table->define_baseurl($PAGE->url);
 
-$categorynode = $PAGE->navigation->find($category->id, navigation_node::TYPE_CATEGORY);
-$evasysnode = $categorynode->add('Evaluations', new moodle_url('/blocks/evasys_sync/managecategory.php', ['id' => $category->id]));
-$semesternode = $evasysnode->add(\customfield_semester\data_controller::get_name_for_semester($data->semester));
-$semesternode->add('Requests', $PAGE->url)->make_active();
+$PAGE->navigation->add('EvaSys', new moodle_url('/blocks/evasys_sync/manageroverview.php'))
+        ->add(
+                get_string('evaluations', 'block_evasys_sync') . ' in ' . data_controller::get_name_for_semester($data->semester),
+                new moodle_url('/blocks/evasys_sync/managecategory.php', ['id' => $category->id])
+        )->add(get_string('courses_without_evals', 'block_evasys_sync'), $PAGE->url)->make_active();
 
 echo $OUTPUT->header();
 

@@ -96,4 +96,8 @@ class evalcat_manager {
         $this->usercache->purge();
     }
 
+    public function purge_categories() {
+        $this->cache->purge();
+    }
+
 }

@@ -154,6 +154,7 @@ $string['evasys_sync:mayevaluate'] = 'Evaluate a course using EvaSys';
 $string['evasys_sync:synchronize'] = 'Export participants to EvaSys';
 $string['evasys_sync:modifymapping'] = 'Modify mapping of EvaSys courses to moodle course';
 $string['evasys_sync:managecourses'] = 'EvaSys manage course';
+$string['evasys_sync:teacherforcourse'] = 'Get emails regarding your course.';
 
 // Settings.
 $string['settings'] = 'EvaSys Sync Block Settings';

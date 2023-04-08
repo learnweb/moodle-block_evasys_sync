@@ -89,8 +89,7 @@ class evaluation_manager {
             ];
 
             $synchronizer->sync_students();
-            $teacherroleid = $DB->get_record('role', ['shortname' => 'editingteacher'])->id;
-            $teachers = get_role_users($teacherroleid, \context_course::instance($course->id));
+            $teachers = get_users_by_capability(\context_course::instance($course->id), 'block/evasys_sync:getnotifiedteacher');
 
             $data = new \stdClass();
             $data->coordinator = fullname($coordinatoruser);

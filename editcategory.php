@@ -33,7 +33,7 @@ $category = core_course_category::get($id);
 
 $title = get_string('evasys_settings_for', 'block_evasys_sync', $category->name);
 $PAGE->set_url(new moodle_url('/blocks/evasys_sync/editcategory.php', ['id' => $id]));
-$PAGE->set_context($category->get_context());
+$PAGE->set_context(context_system::instance());
 $PAGE->set_title($title);
 
 require_capability('block/evasys_sync:managecourses', $PAGE->context);

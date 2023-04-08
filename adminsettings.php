@@ -58,6 +58,9 @@ if (has_capability('moodle/site:config', context_system::instance())) {
     } else if ($data = $mform->get_data()) {
         // Form is submitted.
         // Added course category.
+
+        global $DB;
+        $evasysroleid = $DB->get_record('role', ['shortname' => 'evasysmanager'])->id;
         if (isset($data->addcatbutton)) {
             // Insert new record.
             $record = new stdClass();
@@ -71,7 +74,10 @@ if (has_capability('moodle/site:config', context_system::instance())) {
             $record->mode_flags = 0;
             $persistent = new \block_evasys_sync\evasys_category(0, $record);
             $persistent->create();
-
+            if ($evasysroleid) {
+                role_assign($evasysroleid, $record->userid, context_coursecat::instance($record->course_category));
+            }
+            \block_evasys_sync\evalcat_manager::get_instance()->purge();
             redirect($PAGE->url);
             exit();
         } else if (isset($data->submitbutton)) {
@@ -127,8 +133,12 @@ if (has_capability('moodle/site:config', context_system::instance())) {
                     $allocation->set('category_mode', $newvaluemode);
                     $allocation->update();
                 }
+                if ($evasysroleid) {
+                    role_assign($evasysroleid, $data->$newvalue, context_coursecat::instance($allocation->get('course_category')));
+                }
             }
         }
+        \block_evasys_sync\evalcat_manager::get_instance()->purge();
     }
 
     echo $OUTPUT->header();

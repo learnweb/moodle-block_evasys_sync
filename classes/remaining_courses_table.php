@@ -38,7 +38,6 @@ require_once($CFG->libdir . '/tablelib.php');
  */
 class remaining_courses_table extends \table_sql {
 
-    private int $teacherroleid;
     private evasys_category $evasyscategory;
 
     /**
@@ -49,7 +48,6 @@ class remaining_courses_table extends \table_sql {
         global $DB, $PAGE, $OUTPUT;
 
         $this->evasyscategory = $evasyscategory;
-        $this->teacherroleid = $DB->get_record('role', ['shortname' => 'editingteacher'])->id;
 
         $fields = 'c.id as courseid, c.fullname as coursename, cfd.intvalue as semester';
 
@@ -119,7 +117,7 @@ class remaining_courses_table extends \table_sql {
     }
 
     public function col_teacher($row) {
-        $users = get_role_users($this->teacherroleid, \context_course::instance($row->courseid));
+        $users = get_users_by_capability(\context_course::instance($row->courseid), 'block/evasys_sync:getnotifiedteacher');
         $users = array_map(function($user) {
             return \html_writer::link(new moodle_url('/user/profile.php', ['id' => $user->id]), fullname($user));
         }, $users);
