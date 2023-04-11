@@ -53,6 +53,9 @@ if ($data = $mform->get_simplified_data()) {
         throw new Exception('Not yet implemented!'); // TODO automatic.
     } else {
         $evaluation = \block_evasys_sync\evaluation::from_eval_request($data);
+        foreach ($evaluation->evaluations as $eval) {
+            $eval->state = \block_evasys_sync\local\entity\evaluation_state::MANUAL;
+        }
         $errors = \block_evasys_sync\evaluation_manager::insert_participants_for_evaluation($evaluation);
         if ($errors) {
             $erroroutput = '';

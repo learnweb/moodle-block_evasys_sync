@@ -130,13 +130,13 @@ if ($evasyscategory->is_automatic() || $courseamounts->requestcourses) {
 if ($evasyscategory->is_automatic() || $courseamounts->autoevalcourses) {
     $table->add_data([
         html_writer::link(new moodle_url('/blocks/evasys_sync/managecategory_auto.php', ['id' => $id]),
-                get_string('courses_with_auto_evals', 'block_evasys_sync')), $courseamounts->autoevalcourses
+                get_string('courses_with_automatic_evals', 'block_evasys_sync')), $courseamounts->autoevalcourses
     ]);
 }
 
 if (!$evasyscategory->is_automatic() || $courseamounts->manualevalcourses) {
     $table->add_data([
-        html_writer::link(null, // TODO manual evaluations table!
+        html_writer::link(new moodle_url('/blocks/evasys_sync/managecategory_manual.php', ['id' => $id]),
                 get_string('courses_with_manual_evals', 'block_evasys_sync')), $courseamounts->manualevalcourses
     ]);
 }

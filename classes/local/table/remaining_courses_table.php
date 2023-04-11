@@ -21,8 +21,10 @@
  * @copyright  2022 Justus Dieckmann WWU
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-namespace block_evasys_sync;
+namespace block_evasys_sync\local\table;
 
+use block_evasys_sync\dbtables;
+use block_evasys_sync\evasys_category;
 use moodle_url;
 
 defined('MOODLE_INTERNAL') || die;

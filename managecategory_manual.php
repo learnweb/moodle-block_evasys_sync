@@ -22,7 +22,6 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-use block_evasys_sync\local\table\remaining_courses_table;
 use customfield_semester\data_controller;
 
 require_once(__DIR__ . '/../../config.php');
@@ -35,7 +34,7 @@ $id = required_param('id', PARAM_INT);
 $category = core_course_category::get($id);
 $evasyscategory = \block_evasys_sync\evasys_category::for_category($id);
 
-$PAGE->set_url(new moodle_url('/blocks/evasys_sync/managecategory_remaining.php', ['id' => $id]));
+$PAGE->set_url(new moodle_url('/blocks/evasys_sync/managecategory_manual.php', ['id' => $id]));
 $PAGE->set_context(context_system::instance());
 $PAGE->set_title(get_string('evasys_sync', 'block_evasys_sync'));
 
@@ -45,21 +44,6 @@ $cachekey = 'manageroverview';
 $cache = cache::make('block_evasys_sync', 'mformdata');
 
 $data = $cache->get($cachekey);
-
-$action = optional_param('action', null, PARAM_ALPHAEXT);
-if ($action === 'seteval') {
-    require_sesskey();
-    $courses = required_param_array('ids', PARAM_INT);
-    $errors = \block_evasys_sync\evaluation_manager::set_default_evaluation_for($courses, $evasyscategory);
-    if ($errors) {
-        $erroroutput = '';
-        foreach ($errors as $courseid => $error) {
-            $erroroutput .= $courseid . ': ' . $error . '<br>';
-        }
-        \core\notification::error($erroroutput);
-    }
-    redirect($PAGE->url);
-}
 
 $field = $DB->get_record('customfield_field', array('shortname' => 'semester', 'type' => 'semester'), '*', MUST_EXIST);
 $fieldcontroller = \core_customfield\field_controller::create($field->id);
@@ -72,14 +56,15 @@ if (!$data) {
 
 $catids = array_merge($category->get_all_children_ids(), [$category->id]);
 
-$table = new remaining_courses_table($catids, $data->semester ?? null, $evasyscategory, $data->coursename ?? null);
+$table = new \block_evasys_sync\local\table\manual_courses_table($catids, $data->semester ?? null,
+        $data->coursename ?? null);
 $table->define_baseurl($PAGE->url);
 
 $PAGE->navigation->add('EvaSys', new moodle_url('/blocks/evasys_sync/manageroverview.php'))
         ->add(
                 get_string('evaluations', 'block_evasys_sync') . ' in ' . data_controller::get_name_for_semester($data->semester),
                 new moodle_url('/blocks/evasys_sync/managecategory.php', ['id' => $category->id])
-        )->add(get_string('courses_without_evals', 'block_evasys_sync'), $PAGE->url)->make_active();
+        )->add(get_string('courses_with_manual_evals', 'block_evasys_sync'), $PAGE->url)->make_active();
 
 echo $OUTPUT->header();
 
