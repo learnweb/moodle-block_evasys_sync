@@ -141,11 +141,15 @@ class remaining_courses_table extends \table_sql {
                 get_string('set_default_eval', 'block_evasys_sync')));
     }
 
-    /**
-     * Hook that can be overridden in child classes to wrap a table in a form
-     * for example. Called only when there is data to display and not
-     * downloading.
-     */
+    public function wrap_html_start() {
+        global $OUTPUT;
+        parent::wrap_html_start();
+
+        if (!$this->evasyscategory->default_period_set()) {
+            echo $OUTPUT->heading(get_string('set_default_period_for_default_eval', 'block_evasys_sync'), 5);
+        }
+    }
+
     public function wrap_html_finish() {
         global $OUTPUT;
         parent::wrap_html_finish();

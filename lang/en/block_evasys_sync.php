@@ -273,6 +273,7 @@ $string['courses_without_evals'] = 'Courses without evaluations';
 $string['set_default_eval'] = 'Set default evaluation';
 $string['set_default_eval_for_selected'] = 'Set default evaluation for selected';
 $string['set_default_eval_for_all'] = 'Set default evaluation for all';
+$string['set_default_period_for_default_eval'] = 'Set a default evaluation period to be able to plan default evaluations.';
 
 $string['clear_error'] = 'Clear error';
 $string['clear_selected_errors'] = 'Clear selected errors';

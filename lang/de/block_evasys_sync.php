@@ -262,6 +262,7 @@ $string['courses_without_evals'] = 'Kurse ohne Evaluationen';
 $string['set_default_eval'] = 'Standardevaluation planen';
 $string['set_default_eval_for_selected'] = 'Standardevaluation für alle ausgewählten planen';
 $string['set_default_eval_for_all'] = 'Standardevaluation für alle Kurse planen';
+$string['set_default_period_for_default_eval'] = 'Legen Sie einen Standardevaluationszeitraum fest, um Standardevaluationen planen zu können.';
 
 $string['clear_error'] = 'Fehler löschen';
 $string['clear_selected_errors'] = 'Ausgewählte Fehler löschen';
