@@ -80,7 +80,10 @@ list($inmanualsql, $params) = $DB->get_in_or_equal(evaluation_state::MANUAL_STAT
 list($incatsql, $incatparams) = $DB->get_in_or_equal($catids, SQL_PARAMS_NAMED);
 $params = array_merge($params, $incatparams);
 
-$courseamounts = $DB->get_record_sql('SELECT (COUNT(evalc.id) - COUNT(evalmanualc.id)) as autoevalcourses, COUNT(evalmanualc.id) as manualevalcourses, COUNT(ereqc.id) as requestcourses, (COUNT(*) - COUNT(COALESCE(ereqc.id, evalc.id))) as remainingcourses FROM {course} c '  .
+$courseamounts = $DB->get_record_sql('SELECT (COUNT(evalc.id) - COUNT(evalmanualc.id)) as autoevalcourses, ' .
+        'COUNT(evalmanualc.id) as manualevalcourses, COUNT(ereqc.id) as requestcourses, ' .
+        '(COUNT(*) - COUNT(COALESCE(ereqc.id, evalc.id))) as remainingcourses, COUNT(errors.id) as errorcourses ' .
+        'FROM {course} c '  .
         'JOIN {customfield_data} cfd ON cfd.instanceid = c.id AND cfd.fieldid = :semesterfieldid ' .
         'LEFT JOIN {' . dbtables::EVAL_REQUESTS_COURSES . '} ereqc ON ereqc.courseid = c.id ' .
         'LEFT JOIN {' . dbtables::EVAL_COURSES . '} evalc ON evalc.courseid = c.id ' .
@@ -89,6 +92,7 @@ $courseamounts = $DB->get_record_sql('SELECT (COUNT(evalc.id) - COUNT(evalmanual
             JOIN {' . dbtables::EVAL_VERANSTS . '} evalver1 ON evalver1.evalid = c1.evalid ' .
             "WHERE evalver1.state $inmanualsql " .
         ') evalmanualc ON evalmanualc.courseid = c.id ' .
+        'LEFT JOIN {' . dbtables::ERRORS . '} errors ON errors.courseid = c.id AND errors.timehandled IS NULL ' .
         "WHERE cfd.intvalue = :semester AND " .
         "c.idnumber <> '' AND " .
         "c.category $incatsql ", array_merge(['semesterfieldid' => $field->id, 'semester' => $data->semester], $params)
@@ -119,6 +123,13 @@ $table->define_columns(['table', 'courses']);
 $table->define_baseurl($PAGE->url);
 
 $table->setup();
+
+if ($courseamounts->errorcourses) {
+    $table->add_data([
+        html_writer::link(new moodle_url('/blocks/evasys_sync/managecategory_errors.php', ['id' => $id]),
+                get_string('courses_with_errors', 'block_evasys_sync')), $courseamounts->errorcourses
+    ], 'table-warning');
+}
 
 if ($evasyscategory->is_automatic() || $courseamounts->requestcourses) {
     $table->add_data([

@@ -263,6 +263,10 @@ $string['set_default_eval'] = 'Standardevaluation planen';
 $string['set_default_eval_for_selected'] = 'Standardevaluation für alle ausgewählten planen';
 $string['set_default_eval_for_all'] = 'Standardevaluation für alle Kurse planen';
 
+$string['clear_error'] = 'Fehler löschen';
+$string['clear_selected_errors'] = 'Ausgewählte Fehler löschen';
+$string['clear_all_errors'] = 'Alle Fehler löschen';
+
 $string['notify_teacher_email_subject'] = '{$a->courseshort}: Eine Evaluation wurde für Ihren Kurs geplant.';
 $string['notify_teacher_email_body'] = 'Sehr geehrte*r Lehrende*r,
 

@@ -32,5 +32,6 @@ class dbtables {
     const EVAL = 'block_evasys_sync_eval';
     const EVAL_COURSES = 'block_evasys_sync_eval_cours';
     const EVAL_VERANSTS = 'block_evasys_sync_eval_veran';
+    const ERRORS = 'block_evasys_sync_errors';
 
 }

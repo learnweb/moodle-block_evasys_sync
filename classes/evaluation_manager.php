@@ -70,6 +70,16 @@ class evaluation_manager {
             $title = $synchronizer->get_raw_course_name($course->idnumber);
 
             if ($title === null) {
+                self::insert_error([
+                                'courseid' => $course->id,
+                                'lsfid' => $course->idnumber,
+                                'evasyscategoryid' => $category->get('id'),
+                                'text' => 'Course does not exist in EvaSys!',
+                                'type' => 1,
+                                'usermodified' => $USER->id,
+                                'timecreated' => time(),
+                                'timemodified' => time()
+                ]);
                 $errors[$course->id] = 'Course does not exist in EvaSys!';
                 continue;
             }
@@ -172,6 +182,14 @@ class evaluation_manager {
         $notiftext .= "Learnweb-Support";
 
         email_to_user($userto, $USER, "Evaluation für $course->fullname beantragt", $notiftext);
+    }
+
+    public static function insert_error(array $error) {
+        global $DB;
+        if ($DB->record_exists(dbtables::ERRORS, ['courseid' => $error['courseid'], 'type' => $error['type'], 'timehandled' => null])) {
+            return;
+        }
+        $DB->insert_record(dbtables::ERRORS, $error);
     }
 
 }

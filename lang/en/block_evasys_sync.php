@@ -274,6 +274,10 @@ $string['set_default_eval'] = 'Set default evaluation';
 $string['set_default_eval_for_selected'] = 'Set default evaluation for selected';
 $string['set_default_eval_for_all'] = 'Set default evaluation for all';
 
+$string['clear_error'] = 'Clear error';
+$string['clear_selected_errors'] = 'Clear selected errors';
+$string['clear_all_errors'] = 'Clear all errors';
+
 $string['notify_teacher_email_subject'] = '{$a->courseshort}: A evaluation was planned for your course.';
 $string['notify_teacher_email_body'] = 'Dear teacher,
 
