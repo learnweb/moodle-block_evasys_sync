@@ -128,7 +128,7 @@ class error_courses_table extends \table_sql {
     }
 
     public function col_teacher($row) {
-        $users = get_users_by_capability(\context_course::instance($row->courseid), 'block/evasys_sync:getnotifiedteacher');
+        $users = get_users_by_capability(\context_course::instance($row->courseid), 'block/evasys_sync:teacherforcourse');
         $users = array_map(function($user) {
             return \html_writer::link(new moodle_url('/user/profile.php', ['id' => $user->id]), fullname($user));
         }, $users);
