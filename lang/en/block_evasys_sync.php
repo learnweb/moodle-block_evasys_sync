@@ -291,3 +291,6 @@ Sincerely,
 Your Learnweb-Support';
 
 $string['request_eval'] = 'Request evaluation';
+
+$string['no_eval_planned'] = 'There is no evaluation planned.';
+$string['evaluation_will_be_created_for_you'] = 'An evaluation will be created for you.';

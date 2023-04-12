@@ -278,3 +278,9 @@ Falls Sie Probleme mit dem Zeitraum der Evaluation haben, wenden Sie sich bitte 
 
 Mit freundlichen Grüßen,
 Ihr Learnweb-Support';
+
+$string['request_eval'] = 'Evaluation beantragen';
+
+$string['no_eval_planned'] = 'Es ist keine Evaluation geplant.';
+$string['evaluation_will_be_created_for_you'] = 'Eine Evaluation wird für Sie erstellt.';
+

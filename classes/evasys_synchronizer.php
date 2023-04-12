@@ -111,7 +111,7 @@ class evasys_synchronizer {
         return "Unknown";
     }
 
-    public function get_raw_course_name(int $courseid): ?string {
+    public function get_raw_course_name($courseid): ?string {
         if (isset($this->courseinformation[$courseid])) {
             return $this->courseinformation[$courseid]->m_sCourseTitle;
         }
