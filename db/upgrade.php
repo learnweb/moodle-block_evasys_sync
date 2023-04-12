@@ -508,7 +508,7 @@ function xmldb_block_evasys_sync_upgrade ($oldversion) {
         // Adding fields to table block_evasys_sync_errors.
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
         $table->add_field('courseid', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
-        $table->add_field('lsfid', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
+        $table->add_field('lsfid', XMLDB_TYPE_CHAR, '30', null, null, null, null);
         $table->add_field('evasyscategoryid', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
         $table->add_field('text', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null, null);
         $table->add_field('type', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, '0');
