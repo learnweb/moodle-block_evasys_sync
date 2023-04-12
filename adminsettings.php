@@ -34,9 +34,14 @@ $PAGE->set_url('/blocks/evasys_sync/adminsettings');
 if (has_capability('moodle/site:config', context_system::instance())) {
     admin_externalpage_setup('block_evasys_sync');
 
+    $evasysroleid = $DB->get_record('role', ['shortname' => 'evasysmanager'])->id;
+
     if (!empty($delid) && !empty($confirm)) {
         // Course category user is deleted.
         $persistent = new \block_evasys_sync\evasys_category($delid);
+        if ($evasysroleid) {
+            role_unassign($evasysroleid, $persistent->get('userid'), context_coursecat::instance($persistent->get('course_category'))->id);
+        }
         $persistent->delete();
 
         redirect($PAGE->url);
@@ -59,8 +64,6 @@ if (has_capability('moodle/site:config', context_system::instance())) {
         // Form is submitted.
         // Added course category.
 
-        global $DB;
-        $evasysroleid = $DB->get_record('role', ['shortname' => 'evasysmanager'])->id;
         if (isset($data->addcatbutton)) {
             // Insert new record.
             $record = new stdClass();
@@ -128,7 +131,9 @@ if (has_capability('moodle/site:config', context_system::instance())) {
                 // Update db entry.
                 if ($data->$newvalue != $oldvalue or
                     $newvaluemode != $oldvaluemode) {
-
+                    if ($evasysroleid && $data->$newvalue != $oldvalue) {
+                        role_unassign($evasysroleid, $oldvalue, context_coursecat::instance($allocation->get('course_category'))->id);
+                    }
                     $allocation->set('userid', $data->$newvalue);
                     $allocation->set('category_mode', $newvaluemode);
                     $allocation->update();
