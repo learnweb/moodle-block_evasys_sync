@@ -54,7 +54,7 @@ class evaluation_manager {
                 $errors[$course->id] = 'Not in the evasys_category!';
                 continue;
             }
-            if (!isset($course->idnumber)) {
+            if (empty($course->idnumber)) {
                 $errors[$course->id] = 'Course does not have an idnumber!';
             }
             if ($DB->record_exists(dbtables::EVAL_COURSES, ['courseid' => $course->id])) {

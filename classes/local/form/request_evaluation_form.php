@@ -136,12 +136,12 @@ class request_evaluation_form extends moodleform {
             get_string('endondate', 'block_evasys_sync'));
 
         if ($this->defaulttimeframe) {
-            $mform->hideIf('useoneevalperiod', 'usedefaultevalperiod', 'checked');
-            $mform->hideIf('evaltimestartmulticourse', 'usedefaultevalperiod', 'checked');
-            $mform->hideIf('evaltimeendmulticourse', 'usedefaultevalperiod', 'checked');
-            $mform->hideIf('evaltimestartsinglecourse', 'usedefaultevalperiod', 'checked');
-            $mform->hideIf('evaltimeendsinglecourse', 'usedefaultevalperiod', 'checked');
-            $mform->hideIf('evaltimes', 'usedefaultevalperiod', 'checked');
+            $mform->disabledIf('useoneevalperiod', 'usedefaultevalperiod', 'checked');
+            $mform->disabledIf('evaltimestartmulticourse', 'usedefaultevalperiod', 'checked');
+            $mform->disabledIf('evaltimeendmulticourse', 'usedefaultevalperiod', 'checked');
+            $mform->disabledIf('evaltimestartsinglecourse', 'usedefaultevalperiod', 'checked');
+            $mform->disabledIf('evaltimeendsinglecourse', 'usedefaultevalperiod', 'checked');
+            $mform->disabledIf('evaltimes', 'usedefaultevalperiod', 'checked');
         }
         $mform->hideIf('evaltimestartmulticourse', 'useoneevalperiod', 'notchecked');
         $mform->hideIf('evaltimeendmulticourse', 'useoneevalperiod', 'notchecked');
@@ -261,10 +261,10 @@ class request_evaluation_form extends moodleform {
             $formdata->$endkey = $evaluation->end;
             $lasteval = $evaluation;
         }
-        $formdata->evaltimestartsinglecourse = $formdata->useoneevalperiod ? $lasteval->start : null;
-        $formdata->evaltimeendsinglecourse = $formdata->useoneevalperiod ? $lasteval->end : null;
-        $formdata->evaltimestartmulticourse = $formdata->useoneevalperiod ? $lasteval->start : null;
-        $formdata->evaltimeendmulticourse = $formdata->useoneevalperiod ? $lasteval->end : null;
+        $formdata->evaltimestartsinglecourse = $formdata->useoneevalperiod ? $lasteval?->start : null;
+        $formdata->evaltimeendsinglecourse = $formdata->useoneevalperiod ? $lasteval?->end : null;
+        $formdata->evaltimestartmulticourse = $formdata->useoneevalperiod ? $lasteval?->start : null;
+        $formdata->evaltimeendmulticourse = $formdata->useoneevalperiod ? $lasteval?->end : null;
         return $formdata;
     }
 
