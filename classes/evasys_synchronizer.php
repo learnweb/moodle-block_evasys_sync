@@ -56,6 +56,7 @@ class evasys_synchronizer {
         foreach ($this->get_allocated_courses() as $course) {
             $soapresult = $this->soapclient->GetCourse($course, 'PUBLIC', true, true);
             if (is_soap_fault($soapresult)) {
+                var_dump($soapresult);
                 // var_dump("soap verbindung nicht funktioniert");
                 // This happens e.g. if there is no corresponding course in EvaSys.
                 return null;
