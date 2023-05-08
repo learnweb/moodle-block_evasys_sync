@@ -61,7 +61,7 @@ class remaining_courses_table extends \table_sql {
             'LEFT JOIN {' . dbtables::EVAL_REQUESTS_COURSES . '} evreqc ON evreqc.courseid = c.id ' .
             'LEFT JOIN {' . dbtables::EVAL_COURSES . '} evalc ON evalc.courseid = c.id ';
         $params = ['semesterfieldid' => $semesterfield->id];
-        $where = ['evreqc.id IS NULL and evalc.id IS NULL'];
+        $where = ["evreqc.id IS NULL and evalc.id IS NULL and c.idnumber <> ''"];
 
         if ($categoryids != null) {
             list($insql, $inparams) = $DB->get_in_or_equal($categoryids, SQL_PARAMS_NAMED);

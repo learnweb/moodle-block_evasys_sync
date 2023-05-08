@@ -267,7 +267,7 @@ $string['teachers_cannot_request_evaluation'] = 'Teachers <b>cannot</b> request 
 $string['courses_with_errors'] = 'Courses with errors!';
 $string['courses_with_requests'] = 'Courses with pending requests';
 $string['courses_with_automatic_evals'] = 'Courses with automatic evaluations';
-$string['courses_with_manual_evals'] = 'Courses with manual evaluations';
+$string['courses_with_manual_evals'] = 'Courses with already requested evaluations';
 $string['courses_without_evals'] = 'Courses without evaluations';
 
 $string['set_default_eval'] = 'Set default evaluation';

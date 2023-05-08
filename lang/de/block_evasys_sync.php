@@ -256,7 +256,7 @@ $string['teachers_cannot_request_evaluation'] = 'Lehrende können <b>keine</b> E
 $string['courses_with_errors'] = 'Kurse mit Fehlern!';
 $string['courses_with_requests'] = 'Kurse mit ausstehenden Evaluationsanträgen';
 $string['courses_with_automatic_evals'] = 'Kurse mit automatischen Evaluationen';
-$string['courses_with_manual_evals'] = 'Kurse mit manuellen Evaluationen';
+$string['courses_with_manual_evals'] = 'Kurse mit bereits beantragten Evaluationen';
 $string['courses_without_evals'] = 'Kurse ohne Evaluationen';
 
 $string['set_default_eval'] = 'Standardevaluation planen';
