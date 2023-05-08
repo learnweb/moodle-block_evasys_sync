@@ -289,6 +289,9 @@ class request_evaluation_form extends moodleform {
                 ($formdata->useoneevalperiod ?? false) ? $formdata->evaltimeendmulticourse : null
             ) : $formdata->evaltimeendsinglecourse
         );
+        if (!$formdata->additionalveranstaltungen && $this->course->idnumber) {
+            $formdata->lsfcourses = [$this->course->idnumber];
+        }
         foreach ($formdata->lsfcourses as $lsfcourseid) {
             $startkey = "evaltimestart_$lsfcourseid";
             $endkey = "evaltimeend_$lsfcourseid";
