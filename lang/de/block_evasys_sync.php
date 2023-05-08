@@ -258,6 +258,8 @@ $string['courses_with_requests'] = 'Kurse mit ausstehenden Evaluationsanträgen'
 $string['courses_with_automatic_evals'] = 'Kurse mit automatischen Evaluationen';
 $string['courses_with_manual_evals'] = 'Kurse mit bereits beantragten Evaluationen';
 $string['courses_without_evals'] = 'Kurse ohne Evaluationen';
+$string['courses_without_idnumber'] = 'Kurse, bei denen keine Evaluation möglich ist (fehlende Kurs-ID)';
+$string['courses_without_idnumber_help'] = 'Diese Kurse haben keine ID gesetzt. Jeder Kurs, der evaluiert werden soll, braucht auch eine Kurs-ID, um im EvaSys-System identifiziert werden zu können. Falls Sie Kurs-IDs nicht bearbeiten können, wenden Sie sich bitte an den Support!';
 
 $string['set_default_eval'] = 'Standardevaluation planen';
 $string['set_default_eval_for_selected'] = 'Standardevaluation für alle ausgewählten planen';

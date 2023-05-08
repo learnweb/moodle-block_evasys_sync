@@ -269,6 +269,8 @@ $string['courses_with_requests'] = 'Courses with pending requests';
 $string['courses_with_automatic_evals'] = 'Courses with automatic evaluations';
 $string['courses_with_manual_evals'] = 'Courses with already requested evaluations';
 $string['courses_without_evals'] = 'Courses without evaluations';
+$string['courses_without_idnumber'] = 'Courses for which no evaluation is possible (missing Course ID)';
+$string['courses_without_idnumber_help'] = 'These courses have no ID set. Any to-be-evaluated courses have to have an ID in order to be able to be identified in EvaSys. If you can\'t edit course IDs, please reach out to the support!';
 
 $string['set_default_eval'] = 'Set default evaluation';
 $string['set_default_eval_for_selected'] = 'Set default evaluation for selected';

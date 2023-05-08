@@ -81,7 +81,7 @@ list($incatsql, $incatparams) = $DB->get_in_or_equal($catids, SQL_PARAMS_NAMED);
 $params = array_merge($params, $incatparams);
 
 $courseamounts = $DB->get_record_sql('SELECT (COUNT(evalc.id) - COUNT(evalmanualc.id)) as autoevalcourses, ' .
-        'COUNT(evalmanualc.id) as manualevalcourses, COUNT(ereqc.id) as requestcourses, ' .
+        'COUNT(evalmanualc.id) as manualevalcourses, COUNT(ereqc.id) as requestcourses, COUNT(*) as allcourses, ' .
         '(COUNT(*) - COUNT(COALESCE(ereqc.id, evalc.id))) as remainingcourses ' .
         'FROM {course} c '  .
         'JOIN {customfield_data} cfd ON cfd.instanceid = c.id AND cfd.fieldid = :semesterfieldid ' .
@@ -97,7 +97,7 @@ $courseamounts = $DB->get_record_sql('SELECT (COUNT(evalc.id) - COUNT(evalmanual
         "c.category $incatsql ", array_merge(['semesterfieldid' => $field->id, 'semester' => $data->semester], $params)
 );
 
-$courseamountswithidnumber = $DB->get_record_sql('SELECT COUNT(errors.id) as errorcourses ' .
+$courseamountsall = $DB->get_record_sql('SELECT COUNT(errors.id) as errorcourses, COUNT(*) as allcourses ' .
         'FROM {course} c '  .
         'JOIN {customfield_data} cfd ON cfd.instanceid = c.id AND cfd.fieldid = :semesterfieldid ' .
         'LEFT JOIN {' . dbtables::ERRORS . '} errors ON errors.courseid = c.id AND errors.timehandled IS NULL ' .
@@ -133,10 +133,10 @@ $table->define_baseurl($PAGE->url);
 
 $table->setup();
 
-if ($courseamountswithidnumber->errorcourses) {
+if ($courseamountsall->errorcourses) {
     $table->add_data([
         html_writer::link(new moodle_url('/blocks/evasys_sync/managecategory_errors.php', ['id' => $id]),
-                get_string('courses_with_errors', 'block_evasys_sync')), $courseamountswithidnumber->errorcourses
+                get_string('courses_with_errors', 'block_evasys_sync')), $courseamountsall->errorcourses
     ], 'table-warning');
 }
 
@@ -165,6 +165,14 @@ $table->add_data([
         html_writer::link(new moodle_url('/blocks/evasys_sync/managecategory_remaining.php', ['id' => $id]),
                 get_string('courses_without_evals', 'block_evasys_sync')), $courseamounts->remainingcourses
 ]);
+
+$courseswithoutidnumber = $courseamountsall->allcourses - $courseamounts->allcourses;
+if ($courseswithoutidnumber) {
+    $table->add_data([
+        html_writer::link(new moodle_url('/blocks/evasys_sync/managecategory_invalid.php', ['id' => $id]),
+                get_string('courses_without_idnumber', 'block_evasys_sync')), $courseswithoutidnumber
+    ]);
+}
 
 $table->finish_output();
 
