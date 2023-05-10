@@ -23,6 +23,12 @@ $courseid = required_param('courseid', PARAM_INT);
 require_login($courseid);
 require_sesskey();
 
+$PAGE->set_url('/blocks/evasys_sync/sync.php');
+$DB->get_record('course', array('id' => $courseid), 'id', MUST_EXIST);
+
+$PAGE->set_context(context_course::instance($courseid));
+require_capability('block/evasys_sync:synchronize', context_course::instance($courseid));
+
 $returnurl = new moodle_url($CFG->wwwroot . '/course/view.php');
 $returnurl->param('id', $courseid);
 $returnurl->param('evasyssynccheck', 1);
@@ -80,17 +86,11 @@ try {
     $evasyssynchronizer = new \block_evasys_sync\evasys_synchronizer($courseid);
     $datechanged = $evasyssynchronizer->set_evaluation_period($dates);
 } catch (\dml_missing_record_exception $e) {
-    debugging($exception);
+    debugging($e);
     $returnurl->param('status', 'failure');
     notice(get_string('syncnotpossible', 'block_evasys_sync'), $returnurl);
     exit();
 }
-
-$PAGE->set_url('/blocks/evasys_sync/sync.php');
-$DB->get_record('course', array('id' => $courseid), 'id', MUST_EXIST);
-
-$PAGE->set_context(context_course::instance($courseid));
-require_capability('block/evasys_sync:synchronize', context_course::instance($courseid));
 
 try {
     if (count_enrolled_users(context_course::instance($courseid), 'block/evasys_sync:mayevaluate') == 0) {
@@ -113,11 +113,11 @@ try {
         $event->trigger();
 
         $returnurl->param('status', 'success');
-        redirect($returnurl, get_string('syncsucessful', 'block_evasys_sync'), 0);
+        redirect($returnurl, get_string('syncsucessful', 'block_evasys_sync'));
         exit();
     } else {
         $returnurl->param('status', 'uptodate');
-        redirect($returnurl, get_string('syncalreadyuptodate', 'block_evasys_sync'), 0);
+        redirect($returnurl, get_string('syncalreadyuptodate', 'block_evasys_sync'));
         exit();
     }
 } catch (Exception $exception) {

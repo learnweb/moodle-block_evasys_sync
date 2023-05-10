@@ -191,7 +191,7 @@ class block_evasys_sync extends block_base{
             // If the evaluation hasn't ended yet, display option to restart it.
                 'startoption' => $startoption,
             // Only allow coursemapping before starting an evaluation.
-                'coursemappingenabled' => $hisconnection and (!$startdisabled or is_siteadmin()),
+                'coursemappingenabled' => false,
                 'nostudents' => $nostudents,
                 'emailsentnotice' => $emailsentnotice,
                 'evaluationperiodsetnotice' => $periodsetnotice,

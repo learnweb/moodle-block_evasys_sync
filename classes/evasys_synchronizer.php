@@ -16,6 +16,8 @@
 
 namespace block_evasys_sync;
 
+use block_evasys_sync\local\entity\evaluation_state;
+
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir . '/adminlib.php');
@@ -56,7 +58,6 @@ class evasys_synchronizer {
         foreach ($this->get_allocated_courses() as $course) {
             $soapresult = $this->soapclient->GetCourse($course, 'PUBLIC', true, true);
             if (is_soap_fault($soapresult)) {
-                var_dump($soapresult);
                 // var_dump("soap verbindung nicht funktioniert");
                 // This happens e.g. if there is no corresponding course in EvaSys.
                 return null;
@@ -354,26 +355,33 @@ class evasys_synchronizer {
      */
     public function set_evaluation_period($dates) : bool {
         $usestandardtime = ($dates == 'Standard');
+        $course = get_course($this->courseid);
         if ($usestandardtime) {
-            $course = get_course($this->courseid);
             $dates = self::get_standard_timemode($course->category);
         }
         $changed = false;
-        $data = course_evaluation_allocation::get_record_by_course($this->courseid, false);
+        $data = evaluation::for_course($this->courseid);
         if (!$data) {
-            $data = new course_evaluation_allocation(0);
-            $data->set('course', $this->courseid);
-            $data->set('state', course_evaluation_allocation::STATE_MANUAL);
+            $data = new evaluation();
+            $data->courses = [$this->courseid];
+            foreach ($this->courseinformation as $lsfid => $information) {
+                $data->evaluations[$lsfid] = (object) [
+                        'title' => $this->get_raw_course_name($lsfid),
+                        'lsfid' => $lsfid,
+                        'start' => $dates['start'],
+                        'end' => $dates['end'],
+                        'state' => evaluation_state::MANUAL
+                ];
+            }
         } else {
-            // Don't display date changed warning on first sync.
-            if ($data->get('startdate') != $dates['start'] || $data->get('enddate') != $dates['end']) {
-                $changed = true;
+            foreach ($data->evaluations as &$evaluation) {
+                if ($evaluation->start != $dates['start'] || $evaluation['end'] != $dates['end']) {
+                    $changed = true;
+                    $evaluation->start = $dates['start'];
+                    $evaluation->end = $dates['end'];
+                }
             }
         }
-
-        $data->set('startdate', $dates['start']);
-        $data->set('enddate', $dates['end']);
-        $data->set('usestandardtime', $usestandardtime);
         $data->save();
 
         return $changed;
