@@ -487,9 +487,9 @@ function xmldb_block_evasys_sync_upgrade ($oldversion) {
         $table = new xmldb_table('block_evasys_sync_courses');
 
         // Conditionally launch drop table for block_evasys_sync_courses.
-        if ($dbman->table_exists($table)) {
+        /*if ($dbman->table_exists($table)) {
             $dbman->drop_table($table);
-        }
+        }*/
 
         /// Edit block_evasys_sync_categories ///
 

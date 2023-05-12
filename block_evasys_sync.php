@@ -67,6 +67,8 @@ class block_evasys_sync extends block_base{
             if ($inlsf) {
                 $href = new moodle_url('/course/view.php', array('id' => $this->page->course->id, "evasyssynccheck" => true));
                 $this->content->text .= $OUTPUT->single_button($href, get_string('checkstatus', 'block_evasys_sync'), 'get');
+            } else {
+                $this->content->text .= get_string('missing_course_id', 'block_evasys_sync');
             }
             return $this->content;
         }
@@ -191,7 +193,7 @@ class block_evasys_sync extends block_base{
             // If the evaluation hasn't ended yet, display option to restart it.
                 'startoption' => $startoption,
             // Only allow coursemapping before starting an evaluation.
-                'coursemappingenabled' => false,
+                'coursemappingenabled' => $hisconnection and (!$startdisabled or is_siteadmin()),
                 'nostudents' => $nostudents,
                 'emailsentnotice' => $emailsentnotice,
                 'evaluationperiodsetnotice' => $periodsetnotice,

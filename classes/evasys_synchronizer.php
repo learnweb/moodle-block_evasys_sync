@@ -45,11 +45,27 @@ class evasys_synchronizer {
         }
         $course = get_course($this->courseid);
 
-        $this->evasyscourses = [];
-
         if ($course->idnumber) {
-            $this->evasyscourses = [$course->idnumber];
+            $maincourse = $course->idnumber;
         }
+        // Fetch persistent object id.
+        $pid = $DB->get_field('block_evasys_sync_courses', 'id', array('course' => $this->courseid));
+
+        // Get all associated courses.
+        if (!$pid === false) {
+            $extras = new \block_evasys_sync\course_evasys_courses_allocation($pid);
+            $extras = explode('#', $extras->get('evasyscourses'));
+        } else {
+            $extras = [];
+        }
+        // If noone has associated the course itself, we force that.
+        if (isset($maincourse) && !empty($maincourse)) {
+            if (!in_array($maincourse, $extras)) {
+                $extras[] = $maincourse;
+            }
+        }
+        $extras = array_filter($extras);
+        $this->evasyscourses = $extras;
         return $this->evasyscourses;
     }
 
@@ -110,7 +126,7 @@ class evasys_synchronizer {
         if (isset($this->courseinformation[$coursekey])) {
             return $this->courseinformation[$coursekey]->m_sCourseTitle;
         }
-        return "Unknown";
+        return get_string('no_evasys_course_found', 'block_evasys_sync');
     }
 
     public function get_raw_course_name($courseid): ?string {
