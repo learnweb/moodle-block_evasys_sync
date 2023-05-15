@@ -101,6 +101,9 @@ try {
 
     $evasyssynchronizer = new \block_evasys_sync\evasys_synchronizer($courseid);
     $newparticipantsadded = $evasyssynchronizer->sync_students();
+
+    \block_evasys_sync\evaluation_manager::clear_error($courseid);
+
     if ($newparticipantsadded || $datechanged) {
         $evasyssynchronizer->notify_evaluation_responsible_person($dates, $newparticipantsadded, $datechanged);
 

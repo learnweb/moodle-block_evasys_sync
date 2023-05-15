@@ -391,7 +391,7 @@ class evasys_synchronizer {
             }
         } else {
             foreach ($data->evaluations as &$evaluation) {
-                if ($evaluation->start != $dates['start'] || $evaluation['end'] != $dates['end']) {
+                if ($evaluation->start != $dates['start'] || $evaluation->end != $dates['end']) {
                     $changed = true;
                     $evaluation->start = $dates['start'];
                     $evaluation->end = $dates['end'];

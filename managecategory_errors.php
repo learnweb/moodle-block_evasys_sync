@@ -53,8 +53,8 @@ if ($action === 'clearerror') {
     list($insql, $params) = $DB->get_in_or_equal($ids, SQL_PARAMS_NAMED);
     $params['time'] = time();
     $params['evasyscat'] = $evasyscategory->get('id');
-    $DB->execute('UPDATE {' . \block_evasys_sync\dbtables::ERRORS . '} ' .
-        "SET timehandled = :time WHERE evasyscategoryid = :evasyscat AND id $insql", $params);
+    $DB->execute('DELETE FROM {' . \block_evasys_sync\dbtables::ERRORS . '} ' .
+        " WHERE evasyscategoryid = :evasyscat AND id $insql", $params);
     redirect($PAGE->url);
 }
 

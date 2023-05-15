@@ -115,6 +115,8 @@ class evaluation_manager {
                 );
             }
 
+            self::clear_error($course->id);
+
             $evaluation->save();
         }
         return $errors;
@@ -190,6 +192,11 @@ class evaluation_manager {
             return;
         }
         $DB->insert_record(dbtables::ERRORS, $error);
+    }
+
+    public static function clear_error($courseid) {
+        global $DB;
+        $DB->delete_records(dbtables::ERRORS, ['courseid' => $courseid]);
     }
 
 }
