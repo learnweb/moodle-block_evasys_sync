@@ -285,7 +285,7 @@ Ihr Learnweb-Support';
 $string['request_eval'] = 'Evaluation beantragen';
 
 $string['no_eval_planned'] = 'Es ist keine Evaluation geplant.';
-$string['evaluation_will_be_created_for_you'] = 'Eine Evaluation wird für Sie erstellt.';
+$string['evaluation_will_be_created_for_you'] = 'Lehrende können keine Evaluationen beantragen. Eine Evaluation wird für Sie erstellt.';
 
 $string['missing_course_id'] = 'Fehlende Kurs-ID';
 $string['no_evasys_course_found'] = 'Kein passender EvaSys-Kurs gefunden';

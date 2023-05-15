@@ -182,7 +182,7 @@ class block_evasys_sync extends block_base{
             /* In case of the manual workflow, we can start synchronisation also, if no surveys are registered, yet.
             * In case of the automated workflow, we require surveys
             * in order to be able to automatically trigger the evaluation. */
-                'showcontrols' => count($evasyscourses) > 0 && !$invalidcourses,
+                'showcontrols' => count($evasyscourses) > 0 && !$invalidcourses && $evasyscategory->can_teacher_request_evaluation(),
                 'usestandardtimelayout' => $standardttimemode,
             // Choose mode.
                 'direct' => false,
@@ -204,6 +204,11 @@ class block_evasys_sync extends block_base{
         );
 
         $this->content->text .= $OUTPUT->render_from_template("block_evasys_sync/block", $data);
+
+        if (!$evasyscategory->can_teacher_request_evaluation()) {
+            $this->content->text .= get_string('teacher_request_disabled', 'block_evasys_sync');
+        }
+
         $this->content->footer = '';
         return $this->content;
     }
