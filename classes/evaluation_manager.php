@@ -56,6 +56,7 @@ class evaluation_manager {
             }
             if (empty($course->idnumber)) {
                 $errors[$course->id] = 'Course does not have an idnumber!';
+                continue;
             }
             if ($DB->record_exists(dbtables::EVAL_COURSES, ['courseid' => $course->id])) {
                 $errors[$course->id] = 'Evaluation already exists!';

@@ -55,7 +55,7 @@ $string['add_course_header'] = "Wählen Sie die LSF-Veranstaltungen, die gemeins
 $string['coursename'] = "Kursname";
 $string['associated'] = "zugeordnet";
 $string['forbidden'] = "Die Aktion ist im aktuellen Status des Kurses nicht zulässig";
-$string['hisconnection_error'] = "Um diese Funktion nutzen zu können, muss das lokale Plugin lsf_unification installiert werden";
+$string['nohisconnection_error'] = "Um diese Funktion nutzen zu können, muss das lokale Plugin lsf_unification installiert werden";
 $string['maincoursepredefined'] = 'Vordefinierte Zuordnung.';
 $string['maincoursepredefined_help'] = 'Dieser LSF-Kurs ist fest zugeordnet, da dies der entsprechende Learnweb-Kurs ist. Falls Sie dies für nicht korrekt halten, wenden Sie sich bitte an den Learnweb-Support.';
 
@@ -285,7 +285,8 @@ Ihr Learnweb-Support';
 $string['request_eval'] = 'Evaluation beantragen';
 
 $string['no_eval_planned'] = 'Es ist keine Evaluation geplant.';
-$string['evaluation_will_be_created_for_you'] = 'Lehrende können keine Evaluationen beantragen. Eine Evaluation wird für Sie erstellt.';
+$string['teacher_request_disabled'] = 'Lehrende können keine Evaluationen beantragen. Eine Evaluation wird für Sie erstellt.';
 
 $string['missing_course_id'] = 'Fehlende Kurs-ID';
 $string['no_evasys_course_found'] = 'Kein passender EvaSys-Kurs gefunden';
+$string['not_inside_evaluation_category'] = 'Dieser Kurs ist in keiner Evaluationskategorie!';

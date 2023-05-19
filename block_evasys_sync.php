@@ -55,7 +55,7 @@ class block_evasys_sync extends block_base{
         $evasyscategory = \block_evasys_sync\evasys_category::for_course($this->page->course);
 
         if (!$evasyscategory) {
-            $this->content->text = 'This course isn\'t inside any evaluation category!';
+            $this->content->text = get_string('not_inside_evaluation_category', 'block_evasys_sync');
             return $this->content;
         }
 

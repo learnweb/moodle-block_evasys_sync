@@ -300,3 +300,4 @@ $string['teacher_request_disabled'] = 'Teachers are not allowed to request evalu
 
 $string['missing_course_id'] = 'Missing course id';
 $string['no_evasys_course_found'] = 'No matching EvaSys-Course found';
+$string['not_inside_evaluation_category'] = 'This course isn\'t inside any evaluation category!';
