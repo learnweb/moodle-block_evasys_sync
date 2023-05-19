@@ -273,13 +273,13 @@ $string['clear_all_errors'] = 'Alle Fehler löschen';
 $string['notify_teacher_email_subject'] = '{$a->courseshort}: Eine Evaluation wurde für Ihren Kurs geplant.';
 $string['notify_teacher_email_body'] = 'Sehr geehrte*r Lehrende*r,
 
-eine Evaluation wurde für Ihren Kurs {$a->coursefull}
+dies ist eine automatisch generierte Mail, ausgelöst dadurch, dass Ihr Evaluationskoordinator eine Evaluation für ihren Kurs <b>{$a->coursefull}</b>
 von {$a->start} bis {$a->end}
-geplant.
+geplant hat.
 
-Falls Sie Probleme mit dem Zeitraum der Evaluation haben, wenden Sie sich bitte an Ihre*n Evaluationskoordinator*in {$a->coordinator}.
+Bei Fragen oder Rückmeldungen wenden Sie sich bitte an Ihre*n Evaluationskoordinator*in via {$a->coordinator}.
 
-Mit freundlichen Grüßen,
+Mit freundlichen Grüßen
 Ihr Learnweb-Support';
 
 $string['request_eval'] = 'Evaluation beantragen';

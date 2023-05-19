@@ -284,11 +284,11 @@ $string['clear_all_errors'] = 'Clear all errors';
 $string['notify_teacher_email_subject'] = '{$a->courseshort}: A evaluation was planned for your course.';
 $string['notify_teacher_email_body'] = 'Dear teacher,
 
-an evaluation was planned for your course {$a->coursefull}
+this is an automatically generated mail, caused by you evasys coordinator planning an evaluation for your course <b>{$a->coursefull}</b>
 from {$a->start}
 to {$a->end}.
 
-If this evaluation doesn\'t suit you at all, please contact your evasys coordinator {$a->coordinator}.
+In case of questions or issues regarding this evaluation, please contact your evasys coordinator via {$a->coordinator}.
 
 Sincerely,
 Your Learnweb-Support';

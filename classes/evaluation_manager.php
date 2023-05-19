@@ -100,10 +100,10 @@ class evaluation_manager {
             ];
 
             $synchronizer->sync_students();
-            $teachers = get_users_by_capability(\context_course::instance($course->id), 'block/evasys_sync:getnotifiedteacher');
+            $teachers = get_users_by_capability(\context_course::instance($course->id), 'block/evasys_sync:teacherforcourse');
 
             $data = new \stdClass();
-            $data->coordinator = fullname($coordinatoruser);
+            $data->coordinator = $coordinatoruser->email;
             $data->start = userdate($category->get('standard_time_start'));
             $data->end = userdate($category->get('standard_time_end'));
             $data->courseshort = $course->shortname;
