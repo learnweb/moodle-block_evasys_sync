@@ -298,6 +298,6 @@ $string['request_eval'] = 'Request evaluation';
 $string['no_eval_planned'] = 'There is no evaluation planned.';
 $string['teacher_request_disabled'] = 'Teachers are not allowed to request evaluations. An evaluation will be created for you.';
 
-$string['missing_course_id'] = 'Missing course id';
-$string['no_evasys_course_found'] = 'No matching EvaSys-Course found';
-$string['not_inside_evaluation_category'] = 'This course isn\'t inside any evaluation category!';
+$string['missing_course_id'] = 'Missing course id! Please contact the Learnweb support with a link to the course in HIS LSF which should be evaluated.';
+$string['no_evasys_course_found'] = 'No matching EvaSys-Course found! Please contact your evaluation coordinator.';
+$string['not_inside_evaluation_category'] = 'This course isn\'t inside any evaluation category! Please contact the Learnweb support.';

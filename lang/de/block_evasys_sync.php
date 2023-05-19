@@ -287,6 +287,6 @@ $string['request_eval'] = 'Evaluation beantragen';
 $string['no_eval_planned'] = 'Es ist keine Evaluation geplant.';
 $string['teacher_request_disabled'] = 'Lehrende können keine Evaluationen beantragen. Eine Evaluation wird für Sie erstellt.';
 
-$string['missing_course_id'] = 'Fehlende Kurs-ID';
-$string['no_evasys_course_found'] = 'Kein passender EvaSys-Kurs gefunden';
-$string['not_inside_evaluation_category'] = 'Dieser Kurs ist in keiner Evaluationskategorie!';
+$string['missing_course_id'] = 'Fehlende Kurs-ID! Bitte wenden Sie sich an den Learnweb Support mit einem Link zu der Veranstaltung im HIS LSF, die evaluiert werden soll.';
+$string['no_evasys_course_found'] = 'Kein passender EvaSys-Kurs gefunden! Bitte wenden Sie sich an Ihren Evaluationskoordinator.';
+$string['not_inside_evaluation_category'] = 'Dieser Kurs ist in keiner Evaluationskategorie! Bitte wenden Sie sich an den Learnweb Support.';
