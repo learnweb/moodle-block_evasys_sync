@@ -80,9 +80,9 @@ list($inmanualsql, $params) = $DB->get_in_or_equal(evaluation_state::MANUAL_STAT
 list($incatsql, $incatparams) = $DB->get_in_or_equal($catids, SQL_PARAMS_NAMED);
 $params = array_merge($params, $incatparams);
 
-$courseamounts = $DB->get_record_sql('SELECT (COUNT(evalc.id) - COUNT(evalmanualc.id)) as autoevalcourses, ' .
-        'COUNT(evalmanualc.id) as manualevalcourses, COUNT(ereqc.id) as requestcourses, COUNT(*) as allcourses, ' .
-        '(COUNT(*) - COUNT(COALESCE(ereqc.id, evalc.id))) as remainingcourses ' .
+$courseamounts = $DB->get_record_sql('SELECT (COUNT(DISTINCT evalc.courseid) - COUNT(DISTINCT evalmanualc.courseid)) as autoevalcourses, ' .
+        'COUNT(DISTINCT evalmanualc.courseid) as manualevalcourses, COUNT(DISTINCT ereqc.courseid) as requestcourses, COUNT(DISTINCT c.id) as allcourses, ' .
+        '(COUNT(DISTINCT c.id) - COUNT(DISTINCT COALESCE(ereqc.courseid, evalc.courseid))) as remainingcourses ' .
         'FROM {course} c '  .
         'JOIN {customfield_data} cfd ON cfd.instanceid = c.id AND cfd.fieldid = :semesterfieldid ' .
         'LEFT JOIN {' . dbtables::EVAL_REQUESTS_COURSES . '} ereqc ON ereqc.courseid = c.id ' .
@@ -97,7 +97,7 @@ $courseamounts = $DB->get_record_sql('SELECT (COUNT(evalc.id) - COUNT(evalmanual
         "c.category $incatsql ", array_merge(['semesterfieldid' => $field->id, 'semester' => $data->semester], $params)
 );
 
-$courseamountsall = $DB->get_record_sql('SELECT COUNT(errors.id) as errorcourses, COUNT(*) as allcourses ' .
+$courseamountsall = $DB->get_record_sql('SELECT COUNT(DISTINCT errors.courseid) as errorcourses, COUNT(DISTINCT c.id) as allcourses ' .
         'FROM {course} c '  .
         'JOIN {customfield_data} cfd ON cfd.instanceid = c.id AND cfd.fieldid = :semesterfieldid ' .
         'LEFT JOIN {' . dbtables::ERRORS . '} errors ON errors.courseid = c.id AND errors.timehandled IS NULL ' .
