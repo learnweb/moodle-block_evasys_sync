@@ -36,7 +36,7 @@ $PAGE->set_url(new moodle_url('/blocks/evasys_sync/editcategory.php', ['id' => $
 $PAGE->set_context(context_system::instance());
 $PAGE->set_title($title);
 
-require_capability('block/evasys_sync:managecourses', $PAGE->context);
+require_capability('block/evasys_sync:managecourses', $category->get_context());
 
 $evasyscat = \block_evasys_sync\evasys_category::for_category($id);
 if (!$evasyscat) {
