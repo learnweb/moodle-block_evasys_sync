@@ -140,7 +140,7 @@ class evaluation {
             $DB->delete_records_select(dbtables::EVAL_COURSES,
                 "evalid = :evalid AND courseid $insql", $inparams);
 
-            $existingveransts = $DB->get_records(dbtables::EVAL_VERANSTS, ['evalid' => $this->id], '', 'veranstid, id, veransttile, starttime, endttime');
+            $existingveransts = $DB->get_records(dbtables::EVAL_VERANSTS, ['evalid' => $this->id], '', 'veranstid, id, veransttitle, starttime, endtime');
 
             // Delete outdated lsf courses.
             list($insql, $inparams) = $DB->get_in_or_equal(array_keys($this->evaluations), SQL_PARAMS_NAMED, 'param', false);
