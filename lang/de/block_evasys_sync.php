@@ -290,3 +290,5 @@ $string['teacher_request_disabled'] = 'Lehrende können keine Evaluationen beant
 $string['missing_course_id'] = 'Fehlende Kurs-ID! Bitte wenden Sie sich an den Learnweb Support mit einem Link zu der Veranstaltung im HIS LSF, die evaluiert werden soll.';
 $string['no_evasys_course_found'] = 'Kein passender EvaSys-Kurs gefunden! Bitte wenden Sie sich an Ihren Evaluationskoordinator.';
 $string['not_inside_evaluation_category'] = 'Dieser Kurs ist in keiner Evaluationskategorie! Bitte wenden Sie sich an den Learnweb Support.';
+
+$string['previous_process_still_active'] = 'Diese Kurskategorie wird derzeit bereits bearbeitet. Bitte versuchen Sie es in Kürze erneut!';
