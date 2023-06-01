@@ -46,9 +46,18 @@ $cache = cache::make('block_evasys_sync', 'mformdata');
 
 $data = $cache->get($cachekey);
 
+$lockname = 'block_evasys_sync_process_category';
+$resource = 'evasyscat:' . $evasyscategory->get('id');
+$lockfactory = \core\lock\lock_config::get_lock_factory($lockname);
+$lock = $lockfactory->get_lock($resource, 0);
+
 $action = optional_param('action', null, PARAM_ALPHAEXT);
 if ($action === 'seteval') {
+    if (!$lock) {
+        throw new coding_exception(get_string('previous_process_still_active', 'block_evasys_sync'));
+    }
     require_sesskey();
+    core_php_time_limit::raise();
     $courses = required_param_array('ids', PARAM_INT);
     $errors = \block_evasys_sync\evaluation_manager::set_default_evaluation_for($courses, $evasyscategory);
     if ($errors) {
@@ -58,7 +67,14 @@ if ($action === 'seteval') {
         }
         \core\notification::error($erroroutput);
     }
+    $lock->release();
     redirect($PAGE->url);
+}
+
+if ($lock) {
+    $lock->release();
+} else{
+    \core\notification::warning(get_string('previous_process_still_active', 'block_evasys_sync'));
 }
 
 $field = $DB->get_record('customfield_field', array('shortname' => 'semester', 'type' => 'semester'), '*', MUST_EXIST);
@@ -72,7 +88,8 @@ if (!$data) {
 
 $catids = array_merge($category->get_all_children_ids(), [$category->id]);
 
-$table = new remaining_courses_table($catids, $data->semester ?? null, $evasyscategory, $data->coursename ?? null);
+$table = new remaining_courses_table($catids, $data->semester ?? null, $evasyscategory,
+        $data->coursename ?? null, (bool) $lock);
 $table->define_baseurl($PAGE->url);
 
 $PAGE->navigation->add('EvaSys', new moodle_url('/blocks/evasys_sync/manageroverview.php'))
