@@ -23,6 +23,7 @@
  */
 
 use block_evasys_sync\local\table\remaining_courses_table;
+use block_evasys_sync\task\evasys_bulk_task;
 use customfield_semester\data_controller;
 
 require_once(__DIR__ . '/../../config.php');
@@ -50,13 +51,18 @@ $action = optional_param('action', null, PARAM_ALPHAEXT);
 if ($action === 'seteval') {
     require_sesskey();
     $courses = required_param_array('ids', PARAM_INT);
-    $errors = \block_evasys_sync\evaluation_manager::set_default_evaluation_for($courses, $evasyscategory);
-    if ($errors) {
-        $erroroutput = '';
-        foreach ($errors as $courseid => $error) {
-            $erroroutput .= $courseid . ': ' . $error . '<br>';
-        }
-        \core\notification::error($erroroutput);
+    $queuedtasks = \core\task\manager::get_adhoc_tasks(evasys_bulk_task::class);
+    $tasksofcurrentmodule = array_filter($queuedtasks, fn($task) => $task->get_custom_data()->categoryid === $id);
+    if(empty($tasksofcurrentmodule)){
+        $task = new evasys_bulk_task();
+        $data = new stdClass();
+        $data->courses = $courses;
+        $data->categoryid = $id;
+        $task->set_custom_data($data);
+        $task->set_userid($USER->id);
+        \core\task\manager::queue_adhoc_task($task, true);
+    } else {
+        \core\notification::warning(get_string("running_crontask", "block_evasys_sync"));
     }
     redirect($PAGE->url);
 }
@@ -72,7 +78,10 @@ if (!$data) {
 
 $catids = array_merge($category->get_all_children_ids(), [$category->id]);
 
-$table = new remaining_courses_table($catids, $data->semester ?? null, $evasyscategory, $data->coursename ?? null);
+$queuedtasks = \core\task\manager::get_adhoc_tasks(evasys_bulk_task::class);
+$tasksofcurrentmodule = array_filter($queuedtasks, fn($task) => $task->get_custom_data()->categoryid === $id);
+
+$table = new remaining_courses_table($catids, $data->semester ?? null, $evasyscategory, $data->coursename ?? null, empty($tasksofcurrentmodule));
 $table->define_baseurl($PAGE->url);
 
 $PAGE->navigation->add('EvaSys', new moodle_url('/blocks/evasys_sync/manageroverview.php'))
@@ -86,6 +95,11 @@ echo $OUTPUT->header();
 /* @var \block_evasys_sync\output\renderer $renderer  */
 $renderer = $PAGE->get_renderer('block_evasys_sync');
 $renderer->print_evasys_category_header($evasyscategory);
+
+if(!empty($tasksofcurrentmodule)){
+    $category = \core_course_category::get($id);
+    \core\notification::warning(get_string("running_crontask", "block_evasys_sync", $category->name));
+}
 
 $table->out(48, false);
 
