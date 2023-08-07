@@ -302,4 +302,4 @@ $string['missing_course_id'] = 'Missing course id! Please contact the Learnweb s
 $string['no_evasys_course_found'] = 'No matching EvaSys-Course found! Please contact your evaluation coordinator.';
 $string['not_inside_evaluation_category'] = 'This course isn\'t inside any evaluation category! Please contact the Learnweb support.';
 
-$string["running_crontask"] = "The synchronization of the selected courses of {$a} to evasys are currently being processed. This may take a few minutes. Please wait and reload the page.";
+$string["running_crontask"] = 'The synchronization of the selected courses of {$a} to evasys are currently being processed. This may take a few minutes. Please wait and reload the page.';

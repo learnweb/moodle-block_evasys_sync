@@ -291,4 +291,4 @@ $string['missing_course_id'] = 'Fehlende Kurs-ID! Bitte wenden Sie sich an den L
 $string['no_evasys_course_found'] = 'Kein passender EvaSys-Kurs gefunden! Bitte wenden Sie sich an Ihren Evaluationskoordinator.';
 $string['not_inside_evaluation_category'] = 'Dieser Kurs ist in keiner Evaluationskategorie! Bitte wenden Sie sich an den Learnweb Support.';
 
-$string["running_crontask"] = "Die Synchronization der ausgewählten Kurse von {$a} zu Evasys wird derzeit durchgeführt. Dies kann evt. einige Minuten dauern. Bitte warten Sie einige Zeit und laden die Seite neu.";
+$string["running_crontask"] = 'Die Synchronization der ausgewählten Kurse von {$a} zu Evasys wird derzeit durchgeführt. Dies kann evt. einige Minuten dauern. Bitte warten Sie einige Zeit und laden die Seite neu.';
