@@ -62,7 +62,7 @@ if ($action === 'seteval') {
         $task->set_userid($USER->id);
         \core\task\manager::queue_adhoc_task($task, true);
     } else {
-        \core\notification::warning(get_string("running_crontask", "block_evasys"));
+        \core\notification::warning(get_string("running_crontask", "block_evasys_sync"));
     }
     redirect($PAGE->url);
 }
@@ -97,7 +97,8 @@ $renderer = $PAGE->get_renderer('block_evasys_sync');
 $renderer->print_evasys_category_header($evasyscategory);
 
 if(!empty($tasksofcurrentmodule)){
-    \core\notification::warning(get_string("running_crontask", "block_evasys"));
+    $category = \core_course_category::get($id);
+    \core\notification::warning(get_string("running_crontask", "block_evasys_sync", $category->name));
 }
 
 $table->out(48, false);
