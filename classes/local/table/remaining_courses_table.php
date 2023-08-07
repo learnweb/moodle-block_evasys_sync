@@ -42,14 +42,17 @@ class remaining_courses_table extends \table_sql {
 
     private evasys_category $evasyscategory;
 
+    private bool $showbuttons;
+
     /**
      * Constructor for course_manager_table.
      */
-    public function __construct($categoryids, $semester, evasys_category $evasyscategory, $coursefullname = null) {
+    public function __construct($categoryids, $semester, evasys_category $evasyscategory, $coursefullname = null, bool $showbuttons = true) {
         parent::__construct('block_evasys_sync-course_manager_table');
         global $DB, $PAGE, $OUTPUT;
 
         $this->evasyscategory = $evasyscategory;
+        $this->showbuttons = $showbuttons;
 
         $fields = 'c.id as courseid, c.fullname as coursename, cfd.intvalue as semester';
 
@@ -134,7 +137,7 @@ class remaining_courses_table extends \table_sql {
      */
     public function col_tools($row) {
         global $PAGE, $OUTPUT;
-        if (!$this->evasyscategory->default_period_set()) {
+        if (!$this->evasyscategory->default_period_set() || !$this->showbuttons) {
             return '';
         }
         return $OUTPUT->render(new \single_button(new moodle_url($PAGE->url, ['action' => 'seteval', 'ids[]' => $row->courseid]),
@@ -155,7 +158,7 @@ class remaining_courses_table extends \table_sql {
         parent::wrap_html_finish();
         echo "<br>";
 
-        if (!$this->evasyscategory->default_period_set()) {
+        if (!$this->evasyscategory->default_period_set() || !$this->showbuttons) {
             return;
         }
 

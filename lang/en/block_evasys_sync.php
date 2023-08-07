@@ -301,3 +301,5 @@ $string['teacher_request_disabled'] = 'Teachers are not allowed to request evalu
 $string['missing_course_id'] = 'Missing course id! Please contact the Learnweb support with a link to the course in HIS LSF which should be evaluated.';
 $string['no_evasys_course_found'] = 'No matching EvaSys-Course found! Please contact your evaluation coordinator.';
 $string['not_inside_evaluation_category'] = 'This course isn\'t inside any evaluation category! Please contact the Learnweb support.';
+
+$string["running_crontask"] = "The synchronization to Evasys is currently being processed. This may take a few minutes. Please wait and reload the page.";
