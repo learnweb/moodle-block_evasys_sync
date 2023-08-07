@@ -10,10 +10,11 @@ class evasys_bulk_task extends adhoc_task{
     {
         $data = $this->get_custom_data();
         $courses = $data->courses;
-        $evasyscategory = $data->evasyscategory;
-        if(empty($evasyscategory) || empty($courses)){
+        $categoryid = $data->categoryid;
+        if(empty($categoryid) || empty($courses)){
             mtrace("No category or courses specified, exiting.");
         }
+        $evasyscategory = \block_evasys_sync\evasys_category::for_category($categoryid);
         $errors = \block_evasys_sync\evaluation_manager::set_default_evaluation_for($courses, $evasyscategory);
         if ($errors) {
             $erroroutput = '';

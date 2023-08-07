@@ -52,12 +52,12 @@ if ($action === 'seteval') {
     require_sesskey();
     $courses = required_param_array('ids', PARAM_INT);
     $queuedtasks = \core\task\manager::get_adhoc_tasks(evasys_bulk_task::class);
-    $tasksofcurrentmodule = array_filter($queuedtasks, fn($task) => $task->get_custom_data()->evasyscategory === $evasyscategory);
+    $tasksofcurrentmodule = array_filter($queuedtasks, fn($task) => $task->get_custom_data()->categoryid === $id);
     if(empty($tasksofcurrentmodule)){
         $task = new evasys_bulk_task();
         $data = new stdClass();
         $data->courses = $courses;
-        $data->evasyscategory = $evasyscategory;
+        $data->categoryid = $id;
         $task->set_custom_data($data);
         $task->set_userid($USER->id);
         \core\task\manager::queue_adhoc_task($task, true);
@@ -79,7 +79,7 @@ if (!$data) {
 $catids = array_merge($category->get_all_children_ids(), [$category->id]);
 
 $queuedtasks = \core\task\manager::get_adhoc_tasks(evasys_bulk_task::class);
-$tasksofcurrentmodule = array_filter($queuedtasks, fn($task) => $task->get_custom_data()->evasyscategory === $evasyscategory);
+$tasksofcurrentmodule = array_filter($queuedtasks, fn($task) => $task->get_custom_data()->categoryid === $id);
 
 $table = new remaining_courses_table($catids, $data->semester ?? null, $evasyscategory, $data->coursename ?? null, empty($tasksofcurrentmodule));
 $table->define_baseurl($PAGE->url);
