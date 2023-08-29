@@ -256,6 +256,8 @@ $string['automatic_task_creation'] = 'Planned tasks are created automatically in
 $string['teacher_can_change_evaluation'] = 'Teachers can change existing evaluation';
 $string['teacher_evaluation_change_needs_approval'] = 'Teacher\'s evaluation changes needs approval from you';
 
+$string['send_mail_to_teacher'] = 'Send mail to teacher';
+
 $string['search_for_courses'] = 'Search for courses';
 
 $string['evasys_settings_for'] = 'Evasys settings for {$a}';
