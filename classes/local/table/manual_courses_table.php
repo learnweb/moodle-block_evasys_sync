@@ -40,6 +40,16 @@ require_once($CFG->libdir . '/tablelib.php');
  */
 class manual_courses_table extends \table_sql {
 
+    private array $allcourses;
+
+    private string $where;
+
+    private string $fields;
+
+    private string $from;
+
+    private $params;
+
     /**
      * Constructor for course_manager_table.
      */
@@ -47,7 +57,7 @@ class manual_courses_table extends \table_sql {
         parent::__construct('block_evasys_sync-course_manager_table');
         global $DB;
 
-        $fields = 'c.id as courseid, c.fullname as course, ' .
+        $this->fields = 'c.id as courseid, c.fullname as course, ' .
             'cfd.intvalue as semester,' .
             'eval.id as evalid, ' .
             'evalccount.coursecount, ' .
@@ -57,7 +67,7 @@ class manual_courses_table extends \table_sql {
         $semesterfield = $DB->get_record('customfield_field',
             ['shortname' => 'semester', 'type' => 'semester'], '*', MUST_EXIST);
 
-        $from = '{course} c ' .
+        $this->from = '{course} c ' .
             'JOIN {customfield_data} cfd ON cfd.instanceid = c.id AND cfd.fieldid = :semesterfieldid ' .
             'JOIN {' . dbtables::EVAL_COURSES . '} evalc ON evalc.courseid = c.id ' .
             'LEFT JOIN {' . dbtables::EVAL . '} eval ON evalc.evalid = eval.id ' .
@@ -91,9 +101,13 @@ class manual_courses_table extends \table_sql {
             $where[] = 'c.fullname LIKE :cname';
             $params['cname'] = '%' . $DB->sql_like_escape($coursefullname) . '%';
         }
-        $where = join(" AND ", $where);
+        $this->where = join(" AND ", $where);
+        $this->params = $params;
 
-        $this->set_sql($fields, $from, $where, $params);
+        $this->set_sql($this->fields, $this->from, $this->where, $this->params);
+
+        $this->allcourses = $DB->get_records_sql('SELECT c.id as courseid, c.fullname as coursename FROM ' . $this->from . ' WHERE ' . $this->where, $this->params);
+
         $this->column_nosort = ['teacher', 'evalinfo', 'tools'];
         $this->define_columns(['course', 'teacher', 'evalinfo', 'tools']);
         $this->define_headers([
@@ -166,5 +180,38 @@ class manual_courses_table extends \table_sql {
      */
     public function col_tools($row) {
         return '';
+    }
+
+    /**
+     * Returns all courses that are displayed in this table by courseid => coursename
+     *
+     * @return array
+     */
+    public function get_all_courses() {
+        $courses = array();
+        foreach ($this->allcourses as $course) {
+            $courses[$course->courseid] = $course->coursename;
+        }
+        return $courses;
+    }
+
+    /**
+     * Filters the table by using set_sql()
+     *
+     * @param $courses array of type courseid => coursename
+     * @return void
+     * @throws \coding_exception
+     * @throws \dml_exception
+     */
+    public function filter_courses($courses) {
+
+        global $DB;
+
+        list($insql, $inparams) = $DB->get_in_or_equal($courses, SQL_PARAMS_NAMED);
+        $where = "c.id $insql";
+        $params = array_merge($this->params, $inparams);
+
+        $where = $this->where . ' AND ' . $where;
+        $this->set_sql($this->fields, $this->from, $where, $params);
     }
 }

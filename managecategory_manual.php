@@ -60,6 +60,8 @@ $table = new \block_evasys_sync\local\table\manual_courses_table($catids, $data-
         $data->coursename ?? null);
 $table->define_baseurl($PAGE->url);
 
+$mform = new \block_evasys_sync\managecategory_filter_table_form($PAGE->url, ['table' => $table]);
+
 $PAGE->navigation->add('EvaSys', new moodle_url('/blocks/evasys_sync/manageroverview.php'))
         ->add(
                 get_string('evaluations', 'block_evasys_sync') . ' in ' . data_controller::get_name_for_semester($data->semester),
@@ -71,6 +73,13 @@ echo $OUTPUT->header();
 /* @var \block_evasys_sync\output\renderer $renderer  */
 $renderer = $PAGE->get_renderer('block_evasys_sync');
 $renderer->print_evasys_category_header($evasyscategory);
+
+$mform->display();
+$searchvalues = $mform->get_data();
+
+if (!is_null($searchvalues)) {
+    $table->filter_courses($searchvalues->searchcourse);
+}
 
 $table->out(48, false);
 

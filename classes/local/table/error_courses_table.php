@@ -166,9 +166,9 @@ class error_courses_table extends \table_sql {
                 ['data-evasys-action' => 'clearerror']
         ));
 
-        /*echo $OUTPUT->render(new \single_button(new moodle_url(''),
-                get_string('set_default_eval_for_all', 'block_evasys_sync'), 'post', false,
-                ['data-evasys-action' => 'sseteval', 'data_evasys-forall' => 1]
-        ));*/
+        echo $OUTPUT->render(new \single_button(new moodle_url(''),
+                get_string('clear_all_errors', 'block_evasys_sync'), 'post', false,
+                ['data-evasys-action' => 'clearerror', 'data-evasys-forall' => 1]
+        ));
     }
 }

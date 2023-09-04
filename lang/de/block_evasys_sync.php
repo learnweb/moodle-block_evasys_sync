@@ -246,6 +246,7 @@ $string['teacher_can_change_evaluation'] = 'Lehrende können bestehende Evaluati
 $string['teacher_evaluation_change_needs_approval'] = 'Änderungen an bestehenden Evaluationen müssen von Ihnen bestätigt werden';
 
 $string['search_for_courses'] = 'Nach Kursen suchen';
+$string['search'] = 'Suchen';
 
 $string['evasys_settings_for'] = 'Evasys-Einstellungen für {$a}';
 $string['no_default_period_set'] = 'Es wurde kein Standardevaluationszeitraum festgelegt.';
