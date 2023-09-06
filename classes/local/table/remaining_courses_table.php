@@ -154,7 +154,7 @@ class remaining_courses_table extends \table_sql {
         if (!$this->evasyscategory->default_period_set() || !$this->showbuttons) {
             return '';
         }
-        return $OUTPUT->render(new \single_button(new moodle_url($PAGE->url, ['action' => 'seteval', 'ids[]' => $row->courseid]),
+        return $OUTPUT->render(new \single_button(new moodle_url($PAGE->url, ['action' => 'seteval', 'ids[]' => $row->courseid, 'id' => $this->evasyscategory->get('course_category')]),
                 get_string('set_default_eval', 'block_evasys_sync')));
     }
 
@@ -168,7 +168,7 @@ class remaining_courses_table extends \table_sql {
     }
 
     public function wrap_html_finish() {
-        global $OUTPUT;
+        global $OUTPUT, $PAGE;
         parent::wrap_html_finish();
         echo "<br>";
 
@@ -176,13 +176,13 @@ class remaining_courses_table extends \table_sql {
             return;
         }
 
-        echo $OUTPUT->render(new \single_button(new moodle_url(''),
-                get_string('set_default_eval_for_selected', 'block_evasys_sync'), 'post', false,
+        echo $OUTPUT->render(new \single_button(new moodle_url($PAGE->url),
+                get_string('set_default_eval_for_selected', 'block_evasys_sync'), 'post', \single_button::BUTTON_SECONDARY,
                 ['data-evasys-action' => 'seteval']
         ));
 
-        echo $OUTPUT->render(new \single_button(new moodle_url(''),
-                 get_string('set_default_eval_for_all', 'block_evasys_sync'), 'post', false,
+        echo $OUTPUT->render(new \single_button(new moodle_url($PAGE->url),
+                 get_string('set_default_eval_for_all', 'block_evasys_sync'), 'post', \single_button::BUTTON_SECONDARY,
                 ['data-evasys-action' => 'seteval', 'data-evasys-forall' => 1]
         ));
     }

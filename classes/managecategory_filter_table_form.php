@@ -17,6 +17,7 @@
 namespace block_evasys_sync;
 
 use moodleform;
+use stdClass;
 
 defined('MOODLE_INTERNAL') || die;
 
@@ -42,17 +43,25 @@ class managecategory_filter_table_form extends moodleform {
         $courses = $this->_customdata['table']->get_all_courses();
         $mform->addElement('autocomplete', 'coursesearches', get_string('searcharea','search'), $courses, array('multiple' => true));
 
-
         $searchbutton = $mform->createElement('submit', 'search', get_string('search', 'block_evasys_sync'));
         $mform->addElement($searchbutton);
     }
 
     public function get_data() {
+
         $mform = $this->_form;
         $data = parent::get_data();
-        if (is_array($submit = $mform->getSubmitValue('coursesearches'))) {
-            $data->searchcourse = $submit;
-            return $data;
+
+        // Function is_array is neccessary to avoid filtering if no course is selected.
+        if ($submit = $mform->getSubmitValue('coursesearches')) {
+            if (is_array($submit)) {
+                $data->searchcourse = $submit;
+                return $data;
+            } else {
+                $data = new stdClass();
+                $data->searchcourse = null;
+                return $data;
+            }
         }
         return null;
     }

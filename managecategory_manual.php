@@ -68,6 +68,19 @@ $PAGE->navigation->add('EvaSys', new moodle_url('/blocks/evasys_sync/managerover
                 new moodle_url('/blocks/evasys_sync/managecategory.php', ['id' => $category->id])
         )->add(get_string('courses_with_manual_evals', 'block_evasys_sync'), $PAGE->url)->make_active();
 
+$mformdata = $cache->get('coursesfilter');
+if ($mformdata) {
+    $mform->set_data($mformdata);
+    if (!is_null($mformdata->searchcourse)) {
+        $table->filter_courses($mformdata->searchcourse);
+    }
+}
+
+if ($mformdata = $mform->get_data()) {
+    $cache->set('coursesfilter', $mformdata);
+    redirect(new moodle_url('/blocks/evasys_sync/managecategory_manual.php', ['id'=> $category->id]));
+}
+
 echo $OUTPUT->header();
 
 /* @var \block_evasys_sync\output\renderer $renderer  */
@@ -75,11 +88,7 @@ $renderer = $PAGE->get_renderer('block_evasys_sync');
 $renderer->print_evasys_category_header($evasyscategory);
 
 $mform->display();
-$searchvalues = $mform->get_data();
 
-if (!is_null($searchvalues)) {
-    $table->filter_courses($searchvalues->searchcourse);
-}
 
 $table->out(48, false);
 

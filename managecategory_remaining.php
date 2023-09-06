@@ -43,10 +43,9 @@ $PAGE->set_title(get_string('evasys_sync', 'block_evasys_sync'));
 
 require_capability('block/evasys_sync:managecourses', $category->get_context());
 
-$cachekey = 'manageroverview';
 $cache = cache::make('block_evasys_sync', 'mformdata');
 
-$data = $cache->get($cachekey);
+$data = $cache->get('manageroverview');
 
 $catids = array_merge($category->get_all_children_ids(), [$category->id]);
 
@@ -57,8 +56,8 @@ $action = optional_param('action', null, PARAM_ALPHAEXT);
 $forall = optional_param('all', 0, PARAM_INT);
 if ($action === 'seteval') {
     require_sesskey();
-    if ($forall == 1) {
-        $courses = $table->get_all_courses();
+    if ($forall === 1) {
+        $courses = array_keys(array_keys($table->get_all_courses()));
     } else {
         $courses = required_param_array('ids', PARAM_INT);
     }
@@ -67,7 +66,7 @@ if ($action === 'seteval') {
     if(empty($tasksofcurrentmodule)){
         $task = new evasys_bulk_task();
         $data = new stdClass();
-        $data->courses = $courses;
+        $data->courses = (array) $courses;
         $data->categoryid = $id;
         $task->set_custom_data($data);
         $task->set_userid($USER->id);
@@ -91,13 +90,26 @@ if (!$data) {
 $queuedtasks = \core\task\manager::get_adhoc_tasks(evasys_bulk_task::class);
 $tasksofcurrentmodule = array_filter($queuedtasks, fn($task) => $task->get_custom_data()->categoryid === $id);
 
-$mform = new \block_evasys_sync\managecategory_filter_table_form($PAGE->url, ['table' => $table]);
+$mform = new \block_evasys_sync\managecategory_filter_table_form($PAGE->url, ['table' => $table, 'id' => $id]);
 
 $PAGE->navigation->add('EvaSys', new moodle_url('/blocks/evasys_sync/manageroverview.php'))
         ->add(
                 get_string('evaluations', 'block_evasys_sync') . ' in ' . data_controller::get_name_for_semester($data->semester),
                 new moodle_url('/blocks/evasys_sync/managecategory.php', ['id' => $category->id])
         )->add(get_string('courses_without_evals', 'block_evasys_sync'), $PAGE->url)->make_active();
+
+$mformdata = $cache->get('coursesfilter');
+if ($mformdata) {
+    $mform->set_data($mformdata);
+    if (!is_null($mformdata->searchcourse)) {
+        $table->filter_courses($mformdata->searchcourse);
+    }
+}
+
+if ($mformdata = $mform->get_data()) {
+    $cache->set('coursesfilter', $mformdata);
+    redirect(new moodle_url('/blocks/evasys_sync/managecategory_remaining.php', ['id'=> $category->id]));
+}
 
 echo $OUTPUT->header();
 
@@ -106,11 +118,6 @@ $renderer = $PAGE->get_renderer('block_evasys_sync');
 $renderer->print_evasys_category_header($evasyscategory);
 
 $mform->display();
-$searchvalues = $mform->get_data();
-
-if (!is_null($searchvalues)) {
-    $table->filter_courses($searchvalues->searchcourse);
-}
 
 if(!empty($tasksofcurrentmodule)){
     $category = \core_course_category::get($id);
