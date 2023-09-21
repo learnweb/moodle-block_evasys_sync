@@ -65,6 +65,7 @@ class evasys_category extends persistent {
                 'message' => new \lang_string('invalidmode', 'block_evasys_sync')
             ),
             'mode_flags' => array(
+                'default' => 33,
                 'type' => PARAM_INT
             ),
             'standard_time_start' => array (

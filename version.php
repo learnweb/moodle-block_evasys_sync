@@ -18,6 +18,6 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'block_evasys_sync';
-$plugin->version = 2023080700;  // YYYYMMDDHH (year, month, day, 24-hr time).
+$plugin->version = 2023092100;  // YYYYMMDDHH (year, month, day, 24-hr time).
 $plugin->requires = 2022041900; // YYYYMMDDHH (This is the release version for Moodle 4.0).
 $plugin->maturity = MATURITY_RC;
