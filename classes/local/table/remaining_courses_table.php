@@ -44,15 +44,7 @@ class remaining_courses_table extends \table_sql {
 
     private bool $showbuttons;
 
-    private array $allcourses;
-
-    private string $where;
-
-    private string $fields;
-
-    private string $from;
-
-    private $params;
+    private $allcourseids;
 
     /**
      * Constructor for course_manager_table.
@@ -64,12 +56,12 @@ class remaining_courses_table extends \table_sql {
         $this->evasyscategory = $evasyscategory;
         $this->showbuttons = $showbuttons;
 
-        $this->fields = 'c.id as courseid, c.fullname as coursename, cfd.intvalue as semester';
+        $fields = 'c.id as courseid, c.fullname as coursename, cfd.intvalue as semester';
 
         $semesterfield = $DB->get_record('customfield_field',
             ['shortname' => 'semester', 'type' => 'semester'], '*', MUST_EXIST);
 
-        $this->from = '{course} c ' .
+        $from = '{course} c ' .
             'JOIN {customfield_data} cfd ON cfd.instanceid = c.id AND cfd.fieldid = :semesterfieldid ' .
             'LEFT JOIN {' . dbtables::EVAL_REQUESTS_COURSES . '} evreqc ON evreqc.courseid = c.id ' .
             'LEFT JOIN {' . dbtables::EVAL_COURSES . '} evalc ON evalc.courseid = c.id ';
@@ -91,12 +83,11 @@ class remaining_courses_table extends \table_sql {
             $where[] = 'c.fullname LIKE :cname';
             $params['cname'] = '%' . $DB->sql_like_escape($coursefullname) . '%';
         }
-        $this->where = join(" AND ", $where);
+        $where = join(" AND ", $where);
 
-        $this->params = $params;
-        $this->set_sql($this->fields, $this->from, $this->where, $this->params);
+        $this->allcourseids = $DB->get_records_sql('SELECT c.id as id FROM ' . $from . ' WHERE ' . $where, $params);
 
-        $this->allcourses = $DB->get_records_sql('SELECT c.id as courseid, c.fullname as coursename FROM ' . $this->from . ' WHERE ' . $this->where, $this->params);
+        $this->set_sql($fields, $from, $where, $params);
 
         $this->column_nosort = ['select', 'teacher', 'tools'];
         $this->define_columns(['select', 'courseid', 'teacher', 'tools']);
@@ -192,12 +183,30 @@ class remaining_courses_table extends \table_sql {
      *
      * @return array
      */
-    public function get_all_courses() {
+    public function get_all_displayed_courses() {
+        global $DB;
+
+        $allcourses = $DB->get_records_sql('SELECT c.id as courseid, c.fullname as coursename FROM ' . $this->sql->from . ' WHERE ' . $this->sql->where, $this->sql->params);
+
         $courses = array();
-        foreach ($this->allcourses as $course) {
+        foreach ($allcourses as $course) {
             $courses[$course->courseid] = $course->coursename;
         }
         return $courses;
+    }
+
+    /**
+     * Returns all ids of courses that do not have an evaluation yet
+     *
+     * @return array of courseids
+     */
+    public function get_all_remaining_courseids(): array
+    {
+        $ids = array();
+        foreach ($this->allcourseids as $courseid) {
+            $ids[] = $courseid->id;
+        }
+        return $ids;
     }
 
     /**
@@ -214,9 +223,9 @@ class remaining_courses_table extends \table_sql {
 
         list($insql, $inparams) = $DB->get_in_or_equal($courses, SQL_PARAMS_NAMED);
         $where = "c.id $insql";
-        $params = array_merge($this->params, $inparams);
+        $params = array_merge($this->sql->params, $inparams);
 
-        $where = $this->where . ' AND ' . $where;
-        $this->set_sql($this->fields, $this->from, $where, $params);
+        $where = $this->sql->where . ' AND ' . $where;
+        $this->set_sql($this->sql->fields, $this->sql->from, $where, $params);
     }
 }

@@ -57,7 +57,7 @@ $forall = optional_param('all', 0, PARAM_INT);
 if ($action === 'seteval') {
     require_sesskey();
     if ($forall === 1) {
-        $courses = array_keys(array_keys($table->get_all_courses()));
+        $courses = (array) $table->get_all_remaining_courseids();
     } else {
         $courses = required_param_array('ids', PARAM_INT);
     }
@@ -66,7 +66,7 @@ if ($action === 'seteval') {
     if(empty($tasksofcurrentmodule)){
         $task = new evasys_bulk_task();
         $data = new stdClass();
-        $data->courses = (array) $courses;
+        $data->courses = $courses;
         $data->categoryid = $id;
         $task->set_custom_data($data);
         $task->set_userid($USER->id);

@@ -51,12 +51,43 @@ $cache = cache::make('block_evasys_sync', 'mformdata');
 
 $data = $cache->get('manageroverview');
 
+$field = $DB->get_record('customfield_field', array('shortname' => 'semester', 'type' => 'semester'), '*', MUST_EXIST);
+$fieldcontroller = \core_customfield\field_controller::create($field->id);
+$datacontroller = \core_customfield\data_controller::create(0, null, $fieldcontroller);
+
+if (!$data) {
+    $data = new stdClass();
+    $data->semester = $datacontroller->get_default_value();
+}
+
+$catids = array_merge($category->get_all_children_ids(), [$category->id]);
+
+$errtable = new error_courses_table($catids, $data->semester ?? null, $evasyscategory, $search);
+$errtable->define_baseurl($PAGE->url);
+
+$reqtable = new course_manager_table($catids, $data->semester ?? null, $search);
+$reqtable->define_baseurl($PAGE->url);
+
+$remtable = new remaining_courses_table($catids, $data->semester ?? null, $evasyscategory,$search);
+$remtable->define_baseurl($PAGE->url);
+
+$mantable = new manual_courses_table($catids, $data->semester ?? null, $search);
+$mantable->define_baseurl($PAGE->url);
+
+$invtable = new invalid_courses_table($catids, $data->semester ?? null, $evasyscategory, $search);
+$invtable->define_baseurl($PAGE->url);
+
 $action = optional_param('action', null, PARAM_ALPHAEXT);
 $forall = optional_param('all', 0, PARAM_INT);
+
 switch ($action) {
     case 'clearerror':
         require_sesskey();
-        $ids = required_param_array('ids', PARAM_INT);
+        if ($forall === 1) {
+            $ids = $errtable->get_all_error_courseids();
+        } else {
+            $ids = required_param_array('ids', PARAM_INT);
+        }
         list($insql, $params) = $DB->get_in_or_equal($ids, SQL_PARAMS_NAMED);
         $params['time'] = time();
         $params['evasyscat'] = $evasyscategory->get('id');
@@ -67,7 +98,7 @@ switch ($action) {
     case 'seteval':
         require_sesskey();
         if ($forall === 1) {
-            // $courses = array_keys(array_keys($table->get_all_courses()));
+            $courses = $remtable->get_all_remaining_courseids();
         } else {
             $courses = required_param_array('ids', PARAM_INT);
         }
@@ -86,18 +117,6 @@ switch ($action) {
         }
         redirect($PAGE->url);
 }
-
-$field = $DB->get_record('customfield_field', array('shortname' => 'semester', 'type' => 'semester'), '*', MUST_EXIST);
-$fieldcontroller = \core_customfield\field_controller::create($field->id);
-$datacontroller = \core_customfield\data_controller::create(0, null, $fieldcontroller);
-
-if (!$data) {
-    $data = new stdClass();
-    $data->semester = $datacontroller->get_default_value();
-}
-
-$catids = array_merge($category->get_all_children_ids(), [$category->id]);
-
 
 $PAGE->navigation->add('EvaSys', new moodle_url('/blocks/evasys_sync/manageroverview.php'))
     ->add(
@@ -120,14 +139,18 @@ echo $OUTPUT->render_from_template('core/search_input', [
     'extraclasses' => 'mb-3',
     'inform' => false,
     'searchstring' => get_string('search_for_courses', 'block_evasys_sync'),
+    // Id as url param doesn't work, so set as hidden field.
     'hiddenfields' => [
         (object) ['type' => 'hidden', 'name' => 'id', 'value' => $id]
     ],
     'query' => $search
 ]);
 
-$errtable = new error_courses_table($catids, $data->semester ?? null, $evasyscategory, $search);
-$errtable->define_baseurl($PAGE->url);
+
+// Output search results ordered by tables the courses are in.
+
+$somethingfound = false;
+
 $errtable->setup();
 $errtable->query_db(48, false);
 $errtable->build_table();
@@ -135,12 +158,9 @@ $errtable->close_recordset();
 if ($errtable->started_output) {
     echo $OUTPUT->heading('<br>' . get_string('courses_with_errors', 'block_evasys_sync') . '<br>');
     $errtable->finish_output();
+    $somethingfound = true;
 }
 
-$somethingfound = false;
-
-$reqtable = new course_manager_table($catids, $data->semester ?? null, $search);
-$reqtable->define_baseurl($PAGE->url);
 $reqtable->setup();
 $reqtable->query_db(48, false);
 $reqtable->build_table();
@@ -151,8 +171,6 @@ if ($reqtable->started_output) {
     $somethingfound = true;
 }
 
-$remtable = new remaining_courses_table($catids, $data->semester ?? null, $evasyscategory,$search);
-$remtable->define_baseurl($PAGE->url);
 $remtable->setup();
 $remtable->query_db(48, false);
 $remtable->build_table();
@@ -163,21 +181,16 @@ if ($remtable->started_output) {
     $somethingfound = true;
 }
 
-$mantable = new manual_courses_table($catids, $data->semester ?? null, $search);
-$mantable->define_baseurl($PAGE->url);
 $mantable->setup();
 $mantable->query_db(48, false);
 $mantable->build_table();
 $mantable->close_recordset();
 if ($mantable->started_output) {
-    //echo $OUTPUT->heading('');
     echo $OUTPUT->heading('<br>' . get_string('courses_with_manual_evals', 'block_evasys_sync') . '<br>');
     $mantable->finish_output();
     $somethingfound = true;
 }
 
-$invtable = new invalid_courses_table($catids, $data->semester ?? null, $evasyscategory, $search);
-$invtable->define_baseurl($PAGE->url);
 $invtable->setup();
 $invtable->query_db(48, false);
 $invtable->build_table();

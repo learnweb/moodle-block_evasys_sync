@@ -44,6 +44,8 @@ class error_courses_table extends \table_sql {
 
     private array $str;
 
+    private array $allcourseids;
+
     /**
      * Constructor for course_manager_table.
      */
@@ -85,6 +87,8 @@ class error_courses_table extends \table_sql {
             $params['cname'] = '%' . $DB->sql_like_escape($coursefullname) . '%';
         }
         $where = join(" AND ", $where);
+
+        $this->allcourseids = $DB->get_records_sql('SELECT c.id as id FROM ' . $from . ' WHERE ' . $where, $params);
 
         $this->set_sql($fields, $from, $where, $params);
         $this->column_nosort = ['select', 'teacher', 'tools'];
@@ -170,5 +174,18 @@ class error_courses_table extends \table_sql {
                 get_string('clear_all_errors', 'block_evasys_sync'), 'post', false,
                 ['data-evasys-action' => 'clearerror', 'data-evasys-forall' => 1]
         ));
+    }
+
+    /**
+     * Returns all ids of courses that do not have an evaluation yet
+     *
+     * @return array
+     */
+    public function get_all_error_courseids() {
+        $ids = array();
+        foreach ($this->allcourseids as $courseid) {
+            $ids[] = $courseid->id;
+        }
+        return $ids;
     }
 }

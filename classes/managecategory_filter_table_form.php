@@ -40,7 +40,7 @@ class managecategory_filter_table_form extends moodleform {
         global $DB;
         $mform = $this->_form;
 
-        $courses = $this->_customdata['table']->get_all_courses();
+        $courses = $this->_customdata['table']->get_all_displayed_courses();
         $mform->addElement('autocomplete', 'coursesearches', get_string('searcharea','search'), $courses, array('multiple' => true));
 
         $searchbutton = $mform->createElement('submit', 'search', get_string('search', 'block_evasys_sync'));
