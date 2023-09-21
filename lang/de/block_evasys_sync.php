@@ -246,6 +246,8 @@ $string['teacher_can_change_evaluation'] = 'Lehrende können bestehende Evaluati
 $string['teacher_evaluation_change_needs_approval'] = 'Änderungen an bestehenden Evaluationen müssen von Ihnen bestätigt werden';
 
 $string['send_mail_to_teacher'] = 'Sende Bestätigungsmail an Lehrende';
+$string['send_mail_to_teacher_help'] = 'Falls ausgewählt, wird eine Benachrichtigungsmail an Lehrende geschickt, wenn über die evasys-Überblick-Seite eine Evaluation für ihren Kurs beantragt wird.';
+
 
 $string['search_for_courses'] = 'Nach Kursen suchen';
 

@@ -72,6 +72,7 @@ class evasys_category_edit_form extends moodleform {
         $mform->addElement('checkbox', 'send_mail_to_teacher',
                 get_string('send_mail_to_teacher', 'block_evasys_sync'));
         $mform->setDefault('send_mail_to_teacher', true);
+        $mform->addHelpButton('send_mail_to_teacher', 'send_mail_to_teacher', 'block_evasys_sync');
 
         // TODO automatic
         /*$mform->addElement('checkbox', 'teacher_evaluation_request_needs_approval',

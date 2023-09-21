@@ -257,6 +257,7 @@ $string['teacher_can_change_evaluation'] = 'Teachers can change existing evaluat
 $string['teacher_evaluation_change_needs_approval'] = 'Teacher\'s evaluation changes needs approval from you';
 
 $string['send_mail_to_teacher'] = 'Send mail to teacher';
+$string['send_mail_to_teacher_help'] = 'If checked, each time an evaluation is requested from the evasys overview page, a notification email will be sent to the teacher of the course.';
 
 $string['search_for_courses'] = 'Search for courses';
 
