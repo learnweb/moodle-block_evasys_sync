@@ -91,14 +91,19 @@ class evasys_category extends persistent {
             return $record;
         }
         // Loop through parents.
-        $parents = \core_course_category::get($categoryid)->get_parents();
-        for ($i = count($parents) - 1; $i >= 0; $i--) {
-            $record = evasys_category::get_record(['course_category' => $parents[$i]]);
-            // Stop if a parent has been assigned a custom record.
-            if ($record) {
-                return $record;
+        try{
+            $parents = \core_course_category::get($categoryid)->get_parents();
+            for ($i = count($parents) - 1; $i >= 0; $i--) {
+                $record = evasys_category::get_record(['course_category' => $parents[$i]]);
+                // Stop if a parent has been assigned a custom record.
+                if ($record) {
+                    return $record;
+                }
             }
+        }catch(\Exception $e){
+            // if category is not visible or cannot be accessed, just proceed as if no category was found.
         }
+
         return null;
     }
 
