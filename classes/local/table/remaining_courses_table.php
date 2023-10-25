@@ -168,12 +168,12 @@ class remaining_courses_table extends \table_sql {
         }
 
         echo $OUTPUT->render(new \single_button(new moodle_url($PAGE->url),
-                get_string('set_default_eval_for_selected', 'block_evasys_sync'), 'post', \single_button::BUTTON_SECONDARY,
+                get_string('set_default_eval_for_selected', 'block_evasys_sync'), 'post', false,
                 ['data-evasys-action' => 'seteval']
         ));
 
         echo $OUTPUT->render(new \single_button(new moodle_url($PAGE->url),
-                 get_string('set_default_eval_for_all', 'block_evasys_sync'), 'post', \single_button::BUTTON_SECONDARY,
+                 get_string('set_default_eval_for_all', 'block_evasys_sync'), 'post', false,
                 ['data-evasys-action' => 'seteval', 'data-evasys-forall' => 1]
         ));
     }
