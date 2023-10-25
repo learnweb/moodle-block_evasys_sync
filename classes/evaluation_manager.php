@@ -109,11 +109,13 @@ class evaluation_manager {
             $data->courseshort = $course->shortname;
             $data->coursefull = $course->fullname;
 
-            foreach ($teachers as $teacher) {
-                email_to_user($teacher, $coordinatoruser,
+            if ($category->send_mail_to_teacher()) {
+                foreach ($teachers as $teacher) {
+                    email_to_user($teacher, $coordinatoruser,
                         get_string('notify_teacher_email_subject', 'block_evasys_sync', $data),
                         get_string('notify_teacher_email_body', 'block_evasys_sync', $data)
-                );
+                    );
+                }
             }
 
             self::clear_error($course->id);

@@ -43,6 +43,7 @@ class evasys_category extends persistent {
     const MASK_AUTOMATIC_TASK_CREATION = 1 << 2;
     const MASK_TEACHER_CAN_CHANGE_EVALUATION  = 1 << 3;
     const MASK_EVALUATION_CHANGE_NEEDS_APPROVAL = 1 << 4;
+    const MASK_SEND_MAIL_TO_TEACHER = 1 << 5;
 
     /**
      * Return the definition of the properties of this model.
@@ -122,6 +123,10 @@ class evasys_category extends persistent {
 
     public function can_teacher_request_evaluation() : bool {
         return $this->get('mode_flags') & self::MASK_TEACHER_CAN_REQUEST_EVALUATION;
+    }
+
+    public function send_mail_to_teacher() : bool {
+        return $this->get('mode_flags') & self::MASK_SEND_MAIL_TO_TEACHER;
     }
 
     public function teacher_evaluation_request_needs_approval() : bool {

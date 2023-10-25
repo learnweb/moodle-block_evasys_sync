@@ -69,6 +69,11 @@ class evasys_category_edit_form extends moodleform {
                 get_string('teacher_can_request_evaluation', 'block_evasys_sync'));
         $mform->setDefault('teacher_can_request_evaluation', true);
 
+        $mform->addElement('checkbox', 'send_mail_to_teacher',
+                get_string('send_mail_to_teacher', 'block_evasys_sync'));
+        $mform->setDefault('send_mail_to_teacher', true);
+        $mform->addHelpButton('send_mail_to_teacher', 'send_mail_to_teacher', 'block_evasys_sync');
+
         // TODO automatic
         /*$mform->addElement('checkbox', 'teacher_evaluation_request_needs_approval',
                 get_string('teacher_evaluation_request_needs_approval', 'block_evasys_sync'));
@@ -91,6 +96,7 @@ class evasys_category_edit_form extends moodleform {
             $mform->setDefault('standard_time_end', $this->evasys_category->get('standard_time_end'));
         }
         $mform->setDefault('teacher_can_request_evaluation', $this->evasys_category->can_teacher_request_evaluation());
+        $mform->setDefault('send_mail_to_teacher', $this->evasys_category->send_mail_to_teacher());
         // $mform->setDefault('teacher_evaluation_request_needs_approval', $this->evasys_category->teacher_evaluation_request_needs_approval());
         // $mform->setDefault('automatic_task_creation', $this->evasys_category->is_automatic());
 
@@ -108,6 +114,9 @@ class evasys_category_edit_form extends moodleform {
         $flags = 0;
         if ($data->teacher_can_request_evaluation ?? false) {
             $flags |= evasys_category::MASK_TEACHER_CAN_REQUEST_EVALUATION;
+        }
+        if ($data->send_mail_to_teacher ?? false) {
+            $flags |= evasys_category::MASK_SEND_MAIL_TO_TEACHER;
         }
         if ($data->teacher_evaluation_needs_approval ?? false) {
             $flags |= evasys_category::MASK_EVALUATION_REQUEST_NEEDS_APPROVAL;
