@@ -532,5 +532,17 @@ function xmldb_block_evasys_sync_upgrade ($oldversion) {
         upgrade_block_savepoint(true, 2022092400, 'evasys_sync');
     }
 
+    if ($oldversion < 2023092100) {
+        // Changing default of evasyscategory mode_flags
+        $table = new xmldb_table('block_evasys_sync_categories');
+        $field = new xmldb_field('mode_flags', XMLDB_TYPE_INTEGER, 10, null, XMLDB_NOTNULL, null, 33, 'category_mode');
+
+        // Launch change of type for field mode_flags.
+        $dbman->change_field_default($table, $field);
+
+        // Evasys_sync savepoint reached.
+        upgrade_block_savepoint(true, 2023092100, 'evasys_sync');
+    }
+
     return true;
 }

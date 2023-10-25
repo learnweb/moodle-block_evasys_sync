@@ -74,7 +74,7 @@ if (has_capability('moodle/site:config', context_system::instance())) {
             } else {
                 $record->category_mode = 0;
             }
-            $record->mode_flags = 0;
+            //$record->mode_flags = 0;
             $persistent = new \block_evasys_sync\evasys_category(0, $record);
             $persistent->create();
             if ($evasysroleid) {
