@@ -46,18 +46,6 @@ $cache = cache::make('block_evasys_sync', 'mformdata');
 
 $data = $cache->get($cachekey);
 
-$action = optional_param('action', null, PARAM_ALPHAEXT);
-if ($action === 'clearerror') {
-    require_sesskey();
-    $ids = required_param_array('ids', PARAM_INT);
-    list($insql, $params) = $DB->get_in_or_equal($ids, SQL_PARAMS_NAMED);
-    $params['time'] = time();
-    $params['evasyscat'] = $evasyscategory->get('id');
-    $DB->execute('DELETE FROM {' . \block_evasys_sync\dbtables::ERRORS . '} ' .
-        " WHERE evasyscategoryid = :evasyscat AND id $insql", $params);
-    redirect($PAGE->url);
-}
-
 $field = $DB->get_record('customfield_field', array('shortname' => 'semester', 'type' => 'semester'), '*', MUST_EXIST);
 $fieldcontroller = \core_customfield\field_controller::create($field->id);
 $datacontroller = \core_customfield\data_controller::create(0, null, $fieldcontroller);
@@ -71,6 +59,23 @@ $catids = array_merge($category->get_all_children_ids(), [$category->id]);
 
 $table = new error_courses_table($catids, $data->semester ?? null, $evasyscategory, $data->coursename ?? null);
 $table->define_baseurl($PAGE->url);
+
+$action = optional_param('action', null, PARAM_ALPHAEXT);
+$forall = optional_param('all', 0, PARAM_INT);
+if ($action === 'clearerror') {
+    require_sesskey();
+    if ($forall === 1) {
+        $ids = $table->get_all_error_courseids();
+    } else {
+        $ids = required_param_array('ids', PARAM_INT);
+    }
+    list($insql, $params) = $DB->get_in_or_equal($ids, SQL_PARAMS_NAMED);
+    $params['time'] = time();
+    $params['evasyscat'] = $evasyscategory->get('id');
+    $DB->execute('DELETE FROM {' . \block_evasys_sync\dbtables::ERRORS . '} ' .
+        " WHERE evasyscategoryid = :evasyscat AND id $insql", $params);
+    redirect($PAGE->url);
+}
 
 $PAGE->navigation->add('EvaSys', new moodle_url('/blocks/evasys_sync/manageroverview.php'))
         ->add(

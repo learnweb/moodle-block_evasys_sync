@@ -257,6 +257,7 @@ $string['teacher_can_change_evaluation'] = 'Teachers can change existing evaluat
 $string['teacher_evaluation_change_needs_approval'] = 'Teacher\'s evaluation changes needs approval from you';
 
 $string['search_for_courses'] = 'Search for courses';
+$string['search'] = 'Search';
 
 $string['evasys_settings_for'] = 'Evasys settings for {$a}';
 $string['no_default_period_set'] = 'No default evaluation period has been set.';
@@ -303,3 +304,6 @@ $string['no_evasys_course_found'] = 'No matching EvaSys-Course found! Please con
 $string['not_inside_evaluation_category'] = 'This course isn\'t inside any evaluation category! Please contact the Learnweb support.';
 
 $string["running_crontask"] = 'The synchronization of the selected courses of {$a} to evasys are currently being processed. This may take a few minutes. Please wait and reload the page.';
+
+$string['searchresults'] = 'Search results';
+$string['no_searchresults_found'] = 'No search results found';

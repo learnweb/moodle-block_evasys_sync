@@ -44,6 +44,8 @@ class remaining_courses_table extends \table_sql {
 
     private bool $showbuttons;
 
+    private $allcourseids;
+
     /**
      * Constructor for course_manager_table.
      */
@@ -83,7 +85,10 @@ class remaining_courses_table extends \table_sql {
         }
         $where = join(" AND ", $where);
 
+        $this->allcourseids = $DB->get_records_sql('SELECT c.id as id FROM ' . $from . ' WHERE ' . $where, $params);
+
         $this->set_sql($fields, $from, $where, $params);
+
         $this->column_nosort = ['select', 'teacher', 'tools'];
         $this->define_columns(['select', 'courseid', 'teacher', 'tools']);
         $this->define_headers([
@@ -140,7 +145,7 @@ class remaining_courses_table extends \table_sql {
         if (!$this->evasyscategory->default_period_set() || !$this->showbuttons) {
             return '';
         }
-        return $OUTPUT->render(new \single_button(new moodle_url($PAGE->url, ['action' => 'seteval', 'ids[]' => $row->courseid]),
+        return $OUTPUT->render(new \single_button(new moodle_url($PAGE->url, ['action' => 'seteval', 'ids[]' => $row->courseid, 'id' => $this->evasyscategory->get('course_category')]),
                 get_string('set_default_eval', 'block_evasys_sync')));
     }
 
@@ -154,7 +159,7 @@ class remaining_courses_table extends \table_sql {
     }
 
     public function wrap_html_finish() {
-        global $OUTPUT;
+        global $OUTPUT, $PAGE;
         parent::wrap_html_finish();
         echo "<br>";
 
@@ -162,14 +167,65 @@ class remaining_courses_table extends \table_sql {
             return;
         }
 
-        echo $OUTPUT->render(new \single_button(new moodle_url(''),
+        echo $OUTPUT->render(new \single_button(new moodle_url($PAGE->url),
                 get_string('set_default_eval_for_selected', 'block_evasys_sync'), 'post', false,
                 ['data-evasys-action' => 'seteval']
         ));
 
-        /*echo $OUTPUT->render(new \single_button(new moodle_url(''),
-                get_string('set_default_eval_for_all', 'block_evasys_sync'), 'post', false,
-                ['data-evasys-action' => 'sseteval', 'data_evasys-forall' => 1]
-        ));*/
+        echo $OUTPUT->render(new \single_button(new moodle_url($PAGE->url),
+                 get_string('set_default_eval_for_all', 'block_evasys_sync'), 'post', false,
+                ['data-evasys-action' => 'seteval', 'data-evasys-forall' => 1]
+        ));
+    }
+
+    /**
+     * Returns all courses that are displayed in this table by courseid => coursename
+     *
+     * @return array
+     */
+    public function get_all_displayed_courses() {
+        global $DB;
+
+        $allcourses = $DB->get_records_sql('SELECT c.id as courseid, c.fullname as coursename FROM ' . $this->sql->from . ' WHERE ' . $this->sql->where, $this->sql->params);
+
+        $courses = array();
+        foreach ($allcourses as $course) {
+            $courses[$course->courseid] = $course->coursename;
+        }
+        return $courses;
+    }
+
+    /**
+     * Returns all ids of courses that do not have an evaluation yet
+     *
+     * @return array of courseids
+     */
+    public function get_all_remaining_courseids(): array
+    {
+        $ids = array();
+        foreach ($this->allcourseids as $courseid) {
+            $ids[] = $courseid->id;
+        }
+        return $ids;
+    }
+
+    /**
+     * Filters the table by using set_sql()
+     *
+     * @param $courses array of type courseid => coursename
+     * @return void
+     * @throws \coding_exception
+     * @throws \dml_exception
+     */
+    public function filter_courses($courses) {
+
+        global $DB;
+
+        list($insql, $inparams) = $DB->get_in_or_equal($courses, SQL_PARAMS_NAMED);
+        $where = "c.id $insql";
+        $params = array_merge($this->sql->params, $inparams);
+
+        $where = $this->sql->where . ' AND ' . $where;
+        $this->set_sql($this->sql->fields, $this->sql->from, $where, $params);
     }
 }
