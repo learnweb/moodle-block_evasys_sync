@@ -266,6 +266,8 @@ $string['set_default_eval_for_selected'] = 'Standardevaluation für alle ausgew�
 $string['set_default_eval_for_all'] = 'Standardevaluation für alle Kurse planen';
 $string['set_default_period_for_default_eval'] = 'Legen Sie einen Standardevaluationszeitraum fest, um Standardevaluationen planen zu können.';
 
+$string['set_re_eval'] = 'Evaluation erneut ausführen';
+
 $string['clear_error'] = 'Fehler löschen';
 $string['clear_selected_errors'] = 'Ausgewählte Fehler löschen';
 $string['clear_all_errors'] = 'Alle Fehler löschen';

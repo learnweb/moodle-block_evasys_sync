@@ -22,6 +22,7 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use block_evasys_sync\task\evasys_bulk_task;
 use customfield_semester\data_controller;
 
 require_once(__DIR__ . '/../../config.php');
@@ -45,6 +46,27 @@ $cache = cache::make('block_evasys_sync', 'mformdata');
 
 $data = $cache->get($cachekey);
 
+$action = optional_param('action', null, PARAM_ALPHAEXT);
+if ($action === 'setreeval') {
+    require_sesskey();
+    $courses = required_param_array('ids', PARAM_INT);
+    $queuedtasks = \core\task\manager::get_adhoc_tasks(evasys_bulk_task::class);
+    $tasksofcurrentmodule = array_filter($queuedtasks, fn($task) => $task->get_custom_data()->categoryid === $id);
+    if(empty($tasksofcurrentmodule)){
+        $task = new evasys_bulk_task();
+        $data = new stdClass();
+        $data->courses = $courses;
+        $data->categoryid = $id;
+        $data->reeval = true;
+        $task->set_custom_data($data);
+        $task->set_userid($USER->id);
+        \core\task\manager::queue_adhoc_task($task, true);
+    } else {
+        \core\notification::warning(get_string("running_crontask", "block_evasys_sync"));
+    }
+    redirect($PAGE->url);
+}
+
 $field = $DB->get_record('customfield_field', array('shortname' => 'semester', 'type' => 'semester'), '*', MUST_EXIST);
 $fieldcontroller = \core_customfield\field_controller::create($field->id);
 $datacontroller = \core_customfield\data_controller::create(0, null, $fieldcontroller);
@@ -57,7 +79,7 @@ if (!$data) {
 $catids = array_merge($category->get_all_children_ids(), [$category->id]);
 
 $table = new \block_evasys_sync\local\table\manual_courses_table($catids, $data->semester ?? null,
-        $data->coursename ?? null);
+        $evasyscategory, $data->coursename ?? null);
 $table->define_baseurl($PAGE->url);
 
 $PAGE->navigation->add('EvaSys', new moodle_url('/blocks/evasys_sync/manageroverview.php'))
