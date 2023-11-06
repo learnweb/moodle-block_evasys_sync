@@ -49,6 +49,9 @@ $data = $cache->get('manageroverview');
 
 $catids = array_merge($category->get_all_children_ids(), [$category->id]);
 
+$queuedtasks = \core\task\manager::get_adhoc_tasks(evasys_bulk_task::class);
+$tasksofcurrentmodule = array_filter($queuedtasks, fn($task) => $task->get_custom_data()->categoryid === $id);
+
 $table = new remaining_courses_table($catids, $data->semester ?? null, $evasyscategory, $data->coursename ?? null, empty($tasksofcurrentmodule));
 $table->define_baseurl($PAGE->url);
 
