@@ -26,6 +26,7 @@ Example context (json):
     "enddisabled": false,
     "startoption": false,
     "onlyend": false,
+    "datedisabled": false,
     "disablesubmit": false,
     "coursemappingenabled": true,
     "nostudents": false,
@@ -39,6 +40,7 @@ Example context (json):
     <input type="hidden" name="sesskey" value="{{sesskey}}">
     <input type="hidden" name="courseid" value="{{courseid}}">
     {{#onlyend}}<input id="only_end" type="hidden" name="only_end" value="true">{{/onlyend}}
+    {{#datedisabled}}<input id="datedisabled" type="hidden" name="datedisabled" value="true">{{/datedisabled}}
     {{#nostudents}}<span style="color: orange; ">{{# str}}syncnostudents, block_evasys_sync{{/str}}</span>{{/nostudents}}
     {{#courses}}
         {{#.}}
@@ -121,7 +123,27 @@ Example context (json):
             <input id='evasyssubmitbutton' class="in_box_button" type="submit" value="{{# str}}invitestudents, block_evasys_sync{{/str}}" {{#disablesubmit}}disabled{{/disablesubmit}}/>
         {{/direct}}
         {{#direct}}
-            <input id='evasyssubmitbutton' class="in_box_button" type="submit" value="{{# str}}planorstartevaluation, block_evasys_sync{{/str}}" {{#disablesubmit}}disabled{{/disablesubmit}}/>
+            <input id='evasyssubmitbutton' class="in_box_button" type="submit" value="{{# str}}planorstartevaluation, block_evasys_sync{{/str}}" {{#datedisabled}}data-toggle="modal" data-target="#confirmmodal"{{/datedisabled}}{{#disablesubmit}}disabled{{/disablesubmit}}/>
         {{/direct}}
+        <div class="modal fade" id="confirmmodal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                ...
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save changes</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
     {{/showcontrols}}
 </form>
