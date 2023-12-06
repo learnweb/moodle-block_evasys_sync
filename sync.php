@@ -36,17 +36,22 @@ $returnurl->param('evasyssynccheck', 1);
 if (!optional_param('activate_standard', false, PARAM_BOOL)) {
 
     if (optional_param('datedisabled', false, PARAM_BOOL)) {
-
-        $record = course_evaluation_allocation::get_record_by_course($courseid);
-        $startdate = new \DateTime('@' . $record->get('startdate'), \core_date::get_server_timezone_object());
-        $enddate = new \DateTime('@' . $record->get('enddate'), \core_date::get_server_timezone_object());
+        // We already have an evaluation request for this course: fetch the start- and enddates
+        $sql = 'SELECT v.id, v.starttime, v.endtime, max(v.timemodified) as time FROM {' . \block_evasys_sync\dbtables::EVAL_VERANSTS . '} v INNER JOIN ' .
+            '{' . \block_evasys_sync\dbtables::EVAL_COURSES . '} c on v.evalid=c.evalid WHERE c.courseid = :courseid ORDER BY time DESC';
+        $record = $DB->get_record_sql($sql, ['courseid' => $courseid]);
+        // $record = course_evaluation_allocation::get_record_by_course($courseid);
+        $startdate = new \DateTime('@' . $record->starttime, \core_date::get_server_timezone_object());
+        $enddate = new \DateTime('@' . $record->endtime, \core_date::get_server_timezone_object());
 
     } else {
 
         if (optional_param('only_end', false, PARAM_BOOL)) {
             // Existing start date should not be changed; just the end date. Fetch start date from record.
-            $record = course_evaluation_allocation::get_record_by_course($courseid);
-            $startdate = new \DateTime('@' . $record->get('startdate'), \core_date::get_server_timezone_object());
+            $sql = 'SELECT v.id, v.starttime, max(v.timemodified) as time FROM {' . \block_evasys_sync\dbtables::EVAL_VERANSTS . '} v INNER JOIN ' .
+                '{' . \block_evasys_sync\dbtables::EVAL_COURSES . '} c on v.evalid=c.evalid WHERE c.courseid = :courseid ORDER BY time DESC';
+            $record = $DB->get_record_sql($sql, ['courseid' => $courseid]);
+            $startdate = new \DateTime('@' . $record->starttime, \core_date::get_server_timezone_object());
         } else {
             $startyear = required_param('year_start', PARAM_TEXT);
             $startmonth = date_decoder::decode_from_localised_string(required_param('month_start', PARAM_TEXT));
@@ -116,6 +121,7 @@ try {
     \block_evasys_sync\evaluation_manager::clear_error($courseid);
 
     if ($newparticipantsadded || $datenew) {
+
         if ($datenew) {
             // Only send an email if it's the first time requesting this evaluation
             $evasyssynchronizer->notify_evaluation_responsible_person($dates, $newparticipantsadded, $datenew);
@@ -129,7 +135,12 @@ try {
         ));
         $event->trigger();
 
-        $returnurl->param('status', 'success');
+        if ($datenew) {
+            $returnurl->param('status', 'success');
+        } else {
+            $returnurl->param('status', 'successandinfo');
+        }
+
         redirect($returnurl, get_string('syncsucessful', 'block_evasys_sync'));
         exit();
     } else {

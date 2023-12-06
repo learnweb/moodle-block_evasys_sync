@@ -98,6 +98,10 @@ $string['content_success'] = "Your evaluation coordinator has been instructed to
     "However, you have done your part.".
     "The coordinator will process your request in accordance with the regulations of your organization.";
 
+$string['content_successandinfo'] = "Your evaluation coordinatior has been instructed to start the evaluation again.<br />" .
+    "There already exists an evaluation reqest for this course; there have just been participants added to the evaluation.<br />>" .
+    "In order to change the dates of the evaluation, please contact your evaluation coordinator.";
+
 $string['content_uptodate'] = "Your evaluation coordinator has already been instructed to start the evaluation. <br />" .
     "If you have questions regarding the status of the evaluation please contact your evaluation coordinator.";
 
