@@ -24,6 +24,7 @@
 namespace block_evasys_sync\local\table;
 
 use block_evasys_sync\dbtables;
+use block_evasys_sync\evasys_category;
 use block_evasys_sync\local\entity\evaluation_state;
 use moodle_url;
 
@@ -40,12 +41,19 @@ require_once($CFG->libdir . '/tablelib.php');
  */
 class manual_courses_table extends \table_sql {
 
+    private evasys_category $evasyscategory;
+
+    private bool $showbuttons;
+
     /**
      * Constructor for course_manager_table.
      */
-    public function __construct($categoryids, $semester, $coursefullname = null) {
+    public function __construct($categoryids, $semester, evasys_category $evasyscategory, $coursefullname = null, $showbuttons = true) {
         parent::__construct('block_evasys_sync-course_manager_table');
         global $DB;
+
+        $this->evasyscategory = $evasyscategory;
+        $this->showbuttons = $showbuttons;
 
         $fields = 'c.id as courseid, c.fullname as course, ' .
             'cfd.intvalue as semester,' .
@@ -165,6 +173,16 @@ class manual_courses_table extends \table_sql {
      * @return string
      */
     public function col_tools($row) {
-        return '';
+        global $PAGE, $OUTPUT;
+        if (!$this->evasyscategory->default_period_set() || !$this->showbuttons) {
+            return '';
+        }
+        return $OUTPUT->render(new \single_button(new moodle_url($PAGE->url, ['action' => 'setreeval', 'ids[]' => $row->courseid, 'id' => $this->evasyscategory->get('course_category')]),
+            get_string('set_re_eval', 'block_evasys_sync'), 'post', \single_button::BUTTON_SECONDARY, [
+            'data-modal' => 'confirmation',
+            'data-modal-title-str' => json_encode(['confirm', 'core']),
+            'data-modal-content-str' => json_encode(['areyousure']),
+            'data-modal-yes-button-str' => json_encode(['confirm', 'core'])
+        ]));
     }
 }
