@@ -38,7 +38,7 @@ if (!optional_param('activate_standard', false, PARAM_BOOL)) {
     if (optional_param('datedisabled', false, PARAM_BOOL)) {
         // We already have an evaluation request for this course: fetch the start- and enddates
         $sql = 'SELECT v.id, v.starttime, v.endtime, max(v.timemodified) as time FROM {' . \block_evasys_sync\dbtables::EVAL_VERANSTS . '} v INNER JOIN ' .
-            '{' . \block_evasys_sync\dbtables::EVAL_COURSES . '} c on v.evalid=c.evalid WHERE c.courseid = :courseid ORDER BY time DESC';
+            '{' . \block_evasys_sync\dbtables::EVAL_COURSES . '} c on v.evalid=c.evalid WHERE c.courseid = :courseid GROUP BY v.id, v.starttime ORDER BY time DESC';
         $record = $DB->get_record_sql($sql, ['courseid' => $courseid]);
         // $record = course_evaluation_allocation::get_record_by_course($courseid);
         $startdate = new \DateTime('@' . $record->starttime, \core_date::get_server_timezone_object());
@@ -49,7 +49,7 @@ if (!optional_param('activate_standard', false, PARAM_BOOL)) {
         if (optional_param('only_end', false, PARAM_BOOL)) {
             // Existing start date should not be changed; just the end date. Fetch start date from record.
             $sql = 'SELECT v.id, v.starttime, max(v.timemodified) as time FROM {' . \block_evasys_sync\dbtables::EVAL_VERANSTS . '} v INNER JOIN ' .
-                '{' . \block_evasys_sync\dbtables::EVAL_COURSES . '} c on v.evalid=c.evalid WHERE c.courseid = :courseid ORDER BY time DESC';
+                '{' . \block_evasys_sync\dbtables::EVAL_COURSES . '} c on v.evalid=c.evalid WHERE c.courseid = :courseid GROUP BY v.id, v.starttime ORDER BY time DESC';
             $record = $DB->get_record_sql($sql, ['courseid' => $courseid]);
             $startdate = new \DateTime('@' . $record->starttime, \core_date::get_server_timezone_object());
         } else {
