@@ -365,7 +365,7 @@ class evasys_synchronizer {
      * Set time period for evaluation.
      *
      * @param array $dates expects keys `start' and `end' with timestamp values.
-     * @return bool true if the dates have changed or if the record is new.
+     * @return bool true if the date record is new.
      * @throws \coding_exception
      * @throws \dml_missing_record_exception
      */
@@ -375,10 +375,11 @@ class evasys_synchronizer {
         if ($usestandardtime) {
             $dates = self::get_standard_timemode($course->category);
         }
-        $changed = false;
+        $new = false;
         $data = evaluation::for_course($this->courseid);
         if (!$data) {
             $data = new evaluation();
+            $new = true;
             $data->courses = [$this->courseid];
             foreach ($this->courseinformation as $lsfid => $information) {
                 $data->evaluations[$lsfid] = (object) [
@@ -392,7 +393,6 @@ class evasys_synchronizer {
         } else {
             foreach ($data->evaluations as &$evaluation) {
                 if ($evaluation->start != $dates['start'] || $evaluation->end != $dates['end']) {
-                    $changed = true;
                     $evaluation->start = $dates['start'];
                     $evaluation->end = $dates['end'];
                 }
@@ -400,7 +400,7 @@ class evasys_synchronizer {
         }
         $data->save();
 
-        return $changed;
+        return $new;
     }
 
     /**

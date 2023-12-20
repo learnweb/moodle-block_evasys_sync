@@ -20,6 +20,7 @@ define(['jquery', 'core/notification', 'core/str'], function ($, notification, s
         $('[name=year_end]').last()[0].selectedIndex = end.getFullYear() - 2000;
         if ($('#reactivate').length > 0) {
             endenabled = !$('[name=minute_end]')[0].disabled;
+            datedisabled = $('[name=minute_end]')[0].disabled && $('[name=minute_start]')[0].disabled;
             $(document).on("change", "#reactivate", function() {
                 if (this.checked) {
                     // Ask for confirmation, then enable all fields related to re-invitation.
@@ -51,6 +52,9 @@ define(['jquery', 'core/notification', 'core/str'], function ($, notification, s
                                 if ($('#only_end').length > 0) {
                                     $('#only_end').prop("value", false);
                                 }
+                                if ($('#datedisabled').length > 0) {
+                                    $('#datedisabled').prop("value", false);
+                                }
                                 if ($('#evasyssubmitbutton').length > 0) {
                                     $('#evasyssubmitbutton').prop("disabled", false);
                                     $('#evasyssubmitbutton').val(s[4]);
@@ -80,6 +84,9 @@ define(['jquery', 'core/notification', 'core/str'], function ($, notification, s
                     }
                     if ($('#only_end').length > 0) {
                         $('#only_end').prop("value", true);
+                    }
+                    if ($('#datedisabled').length > 0) {
+                        $('#datedisabled').prop("value", true);
                     }
                     if ($('#evasyssubmitbutton').length > 0) {
                         if (!endenabled) {
