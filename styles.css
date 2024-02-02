@@ -41,3 +41,11 @@
 #page-admin-blocks-evasys_sync-adminsettings #course_category_table .felement {
     margin-left: 0;
 }
+
+.mform fieldset.grouponly {
+    border-bottom: none;
+}
+
+.evasys-request-mform #fgroup_id_buttonar {
+    margin: 0;
+}

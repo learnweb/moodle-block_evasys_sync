@@ -55,7 +55,7 @@ $string['add_course_header'] = "Wählen Sie die LSF-Veranstaltungen, die gemeins
 $string['coursename'] = "Kursname";
 $string['associated'] = "zugeordnet";
 $string['forbidden'] = "Die Aktion ist im aktuellen Status des Kurses nicht zulässig";
-$string['hisconnection_error'] = "Um diese Funktion nutzen zu können, muss das lokale Plugin lsf_unification installiert werden";
+$string['nohisconnection_error'] = "Um diese Funktion nutzen zu können, muss das lokale Plugin lsf_unification installiert werden";
 $string['maincoursepredefined'] = 'Vordefinierte Zuordnung.';
 $string['maincoursepredefined_help'] = 'Dieser LSF-Kurs ist fest zugeordnet, da dies der entsprechende Learnweb-Kurs ist. Falls Sie dies für nicht korrekt halten, wenden Sie sich bitte an den Learnweb-Support.';
 
@@ -215,10 +215,83 @@ $string['November'] = 'November';
 $string['December'] = 'Dezember';
 
 // From...to.
-$string['evaluationperiod'] = 'Evaluationszeitraum:';
-$string['startondate'] = 'Zeitraum planen von';
+$string['evaluationperiod'] = 'Evaluationszeitraum';
+$string['evaluationperiod_for'] = 'Evaluationszeitraum für "{$a}"';
+$string['startondate'] = 'Von';
 $string['endondate'] = 'bis';
+$string['evaluations'] = 'Evaluationen';
+$string['title'] = 'Titel';
 
 // Notices.
 $string['evalperiodsetnotice'] = 'Evaluationszeitraum gesetzt';
 $string['emailsentnotice'] = 'Evaluation beauftragt';
+
+$string['apply'] = 'Anwenden';
+
+$string['useoneevalperiod'] = 'Den gleichen Evaluationszeitraum für alle Veranstaltungen nutzen';
+$string['eval_additional_lsfcourses'] = 'Ich möchte mehrere Veranstaltungen auf einmal evaluieren lassen';
+$string['eval_additional_courses'] = 'Ich möchte, dass Studierende mehrerer (Learnweb-)Kurse zusammen diese Veranstaltung evaluieren';
+$string['course_units'] = 'Veranstaltungen';
+$string['use_default_evalperiod'] = 'Den Standardevaluationszeitraum verwenden:<br>{$a}';
+$string['err_endbeforestart'] = 'Der Endzeitpunkt liegt vor dem Startzeitpunkt';
+$string['dont_evaluate_course'] = 'Dieser Kurs soll NICHT evaluiert werden';
+
+$string['standart_time_start'] = 'Start des Standardevaluationszeitraums';
+$string['standart_time_end'] = 'Ende des Standardevaluationszeitraums';
+
+$string['teacher_can_request_evaluation'] = 'Lehrende können Evaluationen beantragen';
+$string['teacher_evaluation_request_needs_approval'] = 'Evaluationsanträge von Lehrenden müssen von Ihnen bestätigt werden';
+$string['automatic_task_creation'] = 'Geplante Vorgänge werden automatisch in EvaSys erstellt.';
+$string['teacher_can_change_evaluation'] = 'Lehrende können bestehende Evaluationen verändern';
+$string['teacher_evaluation_change_needs_approval'] = 'Änderungen an bestehenden Evaluationen müssen von Ihnen bestätigt werden';
+
+$string['send_mail_to_teacher'] = 'Sende Bestätigungsmail an Lehrende';
+$string['send_mail_to_teacher_help'] = 'Falls ausgewählt, wird eine Benachrichtigungsmail an Lehrende geschickt, wenn über die evasys-Überblick-Seite eine Evaluation für ihren Kurs beantragt wird.';
+
+$string['search_for_courses'] = 'Nach Kursen suchen';
+
+$string['evasys_settings_for'] = 'Evasys-Einstellungen für {$a}';
+$string['no_default_period_set'] = 'Es wurde kein Standardevaluationszeitraum festgelegt.';
+$string['default_period_set_from_to'] = 'Der Standardevaluationszeitraum wurde von <b>{$a->start}</b> bis <b>{$a->end}</b> gesetzt.';
+$string['teachers_can_request_evaluation'] = 'Lehrende <b>können</b> Evaluationen beantragen.';
+$string['teachers_cannot_request_evaluation'] = 'Lehrende können <b>keine</b> Evaluationen beantragen.';
+
+$string['courses_with_errors'] = 'Kurse mit Fehlern!';
+$string['courses_with_requests'] = 'Kurse mit ausstehenden Evaluationsanträgen';
+$string['courses_with_automatic_evals'] = 'Kurse mit automatischen Evaluationen';
+$string['courses_with_manual_evals'] = 'Kurse mit bereits beantragten Evaluationen';
+$string['courses_without_evals'] = 'Kurse ohne Evaluationen';
+$string['courses_without_idnumber'] = 'Kurse, bei denen keine Evaluation möglich ist (fehlende Kurs-ID)';
+$string['courses_without_idnumber_help'] = 'Diese Kurse haben keine ID gesetzt. Jeder Kurs, der evaluiert werden soll, braucht auch eine Kurs-ID, um im EvaSys-System identifiziert werden zu können. Falls Sie Kurs-IDs nicht bearbeiten können, wenden Sie sich bitte an den Support!';
+
+$string['set_default_eval'] = 'Standardevaluation planen';
+$string['set_default_eval_for_selected'] = 'Standardevaluation für alle ausgewählten planen';
+$string['set_default_eval_for_all'] = 'Standardevaluation für alle Kurse planen';
+$string['set_default_period_for_default_eval'] = 'Legen Sie einen Standardevaluationszeitraum fest, um Standardevaluationen planen zu können.';
+
+$string['clear_error'] = 'Fehler löschen';
+$string['clear_selected_errors'] = 'Ausgewählte Fehler löschen';
+$string['clear_all_errors'] = 'Alle Fehler löschen';
+
+$string['notify_teacher_email_subject'] = '{$a->courseshort}: Eine Evaluation wurde für Ihren Kurs geplant.';
+$string['notify_teacher_email_body'] = 'Sehr geehrte*r Lehrende*r,
+
+dies ist eine automatisch generierte Mail, ausgelöst dadurch, dass Ihr Evaluationskoordinator eine Evaluation für ihren Kurs <b>{$a->coursefull}</b>
+von {$a->start} bis {$a->end}
+geplant hat.
+
+Bei Fragen oder Rückmeldungen wenden Sie sich bitte an Ihre*n Evaluationskoordinator*in via {$a->coordinator}.
+
+Mit freundlichen Grüßen
+Ihr Learnweb-Support';
+
+$string['request_eval'] = 'Evaluation beantragen';
+
+$string['no_eval_planned'] = 'Es ist keine Evaluation geplant.';
+$string['teacher_request_disabled'] = 'Lehrende können keine Evaluationen beantragen. Eine Evaluation wird für Sie erstellt.';
+
+$string['missing_course_id'] = 'Fehlende Kurs-ID! Bitte wenden Sie sich an den Learnweb Support mit einem Link zu der Veranstaltung im HIS LSF, die evaluiert werden soll.';
+$string['no_evasys_course_found'] = 'Kein passender EvaSys-Kurs gefunden! Bitte wenden Sie sich an Ihren Evaluationskoordinator.';
+$string['not_inside_evaluation_category'] = 'Dieser Kurs ist in keiner Evaluationskategorie! Bitte wenden Sie sich an den Learnweb Support.';
+
+$string["running_crontask"] = 'Die Synchronization der ausgewählten Kurse von {$a} zu Evasys wird derzeit durchgeführt. Dies kann evt. einige Minuten dauern. Bitte warten Sie einige Zeit und laden die Seite neu.';

@@ -16,6 +16,8 @@
 
 namespace block_evasys_sync;
 
+use block_evasys_sync\local\entity\evaluation_state;
+
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir . '/adminlib.php');
@@ -30,7 +32,7 @@ class evasys_synchronizer {
 
     public function __construct($courseid) {
         $this->courseid = $courseid;
-        $this->init_soap_client();
+        $this->soapclient = evasys_soap_client::get();
         $this->blockcontext = \context_course::instance($courseid); // TODO Course context or block context? Check caps.
         $this->courseinformation = $this->get_course_information();
     }
@@ -67,27 +69,12 @@ class evasys_synchronizer {
         return $this->evasyscourses;
     }
 
-    private function init_soap_client() {
-        $this->soapclient = new \SoapClient(get_config('block_evasys_sync', 'evasys_wsdl_url'), [
-            'trace' => 1,
-            'exceptions' => 0,
-            'location' => get_config('block_evasys_sync', 'evasys_soap_url')
-        ]);
-
-        $headerbody = new \SoapVar([
-            new \SoapVar(get_config('block_evasys_sync', 'evasys_username'), XSD_STRING, null, null, 'Login', null),
-            new \SoapVar(get_config('block_evasys_sync', 'evasys_password'), XSD_STRING, null, null, 'Password', null),
-        ], SOAP_ENC_OBJECT);
-        $header = new \SOAPHEADER('soap', 'Header', $headerbody);
-        $this->soapclient->__setSoapHeaders($header);
-    }
-
     private function get_course_information() {
         $result = [];
         foreach ($this->get_allocated_courses() as $course) {
             $soapresult = $this->soapclient->GetCourse($course, 'PUBLIC', true, true);
             if (is_soap_fault($soapresult)) {
-                //var_dump("soap verbindung nicht funktioniert");
+                // var_dump("soap verbindung nicht funktioniert");
                 // This happens e.g. if there is no corresponding course in EvaSys.
                 return null;
             }
@@ -101,7 +88,7 @@ class evasys_synchronizer {
      * @return array of surveys with additional information
      */
     public function get_surveys($courseid) {
-        if ($this->courseinformation[$courseid] === null) {
+        if (!isset($this->courseinformation[$courseid]) || $this->courseinformation[$courseid] === null) {
             return array();
         }
         if (!isset($this->courseinformation[$courseid]->m_oSurveyHolder->m_aSurveys->Surveys)) {
@@ -139,7 +126,14 @@ class evasys_synchronizer {
         if (isset($this->courseinformation[$coursekey])) {
             return $this->courseinformation[$coursekey]->m_sCourseTitle;
         }
-        return "Unknown";
+        return get_string('no_evasys_course_found', 'block_evasys_sync');
+    }
+
+    public function get_raw_course_name($courseid): ?string {
+        if (isset($this->courseinformation[$courseid])) {
+            return $this->courseinformation[$courseid]->m_sCourseTitle;
+        }
+        return null;
     }
 
     public function get_course_id($coursekey) {
@@ -190,7 +184,8 @@ class evasys_synchronizer {
     }
 
     public function get_amount_participants($courseid) {
-        if ($this->courseinformation[$courseid] === null || !property_exists($this->courseinformation[$courseid]->m_aoParticipants, "Persons")) {
+        if (!isset($this->courseinformation[$courseid]) || $this->courseinformation[$courseid] === null
+            || !property_exists($this->courseinformation[$courseid]->m_aoParticipants, "Persons")) {
             return 0;
         }
         if (is_object($this->courseinformation[$courseid]->m_aoParticipants->Persons)) {
@@ -210,7 +205,7 @@ class evasys_synchronizer {
         $enrolledusers = get_users_by_capability($this->blockcontext, 'block/evasys_sync:mayevaluate');
 
         foreach ($enrolledusers as $user) {
-            $emailadresses[] = $user->username . "@uni-muenster.de";
+            $emailadresses[] = $user->email;
         }
 
         return $emailadresses;
@@ -376,26 +371,33 @@ class evasys_synchronizer {
      */
     public function set_evaluation_period($dates) : bool {
         $usestandardtime = ($dates == 'Standard');
+        $course = get_course($this->courseid);
         if ($usestandardtime) {
-            $course = get_course($this->courseid);
             $dates = self::get_standard_timemode($course->category);
         }
         $changed = false;
-        $data = course_evaluation_allocation::get_record_by_course($this->courseid, false);
+        $data = evaluation::for_course($this->courseid);
         if (!$data) {
-            $data = new course_evaluation_allocation(0);
-            $data->set('course', $this->courseid);
-            $data->set('state', course_evaluation_allocation::STATE_MANUAL);
+            $data = new evaluation();
+            $data->courses = [$this->courseid];
+            foreach ($this->courseinformation as $lsfid => $information) {
+                $data->evaluations[$lsfid] = (object) [
+                        'title' => $this->get_raw_course_name($lsfid),
+                        'lsfid' => $lsfid,
+                        'start' => $dates['start'],
+                        'end' => $dates['end'],
+                        'state' => evaluation_state::MANUAL
+                ];
+            }
         } else {
-            // Don't display date changed warning on first sync.
-            if ($data->get('startdate') != $dates['start'] || $data->get('enddate') != $dates['end']) {
-                $changed = true;
+            foreach ($data->evaluations as &$evaluation) {
+                if ($evaluation->start != $dates['start'] || $evaluation->end != $dates['end']) {
+                    $changed = true;
+                    $evaluation->start = $dates['start'];
+                    $evaluation->end = $dates['end'];
+                }
             }
         }
-
-        $data->set('startdate', $dates['start']);
-        $data->set('enddate', $dates['end']);
-        $data->set('usestandardtime', $usestandardtime);
         $data->save();
 
         return $changed;

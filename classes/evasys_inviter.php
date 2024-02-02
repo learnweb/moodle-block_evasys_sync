@@ -32,7 +32,7 @@ class evasys_inviter {
     private $soapclient;
 
     private function __construct() {
-        $this->soapclient = $this->init_soap_client();
+        $this->soapclient = evasys_soap_client::get();
     }
 
     public static function get_instance() {
@@ -257,22 +257,6 @@ class evasys_inviter {
         }
 
         return $emailadresses;
-    }
-
-    public function init_soap_client() {
-        $soapclient = new \SoapClient(get_config('block_evasys_sync', 'evasys_wsdl_url'), [
-            'trace' => 1,
-            'exceptions' => 0,
-            'location' => get_config('block_evasys_sync', 'evasys_soap_url')
-        ]);
-
-        $headerbody = new \SoapVar([
-                                       new \SoapVar(get_config('block_evasys_sync', 'evasys_username'), XSD_STRING, null, null, 'Login', null),
-                                       new \SoapVar(get_config('block_evasys_sync', 'evasys_password'), XSD_STRING, null, null, 'Password', null),
-                                   ], SOAP_ENC_OBJECT);
-        $header = new \SOAPHEADER('soap', 'Header', $headerbody);
-        $soapclient->__setSoapHeaders($header);
-        return $soapclient;
     }
 
     public function set_close_task($surveyid) {
