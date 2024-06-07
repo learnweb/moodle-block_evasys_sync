@@ -98,6 +98,7 @@ class block_evasys_sync extends block_base{
         $enddisabled = false;
         $emailsentnotice = false;
         $periodsetnotice = false;
+        $datedisabled = false;
 
         // Set start to today and end to a week from now.
         $start = time();
@@ -115,6 +116,7 @@ class block_evasys_sync extends block_base{
             $first = array_key_first($evaluations->evaluations);
             $start = $evaluations->evaluations[$first]->start;
             $end = $evaluations->evaluations[$first]->end;
+            $datedisabled = true;
         } elseif ($evasyscategory->default_period_set()) {
             $start = $evasyscategory->get('standard_time_start');
             $end = $evasyscategory->get('standard_time_end');
@@ -186,8 +188,9 @@ class block_evasys_sync extends block_base{
                 'usestandardtimelayout' => $standardttimemode,
             // Choose mode.
                 'direct' => false,
-                'startdisabled' => $startdisabled || $standardttimemode,
-                'enddisabled' => $enddisabled || $standardttimemode,
+                'startdisabled' => $startdisabled || $standardttimemode || $datedisabled,
+                'enddisabled' => $enddisabled || $standardttimemode || $datedisabled,
+                'datedisabled' => $datedisabled,
                 'onlyend' => $startdisabled && !$standardttimemode,
                 'disablesubmit' => $enddisabled,
             // If the evaluation hasn't ended yet, display option to restart it.
@@ -223,6 +226,8 @@ class block_evasys_sync extends block_base{
             $this->page->requires->js_call_amd('block_evasys_sync/post_dialog', 'show_dialog_success');
         } else if ($status === 'uptodate') {
             $this->page->requires->js_call_amd('block_evasys_sync/post_dialog', 'show_dialog_up_to_date');
+        } else if ($status === 'successandinfo') {
+            $this->page->requires->js_call_amd('block_evasys_sync/post_dialog', 'show_dialog_success_and_info');
         } else if ($status === 'nostudents') {
             $this->page->requires->js_call_amd('block_evasys_sync/post_dialog', 'show_dialog_no_students');
         } else if ($status === 'failure') {
