@@ -34,9 +34,16 @@ use core\persistent;
  * @copyright 2017 Tamara Gunkel
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class user_cat_allocation extends persistent {
+class evasys_category extends persistent {
 
     const TABLE = 'block_evasys_sync_categories';
+
+    const MASK_TEACHER_CAN_REQUEST_EVALUATION = 1 << 0;
+    const MASK_EVALUATION_REQUEST_NEEDS_APPROVAL = 1 << 1;
+    const MASK_AUTOMATIC_TASK_CREATION = 1 << 2;
+    const MASK_TEACHER_CAN_CHANGE_EVALUATION  = 1 << 3;
+    const MASK_EVALUATION_CHANGE_NEEDS_APPROVAL = 1 << 4;
+    const MASK_SEND_MAIL_TO_TEACHER = 1 << 5;
 
     /**
      * Return the definition of the properties of this model.
@@ -57,6 +64,9 @@ class user_cat_allocation extends persistent {
                 'type' => PARAM_INT,
                 'message' => new \lang_string('invalidmode', 'block_evasys_sync')
             ),
+            'mode_flags' => array(
+                'type' => PARAM_INT
+            ),
             'standard_time_start' => array (
                 'type' => PARAM_INT,
                 'message' => new \lang_string('invalid_standard_time_mode', 'block_evasys_sync'),
@@ -72,6 +82,32 @@ class user_cat_allocation extends persistent {
         );
     }
 
+    public static function for_course($course): ?evasys_category {
+        return self::for_category($course->category);
+    }
+
+    public static function for_category($categoryid): ?evasys_category {
+        $record = evasys_category::get_record(['course_category' => $categoryid]);
+        if ($record) {
+            return $record;
+        }
+        // Loop through parents.
+        try{
+            $parents = \core_course_category::get($categoryid)->get_parents();
+            for ($i = count($parents) - 1; $i >= 0; $i--) {
+                $record = evasys_category::get_record(['course_category' => $parents[$i]]);
+                // Stop if a parent has been assigned a custom record.
+                if ($record) {
+                    return $record;
+                }
+            }
+        }catch(\Exception $e){
+            // if category is not visible or cannot be accessed, just proceed as if no category was found.
+        }
+
+        return null;
+    }
+
     /**
      * Validate the user ID.
      *
@@ -83,5 +119,25 @@ class user_cat_allocation extends persistent {
             return new \lang_string('invaliduserid', 'error');
         }
         return true;
+    }
+
+    public function can_teacher_request_evaluation() : bool {
+        return $this->get('mode_flags') & self::MASK_TEACHER_CAN_REQUEST_EVALUATION;
+    }
+
+    public function send_mail_to_teacher() : bool {
+        return $this->get('mode_flags') & self::MASK_SEND_MAIL_TO_TEACHER;
+    }
+
+    public function teacher_evaluation_request_needs_approval() : bool {
+        return $this->get('mode_flags') & self::MASK_EVALUATION_REQUEST_NEEDS_APPROVAL;
+    }
+
+    public function is_automatic() : bool {
+        return $this->get('mode_flags') & self::MASK_AUTOMATIC_TASK_CREATION;
+    }
+
+    public function default_period_set(): bool {
+        return $this->get('standard_time_start') && $this->get('standard_time_end');
     }
 }

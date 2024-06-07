@@ -85,10 +85,13 @@ class admin_form extends moodleform {
         // Heading Add Category.
         $mform->addElement('html', '<h3>' . get_string('hd_user_cat', 'block_evasys_sync') . '</h3>');
 
-        // Course category select.
+        // Course category select (autocomplete).
         $name = 'evasys_cc_select';
         $title = get_string('settings_cc_select', 'block_evasys_sync');
-        $mform->addElement('select', $name, $title, $this->getunassignedcats());
+        $options = array(
+            'multiple' => false
+        );
+        $mform->addElement('autocomplete', $name, $title, $this->getunassignedcats(), $options);
 
         $name = 'evasys_cc_user';
         $title = get_string('settings_cc_user', 'block_evasys_sync');
@@ -225,7 +228,7 @@ class admin_form extends moodleform {
      * @return array
      */
     private function getrecords() {
-        $records = \block_evasys_sync\user_cat_allocation::get_records();
+        $records = \block_evasys_sync\evasys_category::get_records();
         return $records;
     }
 
@@ -282,7 +285,7 @@ class admin_form extends moodleform {
         $errors = parent::validation($data, $files);
 
         // Validate user ids.
-        $records = \block_evasys_sync\user_cat_allocation::get_records();
+        $records = \block_evasys_sync\evasys_category::get_records();
         foreach ($records as $allocation) {
 
             $newvalue = 'category_' . $allocation->get('id');

@@ -153,6 +153,8 @@ $string['surveystatusclosed'] = 'closed';
 $string['evasys_sync:mayevaluate'] = 'Evaluate a course using EvaSys';
 $string['evasys_sync:synchronize'] = 'Export participants to EvaSys';
 $string['evasys_sync:modifymapping'] = 'Modify mapping of EvaSys courses to moodle course';
+$string['evasys_sync:managecourses'] = 'EvaSys manage course';
+$string['evasys_sync:teacherforcourse'] = 'Get emails regarding your course.';
 
 // Settings.
 $string['settings'] = 'EvaSys Sync Block Settings';
@@ -175,7 +177,7 @@ $string['addcat'] = 'Add Category';
 $string['delete_confirm'] = 'Are you sure you want to delete the user for this course category?';
 $string['auto_mode'] = 'Automatic mode';
 $string['standard_time_mode'] = "Offer standard period of time";
-$string['activate_standard_time'] = "Use standard timeframe.";
+$string['activate_standard_time'] = "Define default evaluation period";
 $string['edit_time'] = "Edit standard timeframe";
 $string['save_failure'] = "Error saving";
 $string['usetimecheckbox'] = "Use standard timeframe";
@@ -224,10 +226,83 @@ $string['December'] = 'December';
 
 
 // From...to.
-$string['evaluationperiod'] = 'Evaluation period:';
-$string['startondate'] = 'Planned period from';
+$string['evaluationperiod'] = 'Evaluation period';
+$string['evaluationperiod_for'] = 'Evaluation period for "{$a}"';
+$string['startondate'] = 'From';
 $string['endondate'] = 'until';
+$string['evaluations'] = 'Evaluations';
+$string['title'] = 'Title';
 
 // Notices.
 $string['evalperiodsetnotice'] = 'Evaluationperiod has been set';
 $string['emailsentnotice'] = 'Evaluation has been requested';
+
+$string['apply'] = 'Apply';
+
+$string['useoneevalperiod'] = 'Use same evaluation period for all evaluations';
+$string['eval_additional_lsfcourses'] = 'I want multiple (lsf) course units to be evaluated.';
+$string['eval_additional_courses'] = 'I want students from multiple (Learnweb) courses to evaluate this class.';
+$string['course_units'] = 'Course units';
+$string['use_default_evalperiod'] = 'Use the default evaluation period:<br>{$a}';
+$string['err_endbeforestart'] = 'The end date is before the start date';
+$string['dont_evaluate_course'] = 'This course should NOT be evaluated';
+
+$string['standart_time_start'] = 'Start of default evaluation period';
+$string['standart_time_end'] = 'End of default evaluation period';
+
+$string['teacher_can_request_evaluation'] = 'Teachers can request evaluation';
+$string['teacher_evaluation_request_needs_approval'] = 'Teacher\'s evaluation requests needs approval from you';
+$string['automatic_task_creation'] = 'Planned tasks are created automatically in EvaSys';
+$string['teacher_can_change_evaluation'] = 'Teachers can change existing evaluation';
+$string['teacher_evaluation_change_needs_approval'] = 'Teacher\'s evaluation changes needs approval from you';
+
+$string['send_mail_to_teacher'] = 'Send mail to teacher';
+$string['send_mail_to_teacher_help'] = 'If checked, each time an evaluation is requested from the evasys overview page, a notification email will be sent to the teacher of the course.';
+
+$string['search_for_courses'] = 'Search for courses';
+
+$string['evasys_settings_for'] = 'Evasys settings for {$a}';
+$string['no_default_period_set'] = 'No default evaluation period has been set.';
+$string['default_period_set_from_to'] = 'The default evaluation period has been set from <b>{$a->start}</b> to <b>{$a->end}</b>.';
+$string['teachers_can_request_evaluation'] = 'Teachers <b>can</b> request an evaluation.';
+$string['teachers_cannot_request_evaluation'] = 'Teachers <b>cannot</b> request an evaluation';
+
+$string['courses_with_errors'] = 'Courses with errors!';
+$string['courses_with_requests'] = 'Courses with pending requests';
+$string['courses_with_automatic_evals'] = 'Courses with automatic evaluations';
+$string['courses_with_manual_evals'] = 'Courses with already requested evaluations';
+$string['courses_without_evals'] = 'Courses without evaluations';
+$string['courses_without_idnumber'] = 'Courses for which no evaluation is possible (missing Course ID)';
+$string['courses_without_idnumber_help'] = 'These courses have no ID set. Any to-be-evaluated courses have to have an ID in order to be able to be identified in EvaSys. If you can\'t edit course IDs, please reach out to the support!';
+
+$string['set_default_eval'] = 'Set default evaluation';
+$string['set_default_eval_for_selected'] = 'Set default evaluation for selected';
+$string['set_default_eval_for_all'] = 'Set default evaluation for all';
+$string['set_default_period_for_default_eval'] = 'Set a default evaluation period to be able to plan default evaluations.';
+
+$string['clear_error'] = 'Clear error';
+$string['clear_selected_errors'] = 'Clear selected errors';
+$string['clear_all_errors'] = 'Clear all errors';
+
+$string['notify_teacher_email_subject'] = '{$a->courseshort}: A evaluation was planned for your course.';
+$string['notify_teacher_email_body'] = 'Dear teacher,
+
+this is an automatically generated mail, caused by you evasys coordinator planning an evaluation for your course <b>{$a->coursefull}</b>
+from {$a->start}
+to {$a->end}.
+
+In case of questions or issues regarding this evaluation, please contact your evasys coordinator via {$a->coordinator}.
+
+Sincerely,
+Your Learnweb-Support';
+
+$string['request_eval'] = 'Request evaluation';
+
+$string['no_eval_planned'] = 'There is no evaluation planned.';
+$string['teacher_request_disabled'] = 'Teachers are not allowed to request evaluations. An evaluation will be created for you.';
+
+$string['missing_course_id'] = 'Missing course id! Please contact the Learnweb support with a link to the course in HIS LSF which should be evaluated.';
+$string['no_evasys_course_found'] = 'No matching EvaSys-Course found! Please contact your evaluation coordinator.';
+$string['not_inside_evaluation_category'] = 'This course isn\'t inside any evaluation category! Please contact the Learnweb support.';
+
+$string["running_crontask"] = 'The synchronization of the selected courses of {$a} to evasys are currently being processed. This may take a few minutes. Please wait and reload the page.';

@@ -14,10 +14,31 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace block_evasys_sync\local\entity;
+
+use block_evasys_sync\evaluation;
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->component = 'block_evasys_sync';
-$plugin->version = 2023080700;  // YYYYMMDDHH (year, month, day, 24-hr time).
-$plugin->requires = 2022041900; // YYYYMMDDHH (This is the release version for Moodle 4.0).
-$plugin->maturity = MATURITY_RC;
+/**
+ * Evaluation state
+ * @package block_evasys_sync
+ * @copyright 2022 Justus Dieckmann WWU
+ */
+class evaluation_state {
+
+    public const PENDING = 0;
+    public const PLANNED = 1;
+    public const SYNCHRONIZED = 2;
+    public const RUNNING = 3;
+    public const FINISHED = 4;
+    public const MANUAL = 5;
+    public const MANUAL_VERIFIED = 6;
+
+    public const MANUAL_STATES = [self::MANUAL, self::MANUAL_VERIFIED];
+
+    public function is_manual(\stdClass $evaluation) {
+        return in_array($evaluation->state, self::MANUAL_STATES);
+    }
+
+}

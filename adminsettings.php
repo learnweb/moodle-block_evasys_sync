@@ -34,9 +34,14 @@ $PAGE->set_url('/blocks/evasys_sync/adminsettings');
 if (has_capability('moodle/site:config', context_system::instance())) {
     admin_externalpage_setup('block_evasys_sync');
 
+    $evasysroleid = $DB->get_record('role', ['shortname' => 'evasysmanager'])->id;
+
     if (!empty($delid) && !empty($confirm)) {
         // Course category user is deleted.
-        $persistent = new \block_evasys_sync\user_cat_allocation($delid);
+        $persistent = new \block_evasys_sync\evasys_category($delid);
+        if ($evasysroleid) {
+            role_unassign($evasysroleid, $persistent->get('userid'), context_coursecat::instance($persistent->get('course_category'))->id);
+        }
         $persistent->delete();
 
         redirect($PAGE->url);
@@ -58,6 +63,7 @@ if (has_capability('moodle/site:config', context_system::instance())) {
     } else if ($data = $mform->get_data()) {
         // Form is submitted.
         // Added course category.
+
         if (isset($data->addcatbutton)) {
             // Insert new record.
             $record = new stdClass();
@@ -68,9 +74,13 @@ if (has_capability('moodle/site:config', context_system::instance())) {
             } else {
                 $record->category_mode = 0;
             }
-            $persistent = new \block_evasys_sync\user_cat_allocation(0, $record);
+            $record->mode_flags = 0;
+            $persistent = new \block_evasys_sync\evasys_category(0, $record);
             $persistent->create();
-
+            if ($evasysroleid) {
+                role_assign($evasysroleid, $record->userid, context_coursecat::instance($record->course_category));
+            }
+            \block_evasys_sync\evalcat_manager::get_instance()->purge();
             redirect($PAGE->url);
             exit();
         } else if (isset($data->submitbutton)) {
@@ -101,7 +111,7 @@ if (has_capability('moodle/site:config', context_system::instance())) {
                 set_config('default_his_connection', 0, 'block_evasys_sync');
             }
 
-            $records = \block_evasys_sync\user_cat_allocation::get_records();
+            $records = \block_evasys_sync\evasys_category::get_records();
             foreach ($records as $allocation) {
                 $newvalue = 'category_' . $allocation->get('id');
                 $oldvalue = $allocation->get('userid');
@@ -121,13 +131,19 @@ if (has_capability('moodle/site:config', context_system::instance())) {
                 // Update db entry.
                 if ($data->$newvalue != $oldvalue or
                     $newvaluemode != $oldvaluemode) {
-
+                    if ($evasysroleid && $data->$newvalue != $oldvalue) {
+                        role_unassign($evasysroleid, $oldvalue, context_coursecat::instance($allocation->get('course_category'))->id);
+                    }
                     $allocation->set('userid', $data->$newvalue);
                     $allocation->set('category_mode', $newvaluemode);
                     $allocation->update();
                 }
+                if ($evasysroleid) {
+                    role_assign($evasysroleid, $data->$newvalue, context_coursecat::instance($allocation->get('course_category')));
+                }
             }
         }
+        \block_evasys_sync\evalcat_manager::get_instance()->purge();
     }
 
     echo $OUTPUT->header();
