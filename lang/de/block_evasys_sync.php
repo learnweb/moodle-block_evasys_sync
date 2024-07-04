@@ -124,7 +124,7 @@ $string['content_success'] = "Sie haben die Evaluation erfolgreich beantragt.<br
                              "Ihr*e Evaluationsbeauftragte*r wird nach den Richtlinien Ihres Fachbereichs weiter verfahren.";
 
 $string['content_successandinfo'] = "Sie haben die Evaluation erfolgreich erneut beantragt.<br />" .
-                             "Es existiert bereits ein Evaluationsantrag für diesen Kurs; Sie haben lediglich Teilnehmer*innen hinzugefügt.<br />" .
+                             "Es existiert bereits ein Evaluationsantrag für diesen Kurs; Sie haben lediglich Teilnehmer*innen synchronisiert.<br />" .
                              "Zum Ändern des Evaluationszeitraums wenden Sie sich bitte an Ihre*n Evaluationsbeauftragte*n.";
 
 $string['content_uptodate'] = "Ihr*e Evaluationsbeauftragte*r hat bereits einen Auftrag zum Durchführen der Evaluation von Ihnen erhalten.<br />" .
