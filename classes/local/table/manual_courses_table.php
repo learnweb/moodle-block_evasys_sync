@@ -178,7 +178,7 @@ class manual_courses_table extends \table_sql {
             return '';
         }
         return $OUTPUT->render(new \single_button(new moodle_url($PAGE->url, ['action' => 'setreeval', 'ids[]' => $row->courseid, 'id' => $this->evasyscategory->get('course_category')]),
-            get_string('set_re_eval', 'block_evasys_sync'), 'post', \single_button::BUTTON_SECONDARY, [
+            get_string('set_re_eval', 'block_evasys_sync'), 'post', false, [
             'data-modal' => 'confirmation',
             'data-modal-title-str' => json_encode(['confirm', 'core']),
             'data-modal-content-str' => json_encode(['areyousure']),
