@@ -182,7 +182,8 @@ class manual_courses_table extends \table_sql {
             'data-modal' => 'confirmation',
             'data-modal-title-str' => json_encode(['confirm', 'core']),
             'data-modal-content-str' => json_encode(['areyousure']),
-            'data-modal-yes-button-str' => json_encode(['confirm', 'core'])
+            'data-modal-yes-button-str' => json_encode(['confirm', 'core']),
+            'data-modal-destination' => $PAGE->url,
         ]));
     }
 }
