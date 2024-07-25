@@ -40,6 +40,8 @@ require_once($CFG->libdir . '/tablelib.php');
  */
 class manual_courses_table extends \table_sql {
 
+    private $allcourseids;
+
     /**
      * Constructor for course_manager_table.
      */
@@ -93,7 +95,10 @@ class manual_courses_table extends \table_sql {
         }
         $where = join(" AND ", $where);
 
+        $this->allcourseids = $DB->get_records_sql('SELECT c.id as id FROM ' . $from . ' WHERE ' . $where, $params);
+
         $this->set_sql($fields, $from, $where, $params);
+
         $this->column_nosort = ['teacher', 'evalinfo', 'tools'];
         $this->define_columns(['course', 'teacher', 'evalinfo', 'tools']);
         $this->define_headers([
@@ -166,5 +171,42 @@ class manual_courses_table extends \table_sql {
      */
     public function col_tools($row) {
         return '';
+    }
+
+    /**
+     * Returns all courses that are displayed in this table by courseid => coursename
+     *
+     * @return array
+     */
+    public function get_all_displayed_courses() {
+        global $DB;
+
+        $allcourses = $DB->get_records_sql('SELECT c.id as courseid, c.fullname as coursename FROM ' . $this->sql->from . ' WHERE ' . $this->sql->where, $this->sql->params);
+
+        $courses = array();
+        foreach ($allcourses as $course) {
+            $courses[$course->courseid] = $course->coursename;
+        }
+        return $courses;
+    }
+
+    /**
+     * Filters the table by using set_sql()
+     *
+     * @param $courses array of type courseid => coursename
+     * @return void
+     * @throws \coding_exception
+     * @throws \dml_exception
+     */
+    public function filter_courses($courses) {
+
+        global $DB;
+
+        list($insql, $inparams) = $DB->get_in_or_equal($courses, SQL_PARAMS_NAMED);
+        $where = "c.id $insql";
+        $params = array_merge($this->sql->params, $inparams);
+
+        $where = $this->sql->where . ' AND ' . $where;
+        $this->set_sql($this->sql->fields, $this->sql->from, $where, $params);
     }
 }

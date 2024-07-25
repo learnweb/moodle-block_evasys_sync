@@ -54,8 +54,8 @@ export function init() {
                 {k: 'action', v: a.getAttribute('data-evasys-action')},
                 {k: 'sesskey', v: M.cfg.sesskey}
             ];
-            if (a.getAttribute('data-evasys-forall') === '1') {
-                data.push({k: 'all', v: '1'});
+            if (a.getAttribute('data-evasys-forall') === 1) {
+                data.push({k: 'all', v: 1});
                 redirectPost(window.location, data);
             } else {
                 checkboxes.forEach((c) => {
