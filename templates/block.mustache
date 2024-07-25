@@ -26,6 +26,7 @@ Example context (json):
     "enddisabled": false,
     "startoption": false,
     "onlyend": false,
+    "datedisabled": false,
     "disablesubmit": false,
     "coursemappingenabled": true,
     "nostudents": false,
@@ -39,6 +40,7 @@ Example context (json):
     <input type="hidden" name="sesskey" value="{{sesskey}}">
     <input type="hidden" name="courseid" value="{{courseid}}">
     {{#onlyend}}<input id="only_end" type="hidden" name="only_end" value="true">{{/onlyend}}
+    {{#datedisabled}}<input id="datedisabled" type="hidden" name="datedisabled" value="true">{{/datedisabled}}
     {{#nostudents}}<span style="color: orange; ">{{# str}}syncnostudents, block_evasys_sync{{/str}}</span>{{/nostudents}}
     {{#courses}}
         {{#.}}
