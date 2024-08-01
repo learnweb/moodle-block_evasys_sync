@@ -177,13 +177,20 @@ class manual_courses_table extends \table_sql {
         if (!$this->evasyscategory->default_period_set() || !$this->showbuttons) {
             return '';
         }
-        return $OUTPUT->render(new \single_button(new moodle_url($PAGE->url, ['action' => 'setreeval', 'ids[]' => $row->courseid, 'id' => $this->evasyscategory->get('course_category')]),
+        $url = new moodle_url($PAGE->url, [
+            'action' => 'setreeval',
+            'ids[]' => $row->courseid,
+            'id' => $this->evasyscategory->get('course_category'),
+            'sesskey' => sesskey(),
+        ]);
+
+        return $OUTPUT->render(new \single_button($url,
             get_string('set_re_eval', 'block_evasys_sync'), 'post', false, [
             'data-modal' => 'confirmation',
             'data-modal-title-str' => json_encode(['confirm', 'core']),
             'data-modal-content-str' => json_encode(['areyousure']),
             'data-modal-yes-button-str' => json_encode(['confirm', 'core']),
-            'data-modal-destination' => $PAGE->url,
+            'data-modal-destination' => $url->out(false),
         ]));
     }
 }
