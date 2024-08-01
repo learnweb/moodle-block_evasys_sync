@@ -185,7 +185,7 @@ class manual_courses_table extends \table_sql {
         ]);
 
         return $OUTPUT->render(new \single_button($url,
-            get_string('set_re_eval', 'block_evasys_sync'), 'post', false, [
+            get_string('set_re_eval', 'block_evasys_sync'), 'post', \single_button::BUTTON_SECONDARY, [
             'data-modal' => 'confirmation',
             'data-modal-title-str' => json_encode(['confirm', 'core']),
             'data-modal-content-str' => json_encode(['areyousure']),
