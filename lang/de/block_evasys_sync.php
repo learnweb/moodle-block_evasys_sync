@@ -123,7 +123,11 @@ $string['content_success'] = "Sie haben die Evaluation erfolgreich beantragt.<br
                              "Sie müssen nichts weiter tun, ".
                              "Ihr*e Evaluationsbeauftragte*r wird nach den Richtlinien Ihres Fachbereichs weiter verfahren.";
 
-$string['content_uptodate'] = "Ihr*e Evaluationsbeauftragte*r hat bereist einen Auftrag zum Durchführen der Evaluation von Ihnen erhalten.<br />" .
+$string['content_successandinfo'] = "Sie haben die Evaluation erfolgreich erneut beantragt.<br />" .
+                             "Es existiert bereits ein Evaluationsantrag für diesen Kurs; Sie haben lediglich Teilnehmer*innen synchronisiert.<br />" .
+                             "Zum Ändern des Evaluationszeitraums wenden Sie sich bitte an Ihre*n Evaluationsbeauftragte*n.";
+
+$string['content_uptodate'] = "Ihr*e Evaluationsbeauftragte*r hat bereits einen Auftrag zum Durchführen der Evaluation von Ihnen erhalten.<br />" .
                               "Für Fragen zum Status Ihrer Evaluation kontaktieren Sie bitte Ihre*n Evaluationsbeauftragte*n.";
 
 $string['content_failure'] = "Leider konnte die Evaluation nicht beauftragt werden.<br />" .
@@ -245,7 +249,11 @@ $string['automatic_task_creation'] = 'Geplante Vorgänge werden automatisch in E
 $string['teacher_can_change_evaluation'] = 'Lehrende können bestehende Evaluationen verändern';
 $string['teacher_evaluation_change_needs_approval'] = 'Änderungen an bestehenden Evaluationen müssen von Ihnen bestätigt werden';
 
+$string['send_mail_to_teacher'] = 'Sende Bestätigungsmail an Lehrende';
+$string['send_mail_to_teacher_help'] = 'Falls ausgewählt, wird eine Benachrichtigungsmail an Lehrende geschickt, wenn über die evasys-Überblick-Seite eine Evaluation für ihren Kurs beantragt wird.';
+
 $string['search_for_courses'] = 'Nach Kursen suchen';
+$string['search'] = 'Suchen';
 
 $string['evasys_settings_for'] = 'Evasys-Einstellungen für {$a}';
 $string['no_default_period_set'] = 'Es wurde kein Standardevaluationszeitraum festgelegt.';
@@ -294,3 +302,6 @@ $string['no_evasys_course_found'] = 'Kein passender EvaSys-Kurs gefunden! Bitte 
 $string['not_inside_evaluation_category'] = 'Dieser Kurs ist in keiner Evaluationskategorie! Bitte wenden Sie sich an den Learnweb Support.';
 
 $string["running_crontask"] = 'Die Synchronization der ausgewählten Kurse von {$a} zu Evasys wird derzeit durchgeführt. Dies kann evt. einige Minuten dauern. Bitte warten Sie einige Zeit und laden die Seite neu.';
+
+$string['searchresults'] = 'Suchergebnisse';
+$string['no_searchresults_found'] = 'Keine Suchergebnisse gefunden';

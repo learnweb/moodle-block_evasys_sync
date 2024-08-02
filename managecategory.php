@@ -113,15 +113,17 @@ echo $OUTPUT->header();
 $renderer = $PAGE->get_renderer('block_evasys_sync');
 $renderer->print_evasys_category_header($evasyscategory);
 
-// TODO course search
-/*echo $OUTPUT->render_from_template('core/search_input', [
-        'action' => (new moodle_url('/blocks/evasys_sync/coursesearch.php', ['id' => $category->id]))->out(false),
+echo $OUTPUT->render_from_template('core/search_input', [
+        'action' => (new moodle_url('/blocks/evasys_sync/coursesearch.php', array('id' => $id)))->out(false),
         'uniqid' => 'block_evasys_sync-search-courses',
         'inputname' => 'search',
         'extraclasses' => 'mb-3',
         'inform' => false,
-        'searchstring' => get_string('search_for_courses', 'block_evasys_sync')
-]);*/
+        'searchstring' => get_string('search_for_courses', 'block_evasys_sync'),
+        'hiddenfields' => [
+            (object) ['type' => 'hidden', 'name' => 'id', 'value' => $id]
+        ]
+]);
 
 $mform->display();
 

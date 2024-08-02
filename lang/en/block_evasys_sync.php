@@ -98,6 +98,10 @@ $string['content_success'] = "Your evaluation coordinator has been instructed to
     "However, you have done your part.".
     "The coordinator will process your request in accordance with the regulations of your organization.";
 
+$string['content_successandinfo'] = "Your evaluation coordinatior has been instructed to start the evaluation again.<br />" .
+    "There already exists an evaluation reqest for this course; you have synchronized the participants for this evaluation.<br />>" .
+    "In order to change the dates of the evaluation, please contact your evaluation coordinator.";
+
 $string['content_uptodate'] = "Your evaluation coordinator has already been instructed to start the evaluation. <br />" .
     "If you have questions regarding the status of the evaluation please contact your evaluation coordinator.";
 
@@ -256,7 +260,11 @@ $string['automatic_task_creation'] = 'Planned tasks are created automatically in
 $string['teacher_can_change_evaluation'] = 'Teachers can change existing evaluation';
 $string['teacher_evaluation_change_needs_approval'] = 'Teacher\'s evaluation changes needs approval from you';
 
+$string['send_mail_to_teacher'] = 'Send mail to teacher';
+$string['send_mail_to_teacher_help'] = 'If checked, each time an evaluation is requested from the evasys overview page, a notification email will be sent to the teacher of the course.';
+
 $string['search_for_courses'] = 'Search for courses';
+$string['search'] = 'Search';
 
 $string['evasys_settings_for'] = 'Evasys settings for {$a}';
 $string['no_default_period_set'] = 'No default evaluation period has been set.';
@@ -305,3 +313,6 @@ $string['no_evasys_course_found'] = 'No matching EvaSys-Course found! Please con
 $string['not_inside_evaluation_category'] = 'This course isn\'t inside any evaluation category! Please contact the Learnweb support.';
 
 $string["running_crontask"] = 'The synchronization of the selected courses of {$a} to evasys are currently being processed. This may take a few minutes. Please wait and reload the page.';
+
+$string['searchresults'] = 'Search results';
+$string['no_searchresults_found'] = 'No search results found';

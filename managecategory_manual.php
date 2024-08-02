@@ -82,17 +82,35 @@ $table = new \block_evasys_sync\local\table\manual_courses_table($catids, $data-
         $evasyscategory, $data->coursename ?? null);
 $table->define_baseurl($PAGE->url);
 
+$mform = new \block_evasys_sync\managecategory_filter_table_form($PAGE->url, ['table' => $table]);
+
 $PAGE->navigation->add('EvaSys', new moodle_url('/blocks/evasys_sync/manageroverview.php'))
         ->add(
                 get_string('evaluations', 'block_evasys_sync') . ' in ' . data_controller::get_name_for_semester($data->semester),
                 new moodle_url('/blocks/evasys_sync/managecategory.php', ['id' => $category->id])
         )->add(get_string('courses_with_manual_evals', 'block_evasys_sync'), $PAGE->url)->make_active();
 
+$mformdata = $cache->get('coursesfilter');
+if ($mformdata) {
+    $mform->set_data($mformdata);
+    if (!is_null($mformdata->searchcourse)) {
+        $table->filter_courses($mformdata->searchcourse);
+    }
+}
+
+if ($mformdata = $mform->get_data()) {
+    $cache->set('coursesfilter', $mformdata);
+    redirect(new moodle_url('/blocks/evasys_sync/managecategory_manual.php', ['id'=> $category->id]));
+}
+
 echo $OUTPUT->header();
 
 /* @var \block_evasys_sync\output\renderer $renderer  */
 $renderer = $PAGE->get_renderer('block_evasys_sync');
 $renderer->print_evasys_category_header($evasyscategory);
+
+$mform->display();
+
 
 $table->out(48, false);
 
