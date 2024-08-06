@@ -8,6 +8,7 @@ class evasys_bulk_task extends adhoc_task{
 
     public function execute()
     {
+        global $DB;
         $data = $this->get_custom_data();
         $courses = $data->courses;
         $categoryid = $data->categoryid;
@@ -15,7 +16,11 @@ class evasys_bulk_task extends adhoc_task{
             mtrace("No category or courses specified, exiting.");
         }
         $evasyscategory = \block_evasys_sync\evasys_category::for_category($categoryid);
-        $errors = \block_evasys_sync\evaluation_manager::set_default_evaluation_for($courses, $evasyscategory);
+        if ($data->reeval) {
+            $errors = \block_evasys_sync\evaluation_manager::set_re_evaluation_for($courses,$evasyscategory);
+        } else {
+            $errors = \block_evasys_sync\evaluation_manager::set_default_evaluation_for($courses, $evasyscategory);
+        }
         if ($errors) {
             $erroroutput = '';
             foreach ($errors as $courseid => $error) {

@@ -125,6 +125,40 @@ class evaluation_manager {
         return $errors;
     }
 
+    /**
+     * Set adhoc task for rerunning an evaluation
+     *
+     * @param $courseids
+     * @param evasys_category $category
+     * @return array
+     * @throws \coding_exception
+     * @throws \dml_exception
+     * @throws \moodle_exception
+     */
+    public static function set_re_evaluation_for($courseids, evasys_category $category)
+    {
+        global $DB, $USER;
+        $childids = \core_course_category::get($category->get('course_category'))->get_all_children_ids();
+        $errors = [];
+        foreach ($courseids as $courseid) {
+            $course = get_course($courseid, false);
+
+            if (!$eval = $DB->get_field(dbtables::EVAL_COURSES, 'evalid', ['courseid' => $course->id])) {
+                $errors[$course->id] = 'Evaluation doesnt exist yet!';
+                continue;
+            }
+
+            $DB->delete_records(dbtables::EVAL_VERANSTS, ['evalid' => $eval]);
+            $DB->delete_records(dbtables::EVAL_COURSES, ['evalid' => $eval]);
+            $DB->delete_records(dbtables::EVAL, ['id' => $eval]);
+
+        }
+
+        $errors[] = self::set_default_evaluation_for($courseids, $category);
+
+        return $errors;
+    }
+
     public static function insert_participants_for_evaluation(evaluation $evaluation) {
         $personlist = [];
         $errors = [];

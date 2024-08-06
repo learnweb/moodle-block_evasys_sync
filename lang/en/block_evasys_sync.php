@@ -285,6 +285,8 @@ $string['set_default_eval_for_selected'] = 'Set default evaluation for selected'
 $string['set_default_eval_for_all'] = 'Set default evaluation for all';
 $string['set_default_period_for_default_eval'] = 'Set a default evaluation period to be able to plan default evaluations.';
 
+$string['set_re_eval'] = 'Rerun evaluation';
+
 $string['clear_error'] = 'Clear error';
 $string['clear_selected_errors'] = 'Clear selected errors';
 $string['clear_all_errors'] = 'Clear all errors';
