@@ -15,7 +15,6 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 require_once('../../config.php');
-//require_once('classes/add_course_form.php');
 $id = required_param('id', PARAM_INT);
 
 require_course_login($id);
