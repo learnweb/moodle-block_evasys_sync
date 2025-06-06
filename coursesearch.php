@@ -71,7 +71,7 @@ $reqtable->define_baseurl($PAGE->url);
 $remtable = new remaining_courses_table($catids, $data->semester ?? null, $evasyscategory,$search);
 $remtable->define_baseurl($PAGE->url);
 
-$mantable = new manual_courses_table($catids, $data->semester ?? null, $search);
+$mantable = new manual_courses_table($catids, $data->semester ?? null, $evasyscategory, $search);
 $mantable->define_baseurl($PAGE->url);
 
 $invtable = new invalid_courses_table($catids, $data->semester ?? null, $evasyscategory, $search);
