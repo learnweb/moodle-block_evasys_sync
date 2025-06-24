@@ -19,7 +19,6 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-use block_evasys_sync\course_evaluation_allocation;
 use block_evasys_sync\date_decoder;
 
 require_once('../../config.php');
