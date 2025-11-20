@@ -14,6 +14,11 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * @package block_evasys_sync
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 use block_evasys_sync\course_evaluation_allocation;
 use block_evasys_sync\date_decoder;
 
@@ -36,7 +41,7 @@ $returnurl->param('evasyssynccheck', 1);
 if (!optional_param('activate_standard', false, PARAM_BOOL)) {
 
     if (optional_param('datedisabled', false, PARAM_BOOL)) {
-        // We already have an evaluation request for this course: fetch the start- and enddates
+        // We already have an evaluation request for this course: fetch the start- and enddates.
         $sql = 'SELECT v.id, v.starttime, v.endtime, max(v.timemodified) as time FROM {' . \block_evasys_sync\dbtables::EVAL_VERANSTS . '} v INNER JOIN ' .
             '{' . \block_evasys_sync\dbtables::EVAL_COURSES . '} c on v.evalid=c.evalid WHERE c.courseid = :courseid GROUP BY v.id, v.starttime ORDER BY time DESC';
         $record = $DB->get_record_sql($sql, ['courseid' => $courseid]);

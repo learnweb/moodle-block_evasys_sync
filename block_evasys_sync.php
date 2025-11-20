@@ -14,7 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-defined('MOODLE_INTERNAL') || die();
+/**
+ * @package block_evasys_sync
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
 class block_evasys_sync extends block_base {
 
@@ -252,4 +255,3 @@ class block_evasys_sync extends block_base {
         return true;
     }
 }
-

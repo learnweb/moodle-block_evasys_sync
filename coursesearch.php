@@ -104,7 +104,7 @@ switch ($action) {
         }
         $queuedtasks = \core\task\manager::get_adhoc_tasks(evasys_bulk_task::class);
         $tasksofcurrentmodule = array_filter($queuedtasks, fn($task) => $task->get_custom_data()->categoryid === $id);
-        if(empty($tasksofcurrentmodule)){
+        if (empty($tasksofcurrentmodule)) {
             $task = new evasys_bulk_task();
             $data = new stdClass();
             $data->courses = (array) $courses;

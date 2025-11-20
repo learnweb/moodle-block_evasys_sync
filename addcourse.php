@@ -14,6 +14,13 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * Link another course for evaluation with this Moodle course
+ *
+ * @package    block_evasys_sync
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 require_once('../../config.php');
 $id = required_param('id', PARAM_INT);
 
@@ -30,7 +37,7 @@ if ($evaluation and !is_siteadmin() or !get_config('block_evasys_sync', 'default
     echo get_string('forbidden', 'block_evasys_sync');
     echo $OUTPUT->footer();
     return;
-} else if(!array_key_exists('lsf_unification', core_plugin_manager::instance()->get_plugins_of_type('local'))){
+} else if (!array_key_exists('lsf_unification', core_plugin_manager::instance()->get_plugins_of_type('local'))) {
     echo $OUTPUT->header();
     throw new \moodle_exception('nohisconnection_error', 'block_evasys_sync');
     echo $OUTPUT->footer();
@@ -76,7 +83,9 @@ if ($mform->is_validated()) {
     // Once retrieve the teachers course list in order to search for its values later.
     $coursesofteacher = get_teachers_course_list($USER->username, false, true);
 
-    // Add all courses that were already mapped prior to the current change (even if the logged in user does not own these courses herself).
+    // Add all courses that were already mapped prior to the current
+    // change (even if the logged in user does not own these courses
+    // herself).
     foreach ($preexistingmappings as $veranstid) {
         $iscourseofteacher = !empty($coursesofteacher[$veranstid]);
         if (!$iscourseofteacher && !is_siteadmin()) {
