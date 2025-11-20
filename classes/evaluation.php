@@ -64,17 +64,17 @@ class evaluation {
         global $DB;
         $evaluation = new evaluation();
         $record = $DB->get_record(dbtables::EVAL, [
-            'id' => $id
+            'id' => $id,
         ]);
         $evaluation->id = $record->id;
         $evaluation->initialcourse = $record->initialcourse;
 
         $courses = $DB->get_fieldset_select(dbtables::EVAL_COURSES, 'courseid', 'evalid = :evalid', [
-            'evalid' => $record->id
+            'evalid' => $record->id,
         ]);
         $evaluation->courses = $courses;
         $evalrecords = $DB->get_records(dbtables::EVAL_VERANSTS, [
-            'evalid' => $record->id
+            'evalid' => $record->id,
         ]);
         $evaluations = [];
         foreach ($evalrecords as $evalrecord) {
@@ -179,7 +179,7 @@ class evaluation {
                     'state' => $evaluation->state,
                     'usermodified' => $evaluation->usermodified,
                     'timecreated' => $evaluation->timecreated,
-                    'timemodified' => $evaluation->timemodified
+                    'timemodified' => $evaluation->timemodified,
                 ]);
             }
         }

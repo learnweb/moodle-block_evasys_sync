@@ -95,7 +95,7 @@ class course_manager_table extends \table_sql {
                 get_string('course'),
                 get_string('teachers'),
                 get_string('status'),
-                ''
+                '',
         ]);
     }
 

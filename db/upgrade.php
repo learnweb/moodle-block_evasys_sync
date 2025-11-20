@@ -24,7 +24,7 @@
  * it cannot do itself, it will tell you what you need to do.  The commands in
  * here will all be database-neutral, using the functions defined in DLL libraries.
  *
- * @package   blocks_evasys_sync
+ * @package   block_evasys_sync
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -56,9 +56,9 @@ function xmldb_block_evasys_sync_upgrade ($oldversion) {
         $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
 
         // Adding keys to table block_evasys_sync_categories.
-        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
-        $table->add_key('course_category', XMLDB_KEY_FOREIGN_UNIQUE, array('course_category'), 'course_categories', array('id'));
-        $table->add_key('userid', XMLDB_KEY_FOREIGN, array('userid'), 'user', array('id'));
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+        $table->add_key('course_category', XMLDB_KEY_FOREIGN_UNIQUE, ['course_category'], 'course_categories', ['id']);
+        $table->add_key('userid', XMLDB_KEY_FOREIGN, ['userid'], 'user', ['id']);
 
         // Conditionally launch create table for block_evasys_sync_categories.
         if (!$dbman->table_exists($table)) {
@@ -85,8 +85,8 @@ function xmldb_block_evasys_sync_upgrade ($oldversion) {
         $coursetable->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
         $coursetable->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
 
-        $coursetable->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
-        $coursetable->add_key('survey', XMLDB_KEY_FOREIGN_UNIQUE, array('survey'), 'course', array('id'));
+        $coursetable->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+        $coursetable->add_key('survey', XMLDB_KEY_FOREIGN_UNIQUE, ['survey'], 'course', ['id']);
 
         $multitable = new xmldb_table('block_evasys_sync_courses');
         $multitable->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
@@ -96,8 +96,8 @@ function xmldb_block_evasys_sync_upgrade ($oldversion) {
         $multitable->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
         $multitable->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
 
-        $multitable->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
-        $multitable->add_key('course', XMLDB_KEY_FOREIGN_UNIQUE, array('course'), 'course', array('id'));
+        $multitable->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+        $multitable->add_key('course', XMLDB_KEY_FOREIGN_UNIQUE, ['course'], 'course', ['id']);
         // Conditionally launch create table for block_evasys_sync_categories.
         if (!$dbman->table_exists($table)) {
             $dbman->create_table($table);
@@ -156,8 +156,8 @@ function xmldb_block_evasys_sync_upgrade ($oldversion) {
         $coursetable->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
         $coursetable->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
 
-        $coursetable->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
-        $coursetable->add_key('course', XMLDB_KEY_FOREIGN_UNIQUE, array('course'), 'course', array('id'));
+        $coursetable->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+        $coursetable->add_key('course', XMLDB_KEY_FOREIGN_UNIQUE, ['course'], 'course', ['id']);
 
         if (!$dbman->table_exists($coursetable)) {
             $dbman->create_table($coursetable);
@@ -438,7 +438,7 @@ function xmldb_block_evasys_sync_upgrade ($oldversion) {
             }
             $DB->insert_record(dbtables::EVAL_COURSES, [
                 'evalid' => $evalid,
-                'courseid' => $record->course
+                'courseid' => $record->course,
             ]);
 
             foreach($veransts as $veranst) {
@@ -451,7 +451,8 @@ function xmldb_block_evasys_sync_upgrade ($oldversion) {
                                 $title = mb_convert_encoding($lsfinfo[$veranst]->titel, "UTF-8");
                             }
                         }
-                    } catch (Exception $e) {}
+                    } catch (Exception $e) {
+                    }
                     $id = $DB->insert_record(dbtables::EVAL_VERANSTS, [
                         'evalid' => $evalid,
                         'veranstid' => $veranst,
@@ -461,7 +462,7 @@ function xmldb_block_evasys_sync_upgrade ($oldversion) {
                         'state' => evaluation_state::MANUAL,
                         'usermodified' => $record->usermodified,
                         'timecreated' => $record->timecreated,
-                        'timemodified' => $record->timemodified
+                        'timemodified' => $record->timemodified,
                     ], true, true);
                     $existingveranst[$veranst] = $id;
                 }

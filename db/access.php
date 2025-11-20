@@ -16,57 +16,57 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$capabilities = array(
+$capabilities = [
 
-  'block/evasys_sync:addinstance' => array(
+  'block/evasys_sync:addinstance' => [
     'riskbitmask' => RISK_SPAM,
 
     'captype' => 'write',
     'contextlevel' => CONTEXT_BLOCK,
-    'archetypes' => array(
+    'archetypes' => [
       'editingteacher' => CAP_ALLOW,
-      'manager' => CAP_ALLOW
-    ),
+      'manager' => CAP_ALLOW,
+    ],
 
-    'clonepermissionsfrom' => 'moodle/site:manageblocks'
-  ),
+    'clonepermissionsfrom' => 'moodle/site:manageblocks',
+  ],
 
-  'block/evasys_sync:mayevaluate' => array(
+  'block/evasys_sync:mayevaluate' => [
     'captype' => 'write',
     'contextlevel' => CONTEXT_BLOCK,
-    'archetypes' => array(
+    'archetypes' => [
       'student' => CAP_ALLOW,
       // Prohibit manager and teacher intentionally.
-    ),
-  ),
+    ],
+  ],
 
-  'block/evasys_sync:synchronize' => array(
+  'block/evasys_sync:synchronize' => [
     'riskbitmask' => RISK_SPAM | RISK_PERSONAL,
     'captype' => 'write',
     'contextlevel' => CONTEXT_BLOCK,
-    'archetypes' => array(
+    'archetypes' => [
       'editingteacher' => CAP_ALLOW,
       'manager' => CAP_ALLOW,
-    ),
-  ),
-  'block/evasys_sync:modifymapping' => array(
+    ],
+  ],
+  'block/evasys_sync:modifymapping' => [
       'riskbitmap' => RISK_XSS,
       'captype' => 'write',
       'contextlevel' => CONTEXT_BLOCK,
-      'archetypes' => array(
+      'archetypes' => [
           'editingteacher' => CAP_ALLOW,
           'manager' => CAP_ALLOW,
-      ),
-  ),
-  'block/evasys_sync:managecourses' => array(
+      ],
+  ],
+  'block/evasys_sync:managecourses' => [
       'captype' => 'write',
-      'contextlevel' => CONTEXT_COURSECAT
-  ),
+      'contextlevel' => CONTEXT_COURSECAT,
+  ],
   'block/evasys_sync:teacherforcourse' => [
       'contextlevel' => CONTEXT_COURSE,
       'captype' => 'read',
       'archetypes' => [
-          'editingteacher' => CAP_ALLOW
-      ]
-  ]
-);
+          'editingteacher' => CAP_ALLOW,
+      ],
+  ],
+];

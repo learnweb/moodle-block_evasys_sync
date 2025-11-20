@@ -49,7 +49,7 @@ class evasys_synchronizer {
             $maincourse = $course->idnumber;
         }
         // Fetch persistent object id.
-        $pid = $DB->get_field('block_evasys_sync_courses', 'id', array('course' => $this->courseid));
+        $pid = $DB->get_field('block_evasys_sync_courses', 'id', ['course' => $this->courseid]);
 
         // Get all associated courses.
         if (!$pid === false) {
@@ -91,15 +91,15 @@ class evasys_synchronizer {
      */
     public function get_surveys($courseid) {
         if (!isset($this->courseinformation[$courseid]) || $this->courseinformation[$courseid] === null) {
-            return array();
+            return [];
         }
         if (!isset($this->courseinformation[$courseid]->m_oSurveyHolder->m_aSurveys->Surveys)) {
-            return array();
+            return [];
         }
         $rawsurveys = $this->courseinformation[$courseid]->m_oSurveyHolder->m_aSurveys->Surveys;
         if (count((array)$rawsurveys) == 0) {
             // No surveys available.
-            return array();
+            return [];
         }
 
         if (is_object($rawsurveys)) {
@@ -107,7 +107,7 @@ class evasys_synchronizer {
             return [$this->enrich_survey($rawsurveys)];
         }
 
-        $enrichedsurveys = array();
+        $enrichedsurveys = [];
 
         foreach ($rawsurveys as &$survey) {
             $enrichedsurveys[] = $this->enrich_survey($survey);
@@ -202,7 +202,7 @@ class evasys_synchronizer {
      * @return array of e-mail addresses of all enrolled students
      */
     private function get_enrolled_student_email_adresses_from_usernames() {
-        $emailadresses = array();
+        $emailadresses = [];
 
         $enrolledusers = get_users_by_capability($this->blockcontext, 'block/evasys_sync:mayevaluate');
 
@@ -222,12 +222,12 @@ class evasys_synchronizer {
         }
 
         $emailadresses = $this->get_enrolled_student_email_adresses_from_usernames();
-        $students = array();
+        $students = [];
 
         foreach ($emailadresses as $emailadress) {
             $soapmsidentifier = new \SoapVar($emailadress, XSD_STRING, null, null, 'm_sIdentifier', null);
             $soapmsemail = new \SoapVar($emailadress, XSD_STRING, null, null, 'm_sEmail', null);
-            $student = new \SoapVar(array($soapmsidentifier, $soapmsemail), SOAP_ENC_OBJECT, null, null, 'Persons', null);
+            $student = new \SoapVar([$soapmsidentifier, $soapmsemail], SOAP_ENC_OBJECT, null, null, 'Persons', null);
             $students[] = $student;
         }
         $personlist = new \SoapVar($students, SOAP_ENC_OBJECT, null, null, 'PersonList', null);
@@ -334,17 +334,17 @@ class evasys_synchronizer {
      * @param $course
      * @return bool|\stdClass user
      */
-    static public function get_assigned_user($course) {
+    public static function get_assigned_user($course) {
         global $DB;
 
-        $user = $DB->get_record('block_evasys_sync_categories', array('course_category' => $course->category));
+        $user = $DB->get_record('block_evasys_sync_categories', ['course_category' => $course->category]);
         // Custom user has not been set.
         if (!$user) {
             // Loop through parents.
             $parents = \core_course_category::get($course->category)->get_parents();
             // Start with direct parent.
             for ($i = count($parents) - 1; $i >= 0; $i--) {
-                $user = $DB->get_record('block_evasys_sync_categories', array('course_category' => $parents[$i]));
+                $user = $DB->get_record('block_evasys_sync_categories', ['course_category' => $parents[$i]]);
                 // Stop if a parent has been assigned a custom user.
                 if ($user) {
                     $userto = \core_user::get_user($user->userid);
@@ -371,7 +371,7 @@ class evasys_synchronizer {
      * @throws \coding_exception
      * @throws \dml_missing_record_exception
      */
-    public function set_evaluation_period($dates) : bool {
+    public function set_evaluation_period($dates): bool {
         $usestandardtime = ($dates == 'Standard');
         $course = get_course($this->courseid);
         if ($usestandardtime) {
@@ -389,7 +389,7 @@ class evasys_synchronizer {
                         'lsfid' => $lsfid,
                         'start' => $dates['start'],
                         'end' => $dates['end'],
-                        'state' => evaluation_state::MANUAL
+                        'state' => evaluation_state::MANUAL,
                 ];
             }
         } else {
@@ -416,20 +416,20 @@ class evasys_synchronizer {
      */
     public static function get_standard_timemode($category) {
         global $DB;
-        $mode = $DB->get_record('block_evasys_sync_categories', array('course_category' => $category));
+        $mode = $DB->get_record('block_evasys_sync_categories', ['course_category' => $category]);
         if ($mode !== false) {
             if ($mode->standard_time_start != null) {
-                return array('start' => $mode->standard_time_start, 'end' => $mode->standard_time_end);
+                return ['start' => $mode->standard_time_start, 'end' => $mode->standard_time_end];
             } else {
                 return false;
             }
         } else {
             $parents = \core_course_category::get($category)->get_parents();
             for ($i = count($parents) - 1; $i >= 0; $i--) {
-                $mode = $DB->get_record('block_evasys_sync_categories', array('course_category' => $parents[$i]));
+                $mode = $DB->get_record('block_evasys_sync_categories', ['course_category' => $parents[$i]]);
                 if ($mode !== false) {
                     if ($mode->standard_time_start != null) {
-                        return array('start' => $mode->standard_time_start, 'end' => $mode->standard_time_end);
+                        return ['start' => $mode->standard_time_start, 'end' => $mode->standard_time_end];
                     } else {
                         return false;
                     }

@@ -13,6 +13,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
  * PHPUnit evasys testcase
  * @package block_evasys_sync
@@ -29,31 +30,31 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright 2017 T Gunkel
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class block_evasys_sync_notify_testcase extends advanced_testcase {
+final class notify_responsible_person_test extends advanced_testcase {
     /**
      * @runInSeparateProcess
      */
-    public function test_notify_person () {
+    public function test_notify_person(): void {
         global $DB;
         $this->resetAfterTest(true);
 
         $generator = $this->getDataGenerator();
         $categoryone = $generator->create_category();
         $categorytwo = $generator->create_category();
-        $subcategoryone = $generator->create_category(array('parent' => $categoryone->id));
-        $subsubcategoryone = $generator->create_category(array('parent' => $subcategoryone->id));
+        $subcategoryone = $generator->create_category(['parent' => $categoryone->id]);
+        $subsubcategoryone = $generator->create_category(['parent' => $subcategoryone->id]);
         $defaultuser = $generator->create_user();
         $userone = $this->getDataGenerator()->create_user();
         $usersubone = $this->getDataGenerator()->create_user();
         $usersubsubone = $this->getDataGenerator()->create_user();
         set_config('default_evasys_moodleuser', $defaultuser->id, 'block_evasys_sync');
 
-        $courseone = $this->getDataGenerator()->create_course(array('name' => 'First course',
-                                                                  'category' => $categoryone->id));
-        $coursesubsubone = $this->getDataGenerator()->create_course(array('name' => 'Sub course',
-                                                                        'category' => $subsubcategoryone->id));
-        $coursetwo = $this->getDataGenerator()->create_course(array('name' => 'Second course',
-                                                                  'category' => $categorytwo->id));
+        $courseone = $this->getDataGenerator()->create_course(['name' => 'First course',
+                                                                  'category' => $categoryone->id]);
+        $coursesubsubone = $this->getDataGenerator()->create_course(['name' => 'Sub course',
+                                                                        'category' => $subsubcategoryone->id]);
+        $coursetwo = $this->getDataGenerator()->create_course(['name' => 'Second course',
+                                                                  'category' => $categorytwo->id]);
 
         // Test default user.
         $userto = \block_evasys_sync\evasys_synchronizer::get_assigned_user($courseone);

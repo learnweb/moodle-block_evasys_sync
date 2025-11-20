@@ -36,12 +36,12 @@ class managecategory_filter_table_form extends moodleform {
     /**
      * Defines formelements.
      */
-    protected function definition(){
+    protected function definition() {
         global $DB;
         $mform = $this->_form;
 
         $courses = $this->_customdata['table']->get_all_displayed_courses();
-        $mform->addElement('autocomplete', 'coursesearches', get_string('searcharea','search'), $courses, array('multiple' => true));
+        $mform->addElement('autocomplete', 'coursesearches', get_string('searcharea', 'search'), $courses, ['multiple' => true]);
 
         $searchbutton = $mform->createElement('submit', 'search', get_string('search', 'block_evasys_sync'));
         $mform->addElement($searchbutton);

@@ -55,14 +55,13 @@ class error_courses_table extends \table_sql {
 
         $this->evasyscategory = $evasyscategory;
         $this->str = [
-                'timeformat' => get_string('strftimedatetimeshort', 'langconfig')
+                'timeformat' => get_string('strftimedatetimeshort', 'langconfig'),
         ];
 
         $fields = 'err.id, c.id as courseid, c.fullname as coursename, err.lsfid, err.text, err.timecreated as time';
 
         $semesterfield = $DB->get_record('customfield_field',
             ['shortname' => 'semester', 'type' => 'semester'], '*', MUST_EXIST);
-
 
         $from = '{' . dbtables::ERRORS . '} err ' .
             'LEFT JOIN {course} c ON err.courseid = c.id ' .
@@ -107,7 +106,7 @@ class error_courses_table extends \table_sql {
                 'LSF-ID',
                 get_string('error'),
                 get_string('time'),
-                ''
+                '',
         ]);
 
         $PAGE->requires->js_call_amd('block_evasys_sync/tablebulkactions', 'init');
@@ -182,7 +181,7 @@ class error_courses_table extends \table_sql {
      * @return array
      */
     public function get_all_error_courseids() {
-        $ids = array();
+        $ids = [];
         foreach ($this->allcourseids as $courseid) {
             $ids[] = $courseid->id;
         }

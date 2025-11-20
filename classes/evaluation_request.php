@@ -54,7 +54,7 @@ class evaluation_request {
         global $DB;
         $evalrequest = new evaluation_request();
         $record = $DB->get_record(dbtables::EVAL_REQUESTS, [
-            'id' => $id
+            'id' => $id,
         ]);
         $evalrequest->id = $record->id;
         $evalrequest->shouldevaluate = $record->shouldevaluate;
@@ -66,11 +66,11 @@ class evaluation_request {
         $evalrequest->usermodified = $record->usermodified;
 
         $courses = $DB->get_fieldset_select(dbtables::EVAL_REQUESTS_COURSES, 'courseid', 'erequestid = :ereqid', [
-            'ereqid' => $record->id
+            'ereqid' => $record->id,
         ]);
         $evalrequest->courses = $courses;
         $evalrecords = $DB->get_records(dbtables::EVAL_REQUESTS_VERANSTS, [
-            'erequestid' => $record->id
+            'erequestid' => $record->id,
         ]);
         $evaluations = [];
         foreach ($evalrecords as $evalrecord) {
@@ -124,7 +124,7 @@ class evaluation_request {
             'evasyscategoryid' => $this->evasyscategoryid,
             'usermodified' => $this->usermodified ?? $USER->id,
             'timecreated' => $this->timecreated ?? time(),
-            'timemodified' => $this->timemodified ?? time()
+            'timemodified' => $this->timemodified ?? time(),
         ];
         $existingcourses = [];
         $existingveransts = [];
@@ -173,7 +173,7 @@ class evaluation_request {
                     'veranstid' => $lsfcourseid,
                     'veransttitle' => $evaluation->title,
                     'starttime' => $evaluation->start,
-                    'endtime' => $evaluation->end
+                    'endtime' => $evaluation->end,
                 ]);
             }
         }

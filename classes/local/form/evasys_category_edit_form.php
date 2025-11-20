@@ -39,7 +39,7 @@ require_once($CFG->libdir . '/formslib.php');
  */
 class evasys_category_edit_form extends moodleform {
 
-    private ?evasys_category $evasys_category;
+    private ?evasys_category $evasyscategory;
 
     public function __construct(int $evasyscategoryid, $action = null, $customdata = null, $method = 'post', $target = '', $attributes = null, $editable = true, $ajaxformdata = null) {
         $this->evasys_category = new evasys_category($evasyscategoryid);
@@ -127,7 +127,7 @@ class evasys_category_edit_form extends moodleform {
         $evasyscat->set_many([
             'standard_time_start' => $usestandardtime ? $data->standard_time_start : null,
             'standard_time_end' => $usestandardtime ? $data->standard_time_end : null,
-            'mode_flags' => $flags
+            'mode_flags' => $flags,
         ]);
         return $evasyscat;
     }

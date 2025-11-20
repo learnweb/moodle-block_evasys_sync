@@ -58,7 +58,7 @@ $table->setup();
 foreach ($usercats as $usercat) {
     $table->add_data([
             html_writer::link(new moodle_url('/blocks/evasys_sync/managecategory.php', ['id' => $usercat]),
-                    core_course_category::get($usercat)->name)
+                    core_course_category::get($usercat)->name),
     ]);
 }
 

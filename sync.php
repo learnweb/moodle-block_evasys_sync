@@ -24,7 +24,7 @@ require_login($courseid);
 require_sesskey();
 
 $PAGE->set_url('/blocks/evasys_sync/sync.php');
-$DB->get_record('course', array('id' => $courseid), 'id', MUST_EXIST);
+$DB->get_record('course', ['id' => $courseid], 'id', MUST_EXIST);
 
 $PAGE->set_context(context_course::instance($courseid));
 require_capability('block/evasys_sync:synchronize', context_course::instance($courseid));
@@ -128,11 +128,11 @@ try {
         }
 
         // Log event.
-        $event = \block_evasys_sync\event\evaluation_requested::create(array(
+        $event = \block_evasys_sync\event\evaluation_requested::create([
             'userid' => $USER->id,
             'courseid' => $courseid,
             'context' => \context_course::instance($courseid),
-        ));
+        ]);
         $event->trigger();
 
         if ($datenew) {

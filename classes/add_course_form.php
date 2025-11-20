@@ -30,7 +30,7 @@ class add_course_form extends moodleform {
     // Todo make mustache form.
     // Todo check if course has been started.
 
-    protected function definition () {
+    protected function definition() {
     }
 
     /**
@@ -41,7 +41,7 @@ class add_course_form extends moodleform {
      * @throws \coding_exception
      * @throws \dml_exception
      */
-    public function init ($courseid) {
+    public function init($courseid) {
         // Variable violates moodle codestyle but this is required by the lsf-plugin.
         global $pgDB, $USER, $DB; // phpcs:ignore // @codingStandardsIgnoreLine
         $mform = $this->_form;
@@ -49,13 +49,13 @@ class add_course_form extends moodleform {
         $mform->addElement( 'html', '<h3>'. get_string('add_course_header', 'block_evasys_sync') .'</h3>');
         $pgDB = new \pg_lite(); // phpcs:ignore // @codingStandardsIgnoreLine
         $pgDB->connect(); // phpcs:ignore // @codingStandardsIgnoreLine
-        $lsfid = $DB->get_field('course', 'idnumber', array('id' => $courseid));
+        $lsfid = $DB->get_field('course', 'idnumber', ['id' => $courseid]);
         if ($lsfid) {
             $maincourse = (array)get_course_by_veranstid($lsfid);
         } else {
             $maincourse = null;
         }
-        $veranstids = array();
+        $veranstids = [];
         if (!is_siteadmin()) {
             $veranstids = get_veranstids_by_teacher(get_teachers_pid($USER->username));
         } else {
@@ -70,9 +70,9 @@ class add_course_form extends moodleform {
         }
         $courses = get_courses_by_veranstids($veranstids);
         $pgDB->dispose(); // phpcs:ignore // @codingStandardsIgnoreLine
-        $availablecourselist = array();
+        $availablecourselist = [];
         foreach ($courses as $veranstid => $course) {
-            $result = array();
+            $result = [];
             $result['veranstid'] = $course->veranstid;
             $result['info'] = utf8_encode($course->titel);
             $result['semestertxt'] = utf8_encode($course->semestertxt);
@@ -110,18 +110,18 @@ class add_course_form extends moodleform {
         $attributes['id'] = 'evasys_course_map_table';
         $output = html_writer::start_tag('table', $attributes);
 
-        $output .= html_writer::start_tag('thead', array());
-        $output .= html_writer::start_tag('tr', array());
+        $output .= html_writer::start_tag('thead', []);
+        $output .= html_writer::start_tag('tr', []);
 
-        $attributes = array();
+        $attributes = [];
         $attributes['class'] = 'header c0';
         $attributes['scope'] = 'col';
         $output .= html_writer::tag('th', get_string('coursename', 'block_evasys_sync'), $attributes);
-        $attributes = array();
+        $attributes = [];
         $attributes['class'] = 'header c1';
         $attributes['scope'] = 'col';
         $output .= html_writer::tag('th', get_string('semester', 'block_evasys_sync'), $attributes);
-        $attributes = array();
+        $attributes = [];
         $attributes['class'] = 'header c2 lastcol';
         $attributes['scope'] = 'col';
         $output .= html_writer::tag('th', get_string('associated', 'block_evasys_sync'), $attributes);

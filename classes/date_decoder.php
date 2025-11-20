@@ -30,7 +30,7 @@ class date_decoder {
     }
 
     private function __construct() {
-        $this->decoder = array(
+        $this->decoder = [
             get_string('January', 'block_evasys_sync') => 1,
             get_string('February', 'block_evasys_sync') => 2,
             get_string('March', 'block_evasys_sync') => 3,
@@ -43,7 +43,7 @@ class date_decoder {
             get_string('October', 'block_evasys_sync') => 10,
             get_string('November', 'block_evasys_sync') => 11,
             get_string('December', 'block_evasys_sync') => 12,
-        );
+        ];
     }
 
     public static function decode_from_localised_string(string $month): int {

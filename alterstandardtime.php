@@ -27,4 +27,4 @@ $cat = required_param('category', PARAM_INT);
 global $DB;
 $sql = 'UPDATE {block_evasys_sync_categories} SET standard_time_start = ?, standard_time_end = ? ' .
     'WHERE id = ?';
-$DB->execute($sql, array($starttime, $endtime, $cat));
+$DB->execute($sql, [$starttime, $endtime, $cat]);

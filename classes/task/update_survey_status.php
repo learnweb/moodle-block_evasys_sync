@@ -28,7 +28,7 @@ class update_survey_status extends \core\task\scheduled_task {
      * @return string
      * @throws \coding_exception
      */
-    public function get_name () {
+    public function get_name() {
         return get_string('taskname', 'block_evasys_sync');
     }
     /**
@@ -39,18 +39,18 @@ class update_survey_status extends \core\task\scheduled_task {
     // At the moment manual removal is advised. However since you're here I assume you have some problems...
     // My personal advice is to either move records that are in the past to another table, so you can still display the dates,
     // ...or to simply remove a record once the survey is closed.
-    public function execute () {
+    public function execute() {
         // Obtain all moodle-controlled surveys and open and/or close them.
         // This should never affect manual surveys (with state = 3).
         $time = time();
         $inviter = evasys_inviter::get_instance();
         $startcourseobjects = \block_evasys_sync\course_evaluation_allocation::get_records_select("startdate <= $time AND state = 0");
-        $startcourses = array();
+        $startcourses = [];
         foreach ($startcourseobjects as $object) {
             $startcourses[] = $object->get("course");
         }
         $closecourseobjects = \block_evasys_sync\course_evaluation_allocation::get_records_select("enddate <= $time AND state < 2");
-        $closecourses = array();
+        $closecourses = [];
         foreach ($closecourseobjects as $object) {
             $closecourses[] = $object->get("course");
         }

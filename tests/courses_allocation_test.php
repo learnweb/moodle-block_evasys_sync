@@ -13,6 +13,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
  * Tests the class evasys_courses_allocation
  * @package block_evasys_sync
@@ -29,17 +30,17 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright 2019 T Reischmann
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class block_evasys_courses_allocation_testcase extends advanced_testcase {
+final class courses_allocation_test extends advanced_testcase {
 
     /**
      * Tests if a course has a idnumber, but no allocation entry.
      */
-    public function test_idnumber_only() {
+    public function test_idnumber_only(): void {
         $this->resetAfterTest(true);
 
         $idnumber = '123456789';
 
-        $courseone = $this->getDataGenerator()->create_course(array('name' => 'First course', 'idnumber' => $idnumber));
+        $courseone = $this->getDataGenerator()->create_course(['name' => 'First course', 'idnumber' => $idnumber]);
 
         $result = \block_evasys_sync\course_evasys_courses_allocation::raw_get_evasyscourses($courseone->id);
 
@@ -50,10 +51,10 @@ class block_evasys_courses_allocation_testcase extends advanced_testcase {
     /**
      * Tests if a course has neither an idnumber, nor an allocation entry.
      */
-    public function test_no_idnumber() {
+    public function test_no_idnumber(): void {
         $this->resetAfterTest(true);
 
-        $courseone = $this->getDataGenerator()->create_course(array('name' => 'First course'));
+        $courseone = $this->getDataGenerator()->create_course(['name' => 'First course']);
 
         $result = \block_evasys_sync\course_evasys_courses_allocation::raw_get_evasyscourses($courseone->id);
 
@@ -63,19 +64,19 @@ class block_evasys_courses_allocation_testcase extends advanced_testcase {
     /**
      * Tests if a course has an idnumber and an allocation entry.
      */
-    public function test_idnumber_and_allocation_entries() {
+    public function test_idnumber_and_allocation_entries(): void {
         $this->resetAfterTest(true);
 
         $idnumber = 'idnumber';
         $evasysid1 = 'evasysid1';
         $evasysid2 = 'evasysid2';
 
-        $courseone = $this->getDataGenerator()->create_course(array('name' => 'First course', 'idnumber' => $idnumber));
+        $courseone = $this->getDataGenerator()->create_course(['name' => 'First course', 'idnumber' => $idnumber]);
 
         $allocation = new \block_evasys_sync\course_evasys_courses_allocation();
 
         // Add first evasysid.
-        $evasysids = array();
+        $evasysids = [];
         $evasysids[] = $evasysid1;
         $allocation->set('course', $courseone->id);
         $allocation->set('evasyscourses', implode('#', $evasysids));
@@ -105,18 +106,18 @@ class block_evasys_courses_allocation_testcase extends advanced_testcase {
     /**
      * Tests if a course has no idnumber, but an allocation entry.
      */
-    public function test_only_allocation_entries() {
+    public function test_only_allocation_entries(): void {
         $this->resetAfterTest(true);
 
         $evasysid1 = 'evasysid1';
         $evasysid2 = 'evasysid2';
 
-        $courseone = $this->getDataGenerator()->create_course(array('name' => 'First course'));
+        $courseone = $this->getDataGenerator()->create_course(['name' => 'First course']);
 
         $allocation = new \block_evasys_sync\course_evasys_courses_allocation();
 
         // Add first evasysid.
-        $evasysids = array();
+        $evasysids = [];
         $evasysids[] = $evasysid1;
         $allocation->set('course', $courseone->id);
         $allocation->set('evasyscourses', implode('#', $evasysids));

@@ -26,7 +26,7 @@ use core\persistent;
 
 defined('MOODLE_INTERNAL') || die;
 
-class course_evaluation_allocation extends persistent{
+class course_evaluation_allocation extends persistent {
     const TABLE = 'block_evasys_sync_courseeval';
 
     const STATE_AUTO_NOTOPENED = 0;
@@ -40,34 +40,34 @@ class course_evaluation_allocation extends persistent{
         // 1: opened.
         // 2: closed.
         // 3: email sent.
-        return array(
-            'course' => array(
+        return [
+            'course' => [
                 'type' => PARAM_INT,
-                'message' => new \lang_string('invalidcourse', 'block_evasys_sync')
-            ),
-            'startdate' => array(
+                'message' => new \lang_string('invalidcourse', 'block_evasys_sync'),
+            ],
+            'startdate' => [
                 'type' => PARAM_INT,
-                'message' => new \lang_string('invaliddate', 'block_evasys_sync')
-            ),
-            'enddate' => array(
+                'message' => new \lang_string('invaliddate', 'block_evasys_sync'),
+            ],
+            'enddate' => [
                 'type' => PARAM_INT,
-                'message' => new \lang_string('invaliddate', 'block_evasys_sync')
-            ),
-            'usestandardtime' => array(
+                'message' => new \lang_string('invaliddate', 'block_evasys_sync'),
+            ],
+            'usestandardtime' => [
                 'type' => PARAM_BOOL,
-                'default' => false
-            ),
-            'state' => array(
+                'default' => false,
+            ],
+            'state' => [
                 'type' => PARAM_INT,
                 'required' => true,
-                'message' => new \lang_string('invalidstate', 'block_evasys_sync')
-            )
-        );
+                'message' => new \lang_string('invalidstate', 'block_evasys_sync'),
+            ],
+        ];
     }
 
     public static function get_record_by_course(int $course, $exception = true) {
         global $DB;
-        if (!$record = $DB->get_record(self::TABLE, array('course' => $course))) {
+        if (!$record = $DB->get_record(self::TABLE, ['course' => $course])) {
             if (!$exception) {
                 return false;
             } else {

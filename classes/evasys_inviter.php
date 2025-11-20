@@ -46,7 +46,7 @@ class evasys_inviter {
     public static function get_evasysids($courseid) {
         global $DB;
         // Fetch persistent object id.
-        $pid = $DB->get_field('block_evasys_sync_courses', 'id', array('course' => $courseid));
+        $pid = $DB->get_field('block_evasys_sync_courses', 'id', ['course' => $courseid]);
         // Get all associated courses.
         if ($pid !== false) {
             $allocation = new \block_evasys_sync\course_evasys_courses_allocation($pid);
@@ -56,7 +56,7 @@ class evasys_inviter {
         }
         $extras = array_filter($extras);
 
-	// Maybe add entry via the $course->idnumber.
+        // Maybe add entry via the $course->idnumber.
         $course = get_course($courseid);
         if ($course->idnumber) {
             $maincourse = $course->idnumber;
@@ -77,15 +77,15 @@ class evasys_inviter {
         $soapresult = $this->soapclient->GetCourse($evasyskennung, 'PUBLIC', true, false);
         $surveyids = $soapresult->m_oSurveyHolder->m_aSurveys;
         if (is_soap_fault($soapresult)) {
-            return array();
+            return [];
         }
         if (is_object($surveyids->Surveys)) {
             if ($all or $surveyids->Surveys->m_nOpenState != 0) {
-                return array($surveyids->Surveys);
+                return [$surveyids->Surveys];
             }
-            return array();
+            return [];
         } else {
-            $surveys = array();
+            $surveys = [];
             foreach ($surveyids->Surveys as $survey) {
                 if ($all or $survey->m_nOpenState != 0) {
                     $surveys[] = $survey;
@@ -97,7 +97,7 @@ class evasys_inviter {
 
     public function close_evasys_surveys($courses) {
         foreach ($courses as $evasysid => $moodlecourse) {
-            $errorsurveys = array();
+            $errorsurveys = [];
             // Get all open evasys Surveys.
             $surveys = $this->get_evasys_course_surveys($evasysid, false);
             foreach ($surveys as $survey) {
@@ -111,7 +111,7 @@ class evasys_inviter {
         }
     }
 
-    public function send_failure_warning ($moodlecourse, $evasysid, $errorsurveys) {
+    public function send_failure_warning($moodlecourse, $evasysid, $errorsurveys) {
         global $USER;
         $course = get_course($moodlecourse);
         $userto = evasys_synchronizer::get_assigned_user($course);
@@ -133,12 +133,12 @@ class evasys_inviter {
     }
 
     public function open_evasys_surveys($courses) {
-        $surveys = array();
+        $surveys = [];
         foreach ($courses as $course) {
             // Get all open evasys Surveys.
             $surveys = array_merge($surveys, $this->get_evasys_course_surveys($course, false));
         }
-        $surveyids = array();
+        $surveyids = [];
         foreach ($surveys as $survey) {
             $surveyids[] = (string)$survey->m_nSurveyId;
         }
@@ -151,8 +151,8 @@ class evasys_inviter {
 
     public function open_moodle_courses($courseids) {
         global $DB;
-        $courses = array();
-        $usedcourseids = array();
+        $courses = [];
+        $usedcourseids = [];
         // Push users into (viable) surveys.
         foreach ($courseids as $courseid) {
             if (self::getmode(get_course($courseid)->category)) {
@@ -173,10 +173,10 @@ class evasys_inviter {
 
         // Record that this has happened.
         foreach ($usedcourseids as $courseid) {
-            $event = event\evaluation_opened::create(array(
+            $event = event\evaluation_opened::create([
                 'context' => \context_course::instance($courseid),
                 'courseid' => $courseid,
-                )
+                ]
             );
             $event->trigger();
         }
@@ -184,8 +184,8 @@ class evasys_inviter {
 
     public function close_moodle_course($courseids) {
         global $DB;
-        $courses = array();
-        $usedcourseids = array();
+        $courses = [];
+        $usedcourseids = [];
         // Collect viable courses.
         foreach ($courseids as $courseid) {
             if (self::getmode(get_course($courseid)->category)) {
@@ -202,10 +202,10 @@ class evasys_inviter {
             $DB->execute("UPDATE {block_evasys_sync_courseeval} SET state = 2 WHERE course in ($courseidssql)");
         }
         foreach ($usedcourseids as $courseid) {
-            $event = event\evaluation_closed::create(array(
+            $event = event\evaluation_closed::create([
                 'context' => \context_course::instance($courseid),
-                'courseid' => $courseid
-                )
+                'courseid' => $courseid,
+                ]
             );
             $event->trigger();
         }
@@ -214,11 +214,11 @@ class evasys_inviter {
     public function push_users_in_moodlecourse($moodlecourse) {
         $evasyscourses = self::get_evasysids($moodlecourse);
         $emailadresses = self::get_enrolled_student_email_adresses_from_usernames($moodlecourse);
-        $students = array();
+        $students = [];
         foreach ($emailadresses as $emailadress) {
             $soapmsidentifier = new \SoapVar($emailadress, XSD_STRING, null, null, 'm_sIdentifier', null);
             $soapmsemail = new \SoapVar($emailadress, XSD_STRING, null, null, 'm_sEmail', null);
-            $student = new \SoapVar(array($soapmsidentifier, $soapmsemail), SOAP_ENC_OBJECT, null, null, 'Persons', null);
+            $student = new \SoapVar([$soapmsidentifier, $soapmsemail], SOAP_ENC_OBJECT, null, null, 'Persons', null);
             $students[] = $student;
         }
         $personlist = new \SoapVar($students, SOAP_ENC_OBJECT, null, null, 'PersonList', null);
@@ -248,7 +248,7 @@ class evasys_inviter {
     }
 
     public static function get_enrolled_student_email_adresses_from_usernames($moodlecourseid) {
-        $emailadresses = array();
+        $emailadresses = [];
 
         $enrolledusers = get_users_by_capability(\context_course::instance($moodlecourseid), 'block/evasys_sync:mayevaluate');
 
@@ -289,13 +289,13 @@ class evasys_inviter {
      */
     public static function getmode($category) {
         global $DB;
-        $mode = $DB->get_record('block_evasys_sync_categories', array('course_category' => $category));
+        $mode = $DB->get_record('block_evasys_sync_categories', ['course_category' => $category]);
         if ($mode !== false) {
             return (bool) $mode->category_mode;
         } else {
             $parents = \core_course_category::get($category)->get_parents();
             for ($i = count($parents) - 1; $i >= 0; $i--) {
-                $mode = $DB->get_record('block_evasys_sync_categories', array('course_category' => $parents[$i]));
+                $mode = $DB->get_record('block_evasys_sync_categories', ['course_category' => $parents[$i]]);
                 if ($mode !== false) {
                     return (bool) $mode->category_mode;
                 }
@@ -323,13 +323,13 @@ class evasys_inviter {
             $coursestring .= "\t\t". $evacourse . "\n";
         }
         $usercoordinator = evasys_synchronizer::get_assigned_user($course);
-        $data = array(
+        $data = [
             'name' => $course->fullname,
             'teacher' => $USER->firstname . " " . $USER->lastname,
             'start' => $startdate->format('d.m.Y H:i:s'),
             'end' => $enddate->format('d.m.Y H:i:s'),
-            'evasyscourses' => $coursestring
-        );
+            'evasyscourses' => $coursestring,
+        ];
         $subject = get_string("alert_email_subject", "block_evasys_sync", $course->fullname);
         $message = get_string("alert_email_body", "block_evasys_sync", $data);
 

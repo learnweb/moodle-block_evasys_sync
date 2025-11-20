@@ -51,35 +51,35 @@ class evasys_category extends persistent {
      * @return array
      */
     protected static function define_properties() {
-        return array(
-            'userid' => array(
+        return [
+            'userid' => [
                 'type' => PARAM_INT,
-                'message' => new \lang_string('invaliduserid', 'error')
-            ),
-            'course_category' => array(
+                'message' => new \lang_string('invaliduserid', 'error'),
+            ],
+            'course_category' => [
                 'type' => PARAM_INT,
-                'message' => new \lang_string('invalidcoursecat', 'block_evasys_sync')
-            ),
-            'category_mode' => array(
+                'message' => new \lang_string('invalidcoursecat', 'block_evasys_sync'),
+            ],
+            'category_mode' => [
                 'type' => PARAM_INT,
-                'message' => new \lang_string('invalidmode', 'block_evasys_sync')
-            ),
-            'mode_flags' => array(
-                'type' => PARAM_INT
-            ),
-            'standard_time_start' => array (
+                'message' => new \lang_string('invalidmode', 'block_evasys_sync'),
+            ],
+            'mode_flags' => [
                 'type' => PARAM_INT,
-                'message' => new \lang_string('invalid_standard_time_mode', 'block_evasys_sync'),
-                'null' => NULL_ALLOWED,
-                'default' => null
-            ),
-            'standard_time_end' => array (
+            ],
+            'standard_time_start' => [
                 'type' => PARAM_INT,
                 'message' => new \lang_string('invalid_standard_time_mode', 'block_evasys_sync'),
                 'null' => NULL_ALLOWED,
-                'default' => null
-            )
-        );
+                'default' => null,
+            ],
+            'standard_time_end' => [
+                'type' => PARAM_INT,
+                'message' => new \lang_string('invalid_standard_time_mode', 'block_evasys_sync'),
+                'null' => NULL_ALLOWED,
+                'default' => null,
+            ],
+        ];
     }
 
     public static function for_course($course): ?evasys_category {
@@ -87,7 +87,7 @@ class evasys_category extends persistent {
     }
 
     public static function for_category($categoryid): ?evasys_category {
-        $record = evasys_category::get_record(['course_category' => $categoryid]);
+        $record = self::get_record(['course_category' => $categoryid]);
         if ($record) {
             return $record;
         }
@@ -95,7 +95,7 @@ class evasys_category extends persistent {
         try{
             $parents = \core_course_category::get($categoryid)->get_parents();
             for ($i = count($parents) - 1; $i >= 0; $i--) {
-                $record = evasys_category::get_record(['course_category' => $parents[$i]]);
+                $record = self::get_record(['course_category' => $parents[$i]]);
                 // Stop if a parent has been assigned a custom record.
                 if ($record) {
                     return $record;
@@ -121,19 +121,19 @@ class evasys_category extends persistent {
         return true;
     }
 
-    public function can_teacher_request_evaluation() : bool {
+    public function can_teacher_request_evaluation(): bool {
         return $this->get('mode_flags') & self::MASK_TEACHER_CAN_REQUEST_EVALUATION;
     }
 
-    public function send_mail_to_teacher() : bool {
+    public function send_mail_to_teacher(): bool {
         return $this->get('mode_flags') & self::MASK_SEND_MAIL_TO_TEACHER;
     }
 
-    public function teacher_evaluation_request_needs_approval() : bool {
+    public function teacher_evaluation_request_needs_approval(): bool {
         return $this->get('mode_flags') & self::MASK_EVALUATION_REQUEST_NEEDS_APPROVAL;
     }
 
-    public function is_automatic() : bool {
+    public function is_automatic(): bool {
         return $this->get('mode_flags') & self::MASK_AUTOMATIC_TASK_CREATION;
     }
 

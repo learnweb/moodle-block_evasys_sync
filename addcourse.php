@@ -40,9 +40,9 @@ if ($evaluation and !is_siteadmin() or !get_config('block_evasys_sync', 'default
 $mform = new \block_evasys_sync\add_course_form();
 $mform->init($id);
 
-$pid = $DB->get_field('block_evasys_sync_courses', 'id', array('course' => $id));
-$prefill = array();
-$preexistingmappings = array();
+$pid = $DB->get_field('block_evasys_sync_courses', 'id', ['course' => $id]);
+$prefill = [];
+$preexistingmappings = [];
 if (!$pid) {
     $persistent = new \block_evasys_sync\course_evasys_courses_allocation(0);
 } else {
@@ -109,7 +109,7 @@ if ($mform->is_validated()) {
         $persistent->set('evasyscourses', $mappingstring);
         $persistent->save();
     }
-    $redirecturl = new moodle_url('/course/view.php', array('id' => $id, 'evasyssynccheck' => 1));
+    $redirecturl = new moodle_url('/course/view.php', ['id' => $id, 'evasyssynccheck' => 1]);
     redirect($redirecturl, get_string('selection_success', 'block_evasys_sync'));
 }
 

@@ -44,7 +44,7 @@ class manual_courses_table extends \table_sql {
     private evasys_category $evasyscategory;
 
     private bool $showbuttons;
-  
+
     private $allcourseids;
 
     /**
@@ -113,7 +113,7 @@ class manual_courses_table extends \table_sql {
                 get_string('course'),
                 get_string('teachers'),
                 get_string('status'),
-                ''
+                '',
         ]);
     }
 
@@ -209,7 +209,7 @@ class manual_courses_table extends \table_sql {
 
         $allcourses = $DB->get_records_sql('SELECT c.id as courseid, c.fullname as coursename FROM ' . $this->sql->from . ' WHERE ' . $this->sql->where, $this->sql->params);
 
-        $courses = array();
+        $courses = [];
         foreach ($allcourses as $course) {
             $courses[$course->courseid] = $course->coursename;
         }

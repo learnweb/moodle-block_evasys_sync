@@ -57,7 +57,7 @@ if ($data = $mform->get_data()) {
 
 $data = $cache->get($cachekey);
 
-$field = $DB->get_record('customfield_field', array('shortname' => 'semester', 'type' => 'semester'), '*', MUST_EXIST);
+$field = $DB->get_record('customfield_field', ['shortname' => 'semester', 'type' => 'semester'], '*', MUST_EXIST);
 $fieldcontroller = \core_customfield\field_controller::create($field->id);
 $datacontroller = \core_customfield\data_controller::create(0, null, $fieldcontroller);
 
@@ -71,7 +71,7 @@ if ($data) {
 $catids = array_merge($category->get_all_children_ids(), [$category->id]);
 
 $PAGE->navigation->add('EvaSys', new moodle_url('/blocks/evasys_sync/manageroverview.php'))
-        ->add(
+    ->add(
             get_string('evaluations', 'block_evasys_sync') . ' in ' . data_controller::get_name_for_semester($data->semester),
             new moodle_url('/blocks/evasys_sync/managecategory.php', ['id' => $category->id])
         )->make_active();
@@ -114,15 +114,15 @@ $renderer = $PAGE->get_renderer('block_evasys_sync');
 $renderer->print_evasys_category_header($evasyscategory);
 
 echo $OUTPUT->render_from_template('core/search_input', [
-        'action' => (new moodle_url('/blocks/evasys_sync/coursesearch.php', array('id' => $id)))->out(false),
+        'action' => (new moodle_url('/blocks/evasys_sync/coursesearch.php', ['id' => $id]))->out(false),
         'uniqid' => 'block_evasys_sync-search-courses',
         'inputname' => 'search',
         'extraclasses' => 'mb-3',
         'inform' => false,
         'searchstring' => get_string('search_for_courses', 'block_evasys_sync'),
         'hiddenfields' => [
-            (object) ['type' => 'hidden', 'name' => 'id', 'value' => $id]
-        ]
+            (object) ['type' => 'hidden', 'name' => 'id', 'value' => $id],
+        ],
 ]);
 
 $mform->display();
@@ -138,41 +138,41 @@ $table->setup();
 if ($courseamountsall->errorcourses) {
     $table->add_data([
         html_writer::link(new moodle_url('/blocks/evasys_sync/managecategory_errors.php', ['id' => $id]),
-                get_string('courses_with_errors', 'block_evasys_sync')), $courseamountsall->errorcourses
+                get_string('courses_with_errors', 'block_evasys_sync')), $courseamountsall->errorcourses,
     ], 'table-warning');
 }
 
 if ($evasyscategory->is_automatic() || $courseamounts->requestcourses) {
     $table->add_data([
         html_writer::link(new moodle_url('/blocks/evasys_sync/managecategory_requests.php', ['id' => $id]),
-                get_string('courses_with_requests', 'block_evasys_sync')), $courseamounts->requestcourses
+                get_string('courses_with_requests', 'block_evasys_sync')), $courseamounts->requestcourses,
     ]);
 }
 
 if ($evasyscategory->is_automatic() || $courseamounts->autoevalcourses) {
     $table->add_data([
         html_writer::link(new moodle_url('/blocks/evasys_sync/managecategory_auto.php', ['id' => $id]),
-                get_string('courses_with_automatic_evals', 'block_evasys_sync')), $courseamounts->autoevalcourses
+                get_string('courses_with_automatic_evals', 'block_evasys_sync')), $courseamounts->autoevalcourses,
     ]);
 }
 
 if (!$evasyscategory->is_automatic() || $courseamounts->manualevalcourses) {
     $table->add_data([
         html_writer::link(new moodle_url('/blocks/evasys_sync/managecategory_manual.php', ['id' => $id]),
-                get_string('courses_with_manual_evals', 'block_evasys_sync')), $courseamounts->manualevalcourses
+                get_string('courses_with_manual_evals', 'block_evasys_sync')), $courseamounts->manualevalcourses,
     ]);
 }
 
 $table->add_data([
         html_writer::link(new moodle_url('/blocks/evasys_sync/managecategory_remaining.php', ['id' => $id]),
-                get_string('courses_without_evals', 'block_evasys_sync')), $courseamounts->remainingcourses
+                get_string('courses_without_evals', 'block_evasys_sync')), $courseamounts->remainingcourses,
 ]);
 
 $courseswithoutidnumber = $courseamountsall->allcourses - $courseamounts->allcourses;
 if ($courseswithoutidnumber) {
     $table->add_data([
         html_writer::link(new moodle_url('/blocks/evasys_sync/managecategory_invalid.php', ['id' => $id]),
-                get_string('courses_without_idnumber', 'block_evasys_sync')), $courseswithoutidnumber
+                get_string('courses_without_idnumber', 'block_evasys_sync')), $courseswithoutidnumber,
     ]);
 }
 

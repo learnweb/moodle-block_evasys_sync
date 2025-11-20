@@ -48,7 +48,7 @@ class provider implements \core_privacy\local\metadata\provider, \core_privacy\l
         $collection->add_external_location_link(
             'evasys_invitation',
             [
-                'username' => 'privacy:metadata:username'
+                'username' => 'privacy:metadata:username',
             ],
             'privacy:metadata'
         );

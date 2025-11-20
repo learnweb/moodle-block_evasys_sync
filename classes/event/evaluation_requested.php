@@ -13,6 +13,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 namespace block_evasys_sync\event;
 defined('MOODLE_INTERNAL') || die();
 
@@ -47,6 +48,6 @@ class evaluation_requested extends \core\event\base {
     }
 
     public function get_url() {
-        return new \moodle_url('/course/view.php', array('id' => $this->courseid));
+        return new \moodle_url('/course/view.php', ['id' => $this->courseid]);
     }
 }

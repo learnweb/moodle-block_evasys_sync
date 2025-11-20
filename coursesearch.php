@@ -51,7 +51,7 @@ $cache = cache::make('block_evasys_sync', 'mformdata');
 
 $data = $cache->get('manageroverview');
 
-$field = $DB->get_record('customfield_field', array('shortname' => 'semester', 'type' => 'semester'), '*', MUST_EXIST);
+$field = $DB->get_record('customfield_field', ['shortname' => 'semester', 'type' => 'semester'], '*', MUST_EXIST);
 $fieldcontroller = \core_customfield\field_controller::create($field->id);
 $datacontroller = \core_customfield\data_controller::create(0, null, $fieldcontroller);
 
@@ -68,7 +68,7 @@ $errtable->define_baseurl($PAGE->url);
 $reqtable = new course_manager_table($catids, $data->semester ?? null, $search);
 $reqtable->define_baseurl($PAGE->url);
 
-$remtable = new remaining_courses_table($catids, $data->semester ?? null, $evasyscategory,$search);
+$remtable = new remaining_courses_table($catids, $data->semester ?? null, $evasyscategory, $search);
 $remtable->define_baseurl($PAGE->url);
 
 $mantable = new manual_courses_table($catids, $data->semester ?? null, $evasyscategory, $search);
@@ -133,7 +133,7 @@ $renderer = $PAGE->get_renderer('block_evasys_sync');
 $renderer->print_evasys_category_header($evasyscategory);
 
 echo $OUTPUT->render_from_template('core/search_input', [
-    'action' => (new moodle_url('/blocks/evasys_sync/coursesearch.php', array('id' => $id)))->out(false),
+    'action' => (new moodle_url('/blocks/evasys_sync/coursesearch.php', ['id' => $id]))->out(false),
     'uniqid' => 'block_evasys_sync-search-courses',
     'inputname' => 'search',
     'extraclasses' => 'mb-3',
@@ -141,9 +141,9 @@ echo $OUTPUT->render_from_template('core/search_input', [
     'searchstring' => get_string('search_for_courses', 'block_evasys_sync'),
     // Id as url param doesn't work, so set as hidden field.
     'hiddenfields' => [
-        (object) ['type' => 'hidden', 'name' => 'id', 'value' => $id]
+        (object) ['type' => 'hidden', 'name' => 'id', 'value' => $id],
     ],
-    'query' => $search
+    'query' => $search,
 ]);
 
 

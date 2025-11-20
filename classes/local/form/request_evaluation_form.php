@@ -66,8 +66,7 @@ class request_evaluation_form extends moodleform {
         $PAGE->requires->js_call_amd('block_evasys_sync/evaluation_request', 'init');
     }
 
-    public function display()
-    {
+    public function display() {
         parent::display();
 
         // Create template for date time selector for JS. This way instead of js argument in order to get rid of...
@@ -227,14 +226,14 @@ class request_evaluation_form extends moodleform {
                 $evaluations = [
                     $this->course->idnumber => (object) [
                         'start' => $this->defaulttimeframe ? $this->defaulttimeframe['start'] : time(),
-                        'end' => $this->defaulttimeframe ? $this->defaulttimeframe['end'] : time()
-                    ]
+                        'end' => $this->defaulttimeframe ? $this->defaulttimeframe['end'] : time(),
+                    ],
                 ];
             }
             $data = (object) [
                 'evaluations' => $evaluations,
                 'courses' => [$this->course->id],
-                'donotevaluate' => false
+                'donotevaluate' => false,
             ];
         }
         $formdata = new \stdClass();
@@ -299,7 +298,7 @@ class request_evaluation_form extends moodleform {
                 'lsfid' => $lsfcourseid,
                 'title' => $this->lsfcourses[$lsfcourseid] ?? null,
                 'start' => $defaultstart ?? $formdata->$startkey,
-                'end' => $defaultend ?? $formdata->$endkey
+                'end' => $defaultend ?? $formdata->$endkey,
             ];
         }
         return $data;

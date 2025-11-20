@@ -14,7 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -52,8 +51,8 @@ use html_writer;
  */
 class renderer extends \plugin_renderer_base {
 
-    function print_evasys_category_header(evasys_category $evasys_category) {
-        $catid = $evasys_category->get('course_category');
+    function print_evasys_category_header(evasys_category $evasyscategory) {
+        $catid = $evasyscategory->get('course_category');
         $category = \core_course_category::get($catid);
 
         echo $this->output->box_start('generalbox border p-3 mb-3');
@@ -61,15 +60,15 @@ class renderer extends \plugin_renderer_base {
         echo html_writer::tag('h2', $category->name);
 
         echo html_writer::start_div('text-muted');
-        if ($evasys_category->get('standard_time_start') && $evasys_category->get('standard_time_end')) {
+        if ($evasyscategory->get('standard_time_start') && $evasyscategory->get('standard_time_end')) {
             echo html_writer::span(get_string('default_period_set_from_to', 'block_evasys_sync', [
-                'start' => userdate($evasys_category->get('standard_time_start')),
-                'end' => userdate($evasys_category->get('standard_time_end')),
+                'start' => userdate($evasyscategory->get('standard_time_start')),
+                'end' => userdate($evasyscategory->get('standard_time_end')),
             ])) . '<br>';
         } else {
             echo html_writer::span(get_string('no_default_period_set', 'block_evasys_sync')) . '<br>';
         }
-        if ($evasys_category->is_automatic()) {
+        if ($evasyscategory->is_automatic()) {
             /*echo html_writer::span('Evaluations are created <b>automatically</b>.');
             if ($evasys_category->can_teacher_request_evaluation()) {
                 if ($evasys_category->teacher_evaluation_request_needs_approval()) {
@@ -82,7 +81,7 @@ class renderer extends \plugin_renderer_base {
             }*/
         } else {
             // echo html_writer::span('Evaluations have to be created <b>manually</b>.') . '<br>';
-            if ($evasys_category->can_teacher_request_evaluation()) {
+            if ($evasyscategory->can_teacher_request_evaluation()) {
                 echo html_writer::span(get_string('teachers_can_request_evaluation', 'block_evasys_sync')) . '<br>';
             } else {
                 echo html_writer::span(get_string('teachers_cannot_request_evaluation', 'block_evasys_sync')) . '<br>';

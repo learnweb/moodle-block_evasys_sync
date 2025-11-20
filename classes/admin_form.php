@@ -79,7 +79,7 @@ class admin_form extends moodleform {
         $title = get_string('his_connection', 'block_evasys_sync');
         $mform->addElement('checkbox', $name, $title);
         $mform->setType($name, PARAM_BOOL);
-        $mform->addHelpButton('default_his_connection','his_connection', 'block_evasys_sync');
+        $mform->addHelpButton('default_his_connection', 'his_connection', 'block_evasys_sync');
         $mform->setDefault($name, get_config('block_evasys_sync', 'default_his_connection'));
 
         // Heading Add Category.
@@ -88,9 +88,9 @@ class admin_form extends moodleform {
         // Course category select (autocomplete).
         $name = 'evasys_cc_select';
         $title = get_string('settings_cc_select', 'block_evasys_sync');
-        $options = array(
-            'multiple' => false
-        );
+        $options = [
+            'multiple' => false,
+        ];
         $mform->addElement('autocomplete', $name, $title, $this->getunassignedcats(), $options);
 
         $name = 'evasys_cc_user';
@@ -125,26 +125,26 @@ class admin_form extends moodleform {
         $attributes['id'] = 'course_category_table';
         $output = html_writer::start_tag('table', $attributes);
 
-        $output .= html_writer::start_tag('thead', array());
-        $output .= html_writer::start_tag('tr', array());
+        $output .= html_writer::start_tag('thead', []);
+        $output .= html_writer::start_tag('tr', []);
 
-        $attributes = array();
+        $attributes = [];
         $attributes['class'] = 'header c0';
         $attributes['scope'] = 'col';
         $output .= html_writer::tag('th', get_string('category_name', 'block_evasys_sync'), $attributes);
-        $attributes = array();
+        $attributes = [];
         $attributes['class'] = 'header c1';
         $attributes['scope'] = 'col';
         $output .= html_writer::tag('th', get_string('responsible_user', 'block_evasys_sync'), $attributes);
-        $attributes = array();
+        $attributes = [];
         $attributes['class'] = 'header c2';
         $attributes['scope'] = 'col';
         $output .= html_writer::tag('th', get_string('auto_mode', 'block_evasys_sync'), $attributes);
-        $attributes = array();
+        $attributes = [];
         $attributes['class'] = 'header c3';
         $attributes['scope'] = 'col';
         $output .= html_writer::tag('th', get_string('standard_time_mode', 'block_evasys_sync'), $attributes);
-        $attributes = array();
+        $attributes = [];
         $attributes['class'] = 'header c4 lastcol';
         $attributes['scope'] = 'col';
         $output .= html_writer::tag('th', get_string('delete_category_user', 'block_evasys_sync'), $attributes);
@@ -196,7 +196,7 @@ class admin_form extends moodleform {
 
             $mform->addElement('html', '</td><td class="cell c3">');
             $timeeditlink = 'javascript:void(0)';
-            $timeediturl = new \moodle_url($timeeditlink, array('id' => $record->get('id')));
+            $timeediturl = new \moodle_url($timeeditlink, ['id' => $record->get('id')]);
             $text = get_string('edit_time', 'block_evasys_sync');
             $htmlurl = "<a id='timeediturl_{$i}' href='{$timeediturl->out()}'>$text</a>";
             $mform->addElement('html', $htmlurl);
@@ -210,7 +210,7 @@ class admin_form extends moodleform {
             }
             $mform->addElement('html', '</td><td class="cell c4 lastcol">');
             $link = '/blocks/evasys_sync/adminsettings.php';
-            $editurl = new \moodle_url($link, array('d' => $record->get('id')));
+            $editurl = new \moodle_url($link, ['d' => $record->get('id')]);
             $text = get_string('delete', 'block_evasys_sync');
             $mform->addElement('html', '<a href="' . $editurl->out() . '">' . $text . '</a></td></tr>');
             $startdates[] = $startdate;
@@ -218,7 +218,7 @@ class admin_form extends moodleform {
             $i++;
         }
         global $PAGE;
-        $PAGE->requires->js_call_amd('block_evasys_sync/edit_timeframe', 'initialize', array($startdates, $enddates));
+        $PAGE->requires->js_call_amd('block_evasys_sync/edit_timeframe', 'initialize', [$startdates, $enddates]);
         $mform->addElement('html', '</tbody>');
         $mform->addElement('html', '</table>');
     }
@@ -245,7 +245,7 @@ class admin_form extends moodleform {
                                                 WHERE {block_evasys_sync_categories}.course_category IS NULL
                                                 ORDER BY name ASC');
 
-        $cat = array();
+        $cat = [];
         foreach ($categories as $category) {
             $cat[$category->id] = $category->name;
         }

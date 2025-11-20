@@ -102,7 +102,7 @@ class remaining_courses_table extends \table_sql {
                 ])),
                 get_string('course'),
                 get_string('teachers'),
-                ''
+                '',
         ]);
 
         $PAGE->requires->js_call_amd('block_evasys_sync/tablebulkactions', 'init');
@@ -188,7 +188,7 @@ class remaining_courses_table extends \table_sql {
 
         $allcourses = $DB->get_records_sql('SELECT c.id as courseid, c.fullname as coursename FROM ' . $this->sql->from . ' WHERE ' . $this->sql->where, $this->sql->params);
 
-        $courses = array();
+        $courses = [];
         foreach ($allcourses as $course) {
             $courses[$course->courseid] = $course->coursename;
         }
@@ -200,9 +200,8 @@ class remaining_courses_table extends \table_sql {
      *
      * @return array of courseids
      */
-    public function get_all_remaining_courseids(): array
-    {
-        $ids = array();
+    public function get_all_remaining_courseids(): array {
+        $ids = [];
         foreach ($this->allcourseids as $courseid) {
             $ids[] = $courseid->id;
         }

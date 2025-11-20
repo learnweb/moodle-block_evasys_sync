@@ -38,7 +38,7 @@ class evasys_soap_client {
         $soapclient = new \SoapClient(get_config('block_evasys_sync', 'evasys_wsdl_url'), [
             'trace' => 1,
             'exceptions' => 0,
-            'location' => get_config('block_evasys_sync', 'evasys_soap_url')
+            'location' => get_config('block_evasys_sync', 'evasys_soap_url'),
         ]);
 
         $headerbody = new \SoapVar([

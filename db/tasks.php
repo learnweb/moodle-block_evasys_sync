@@ -16,8 +16,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$tasks = array(
-    array(
+$tasks = [
+    [
         'classname' => '\block_evasys_sync\task\update_survey_status',
         'blocking' => 0,
         'minute' => '*',
@@ -25,6 +25,6 @@ $tasks = array(
         'day' => '*',
         'month' => '*',
         'dayofweek' => '*',
-        'disabled' => 0
-    )
-);
+        'disabled' => 0,
+    ],
+];

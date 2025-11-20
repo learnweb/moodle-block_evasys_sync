@@ -93,7 +93,7 @@ class invalid_courses_table extends \table_sql {
                 ])),
                 get_string('course'),
                 get_string('teachers'),
-                ''
+                '',
         ]);
 
         $PAGE->requires->js_call_amd('block_evasys_sync/tablebulkactions', 'init');

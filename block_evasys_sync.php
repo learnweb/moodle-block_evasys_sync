@@ -16,7 +16,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-class block_evasys_sync extends block_base{
+class block_evasys_sync extends block_base {
 
     /**
      * Initializes the block.
@@ -65,7 +65,7 @@ class block_evasys_sync extends block_base{
 
             // Display the check status button.
             if ($inlsf) {
-                $href = new moodle_url('/course/view.php', array('id' => $this->page->course->id, "evasyssynccheck" => true));
+                $href = new moodle_url('/course/view.php', ['id' => $this->page->course->id, "evasyssynccheck" => true]);
                 $this->content->text .= $OUTPUT->single_button($href, get_string('checkstatus', 'block_evasys_sync'), 'get');
             } else {
                 $this->content->text .= get_string('missing_course_id', 'block_evasys_sync');
@@ -117,7 +117,7 @@ class block_evasys_sync extends block_base{
             $start = $evaluations->evaluations[$first]->start;
             $end = $evaluations->evaluations[$first]->end;
             $datedisabled = true;
-        } elseif ($evasyscategory->default_period_set()) {
+        } else if ($evasyscategory->default_period_set()) {
             $start = $evasyscategory->get('standard_time_start');
             $end = $evasyscategory->get('standard_time_end');
         }
@@ -125,26 +125,25 @@ class block_evasys_sync extends block_base{
         // This javascript module sets the start and end fields to the correct values.
         $jsmodestring = 'manual';
         $jsmodestring .= $enddisabled ? '_closed' : '_open';
-        $this->page->requires->js_call_amd('block_evasys_sync/initialize', 'init', array($start, $end, $jsmodestring));
-
+        $this->page->requires->js_call_amd('block_evasys_sync/initialize', 'init', [$start, $end, $jsmodestring]);
 
         // Initialize variables to pass to mustache.
-        $courses = array();
+        $courses = [];
         $hassurveys = false;
         $startoption = ($startdisabled xor $enddisabled);
         $warning = false;
         $invalidcourses = false;
         // Query course data (put in function).
         foreach ($evasyscourses as $evasyscourseinfo) {
-            $course = array();
+            $course = [];
             $course['evasyscoursetitle'] = $evasyssynchronizer->get_course_name($evasyscourseinfo);
             $course['technicalid'] = $evasyssynchronizer->get_course_id($evasyscourseinfo);
             $course['evasyscourseid'] = $evasyscourseinfo;
             $course['c_participants'] = format_string($evasyssynchronizer->get_amount_participants($evasyscourseinfo));
             $rawsurveys = $evasyssynchronizer->get_surveys($evasyscourseinfo);
-            $surveys = array();
+            $surveys = [];
             foreach ($rawsurveys as $rawsurvey) {
-                $survey = array();
+                $survey = [];
                 $survey['formName'] = format_string($rawsurvey->formName);
                 $survey['surveystatus'] = get_string('surveystatus' . $rawsurvey->surveyStatus, 'block_evasys_sync');
                 $survey['amountOfCompleteForms'] = format_string($rawsurvey->amountOfCompletedForms);
@@ -172,11 +171,11 @@ class block_evasys_sync extends block_base{
             $courses[] = $course;
         }
 
-    $standardttimemode = !$evaluations && $categoryhasstandardtime;
+        $standardttimemode = !$evaluations && $categoryhasstandardtime;
         $hisconnection = get_config('block_evasys_sync', 'default_his_connection');
 
         // Create the data object for the mustache table.
-        $data = array(
+        $data = [
                 'href' => $href,
                 'sesskey' => sesskey(),
                 'courseid' => $this->page->course->id,
@@ -203,8 +202,8 @@ class block_evasys_sync extends block_base{
             // Defines if an lsf course is already mapped to the moodle course.
                 'optional' => !empty($evasyscourses),
             // Outputs a warning that there are open course when there shouldn't.
-                'warning' => $warning
-        );
+                'warning' => $warning,
+        ];
 
         $this->content->text .= $OUTPUT->render_from_template("block_evasys_sync/block", $data);
 
@@ -241,7 +240,7 @@ class block_evasys_sync extends block_base{
      * @return array
      */
     public function applicable_formats() {
-        return array('course-view' => true, 'mod' => false, 'my' => false);
+        return ['course-view' => true, 'mod' => false, 'my' => false];
     }
 
     /**

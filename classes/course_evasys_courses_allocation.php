@@ -24,6 +24,7 @@ use core\persistent;
 /**
  * @property mixed course
  * @property string evasyscourses
+ * @package block_evasys_sync
  */
 class course_evasys_courses_allocation  extends persistent {
     const TABLE = 'block_evasys_sync_courses';
@@ -33,16 +34,16 @@ class course_evasys_courses_allocation  extends persistent {
      * @return array
      */
     protected static function define_properties() {
-        return array(
-            'course' => array(
+        return [
+            'course' => [
                 'type' => PARAM_INT,
-                'message' => new \lang_string('invalidcourse', 'block_evasys_sync')
-            ),
-            'evasyscourses' => array(
+                'message' => new \lang_string('invalidcourse', 'block_evasys_sync'),
+            ],
+            'evasyscourses' => [
                 'type' => PARAM_TEXT,
-                'message' => new \lang_string('invalidcourse', 'block_evasys_sync')
-            ),
-        );
+                'message' => new \lang_string('invalidcourse', 'block_evasys_sync'),
+            ],
+        ];
     }
 
     /** Returns array of evasysids that belong to this course.
@@ -52,9 +53,9 @@ class course_evasys_courses_allocation  extends persistent {
      */
     public static function raw_get_evasyscourses($courseid) {
         global $DB;
-        $courses = $DB->get_field(self::TABLE, 'evasyscourses', array('course' => $courseid));
-        $idcourse = $DB->get_field('course', 'idnumber', array('id' => $courseid));
-        $coursearray = array();
+        $courses = $DB->get_field(self::TABLE, 'evasyscourses', ['course' => $courseid]);
+        $idcourse = $DB->get_field('course', 'idnumber', ['id' => $courseid]);
+        $coursearray = [];
         if ($courses) {
             $coursearray = explode('#', $courses);
         }

@@ -41,11 +41,11 @@ class course_manager_filter_form extends moodleform {
     /**
      * Defines form elements.
      */
-    protected function definition () {
+    protected function definition() {
         global $DB;
         $mform = $this->_form;
 
-        if ($field = $DB->get_record('customfield_field', array('shortname' => 'semester', 'type' => 'semester'))) {
+        if ($field = $DB->get_record('customfield_field', ['shortname' => 'semester', 'type' => 'semester'])) {
             $fieldcontroller = \core_customfield\field_controller::create($field->id);
             $datacontroller = \core_customfield\data_controller::create(0, null, $fieldcontroller);
             $datacontroller->instance_form_definition($mform);

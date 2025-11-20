@@ -79,7 +79,7 @@ class evaluation_manager {
                                 'type' => 1,
                                 'usermodified' => $USER->id,
                                 'timecreated' => time(),
-                                'timemodified' => time()
+                                'timemodified' => time(),
                 ]);
                 $errors[$course->id] = 'Course does not exist in EvaSys!';
                 continue;
@@ -96,7 +96,7 @@ class evaluation_manager {
                         'start' => $category->get('standard_time_start'),
                         'end' => $category->get('standard_time_end'),
                         'state' => evaluation_state::MANUAL,
-                    ]
+                    ],
             ];
 
             $synchronizer->sync_students();
@@ -135,8 +135,7 @@ class evaluation_manager {
      * @throws \dml_exception
      * @throws \moodle_exception
      */
-    public static function set_re_evaluation_for($courseids, evasys_category $category)
-    {
+    public static function set_re_evaluation_for($courseids, evasys_category $category) {
         global $DB, $USER;
         $childids = \core_course_category::get($category->get('course_category'))->get_all_children_ids();
         $errors = [];

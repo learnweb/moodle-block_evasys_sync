@@ -46,7 +46,7 @@ $cache = cache::make('block_evasys_sync', 'mformdata');
 
 $data = $cache->get($cachekey);
 
-$field = $DB->get_record('customfield_field', array('shortname' => 'semester', 'type' => 'semester'), '*', MUST_EXIST);
+$field = $DB->get_record('customfield_field', ['shortname' => 'semester', 'type' => 'semester'], '*', MUST_EXIST);
 $fieldcontroller = \core_customfield\field_controller::create($field->id);
 $datacontroller = \core_customfield\data_controller::create(0, null, $fieldcontroller);
 
@@ -61,7 +61,7 @@ $table = new invalid_courses_table($catids, $data->semester ?? null, $evasyscate
 $table->define_baseurl($PAGE->url);
 
 $PAGE->navigation->add('EvaSys', new moodle_url('/blocks/evasys_sync/manageroverview.php'))
-        ->add(
+    ->add(
                 get_string('evaluations', 'block_evasys_sync') . ' in ' . data_controller::get_name_for_semester($data->semester),
                 new moodle_url('/blocks/evasys_sync/managecategory.php', ['id' => $category->id])
         )->add(get_string('courses_without_idnumber', 'block_evasys_sync'), $PAGE->url)->make_active();
