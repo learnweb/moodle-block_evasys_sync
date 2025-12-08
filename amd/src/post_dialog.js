@@ -31,7 +31,7 @@ define(['jquery', 'core/notification', 'core/str'], function($, notification, st
                 notification.alert(s[0], s[1], s[2]);
             }
         ).fail(notification.exception);
-    }
+    };
 
     var show_dialog_nostudents = function() {
         str.get_strings([
