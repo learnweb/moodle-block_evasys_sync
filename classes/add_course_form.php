@@ -55,20 +55,7 @@ class add_course_form extends moodleform {
         } else {
             $maincourse = null;
         }
-        $veranstids = [];
-        if (!is_siteadmin()) {
-            $veranstids = get_veranstids_by_teacher(get_teachers_pid($USER->username));
-        } else {
-            $teachers = get_users_by_capability(\context_course::instance($courseid), 'block/evasys_sync:modifymapping');
-            foreach ($teachers as $teacher) {
-                $personalid = get_teachers_pid($teacher->username);
-                if (!$personalid) {
-                    continue;
-                }
-                $veranstids = array_merge($veranstids, get_veranstids_by_teacher($personalid));
-            }
-        }
-        $courses = get_courses_by_veranstids($veranstids);
+        $courses = $this->courses_proposed_for_association($courseid);
         $pgDB->dispose(); // phpcs:ignore // @codingStandardsIgnoreLine
         $availablecourselist = [];
         foreach ($courses as $veranstid => $course) {
@@ -93,6 +80,32 @@ class add_course_form extends moodleform {
         $this->table_body($availablecourselist);
         $this->addpubid($maincourse);
         $this->addid($courseid);
+    }
+
+    /**
+     * Returns the list of Moodle courses that the user might want to
+     * associate to the current course for evaluation.
+     *
+     * @param int $courseid the id of the current course
+     * @return array the list of proposed courses
+     */
+    private function courses_proposed_for_association(int $courseid): array {
+        global $USER;
+        $veranstids = array();
+        if (!is_siteadmin()) {
+            $veranstids = get_veranstids_by_teacher(get_teachers_pid($USER->username));
+        } else {
+            $teachers = get_users_by_capability(
+                \context_course::instance($courseid), 'block/evasys_sync:modifymapping');
+            foreach ($teachers as $teacher) {
+                $personalid = get_teachers_pid($teacher->username);
+                if (!$personalid) {
+                    continue;
+                }
+                $veranstids = array_merge($veranstids, get_veranstids_by_teacher($personalid));
+            }
+        }
+        return get_courses_by_veranstids($veranstids);
     }
 
     private function addid($id) {
