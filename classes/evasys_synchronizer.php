@@ -76,6 +76,7 @@ class evasys_synchronizer {
             if (is_soap_fault($soapresult)) {
                 // This happens e.g. if there is no corresponding course in
                 // EvaSys.
+                var_dump($soapresult);
                 $result[$course] = null;
             } else {
                 $result[$course] = $soapresult;
