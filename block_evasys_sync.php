@@ -34,7 +34,6 @@ class block_evasys_sync extends block_base {
      * @return object
      */
     public function get_content() {
-        global $OUTPUT;
         $evasyssynccheck = optional_param('evasyssynccheck', 0, PARAM_BOOL);
         $status = optional_param('status', "", PARAM_TEXT);
 
@@ -62,6 +61,7 @@ class block_evasys_sync extends block_base {
             return $this->content;
         }
 
+        $output = $this->page->get_renderer('core');
         // If we are not in sync mode, we display either the course mapping or the check status button.
         if ($evasyssynccheck !== 1) {
             $inlsf = !empty($this->page->course->idnumber);
@@ -69,7 +69,7 @@ class block_evasys_sync extends block_base {
             // Display the check status button.
             if ($inlsf) {
                 $href = new moodle_url('/course/view.php', ['id' => $this->page->course->id, "evasyssynccheck" => true]);
-                $this->content->text .= $OUTPUT->single_button($href, get_string('checkstatus', 'block_evasys_sync'), 'get');
+                $this->content->text .= $output->single_button($href, get_string('checkstatus', 'block_evasys_sync'), 'get');
             } else {
                 $this->content->text .= get_string('missing_course_id', 'block_evasys_sync');
             }
@@ -208,7 +208,7 @@ class block_evasys_sync extends block_base {
                 'warning' => $warning,
         ];
 
-        $this->content->text .= $OUTPUT->render_from_template("block_evasys_sync/block", $data);
+        $this->content->text .= $output->render_from_template("block_evasys_sync/block", $data);
 
         if (!$evasyscategory->can_teacher_request_evaluation()) {
             $this->content->text .= get_string('teacher_request_disabled', 'block_evasys_sync');
