@@ -75,7 +75,6 @@ class block_evasys_sync extends block_base {
             return $this->content;
         }
 
-        $evalrequest = \block_evasys_sync\evaluation_request::for_course($this->page->course->id);
         $evaluations = \block_evasys_sync\evaluation::for_course($this->page->course->id);
 
         $categoryhasstandardtime = $evasyscategory->default_period_set();
