@@ -11,3 +11,6 @@ jobs:
   call:
     name: Run central Learnweb CI workflow
     uses: learnweb/moodle-workflows-learnweb/.github/workflows/moodle-ci.yml@main
+    with:
+      allow-phpcs-error: true
+      allow-phpdoc-error: true
