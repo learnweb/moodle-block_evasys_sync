@@ -38,7 +38,6 @@ require_once($CFG->libdir . '/formslib.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class evasys_category_edit_form extends moodleform {
-
     private ?evasys_category $evasyscategory;
 
     public function __construct(int $evasyscategoryid, $action = null, $customdata = null, $method = 'post', $target = '', $attributes = null, $editable = true, $ajaxformdata = null) {
@@ -52,25 +51,39 @@ class evasys_category_edit_form extends moodleform {
     protected function definition() {
         $mform = $this->_form;
 
-        $mform->addElement('checkbox', 'activate_standard_time',
-                get_string('activate_standard_time', 'block_evasys_sync')
+        $mform->addElement(
+            'checkbox',
+            'activate_standard_time',
+            get_string('activate_standard_time', 'block_evasys_sync')
         );
 
-        $mform->addElement('date_time_selector', 'standard_time_start',
-                get_string('standart_time_start', 'block_evasys_sync'));
-        $mform->addElement('date_time_selector', 'standard_time_end',
-                get_string('standart_time_end', 'block_evasys_sync'));
+        $mform->addElement(
+            'date_time_selector',
+            'standard_time_start',
+            get_string('standart_time_start', 'block_evasys_sync')
+        );
+        $mform->addElement(
+            'date_time_selector',
+            'standard_time_end',
+            get_string('standart_time_end', 'block_evasys_sync')
+        );
         $mform->disabledIf('standard_time_start', 'activate_standard_time');
         $mform->disabledIf('standard_time_end', 'activate_standard_time');
 
         $mform->addElement('html', '<br><br>');
 
-        $mform->addElement('checkbox', 'teacher_can_request_evaluation',
-                get_string('teacher_can_request_evaluation', 'block_evasys_sync'));
+        $mform->addElement(
+            'checkbox',
+            'teacher_can_request_evaluation',
+            get_string('teacher_can_request_evaluation', 'block_evasys_sync')
+        );
         $mform->setDefault('teacher_can_request_evaluation', true);
 
-        $mform->addElement('checkbox', 'send_mail_to_teacher',
-                get_string('send_mail_to_teacher', 'block_evasys_sync'));
+        $mform->addElement(
+            'checkbox',
+            'send_mail_to_teacher',
+            get_string('send_mail_to_teacher', 'block_evasys_sync')
+        );
         $mform->setDefault('send_mail_to_teacher', true);
         $mform->addHelpButton('send_mail_to_teacher', 'send_mail_to_teacher', 'block_evasys_sync');
 
@@ -134,11 +147,12 @@ class evasys_category_edit_form extends moodleform {
 
     public function validation($data, $files) {
         $errors = [];
-        if (isset($data['activate_standard_time']) && $data['activate_standard_time'] &&
-                $data['standard_time_start'] >= $data['standard_time_end']) {
+        if (
+            isset($data['activate_standard_time']) && $data['activate_standard_time'] &&
+                $data['standard_time_start'] >= $data['standard_time_end']
+        ) {
             $errors['standard_time_end'] = get_string('err_endbeforestart', 'block_evasys_sync');
         }
         return $errors;
     }
-
 }

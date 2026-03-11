@@ -26,7 +26,6 @@ use block_evasys_sync\local\entity\evaluation_state;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class evaluation_manager {
-
     private static $instance;
 
     public static function get_instance(): evaluation_manager {
@@ -111,7 +110,9 @@ class evaluation_manager {
 
             if ($category->send_mail_to_teacher()) {
                 foreach ($teachers as $teacher) {
-                    email_to_user($teacher, $coordinatoruser,
+                    email_to_user(
+                        $teacher,
+                        $coordinatoruser,
                         get_string('notify_teacher_email_subject', 'block_evasys_sync', $data),
                         get_string('notify_teacher_email_body', 'block_evasys_sync', $data)
                     );
@@ -150,7 +151,6 @@ class evaluation_manager {
             $DB->delete_records(dbtables::EVAL_VERANSTS, ['evalid' => $eval]);
             $DB->delete_records(dbtables::EVAL_COURSES, ['evalid' => $eval]);
             $DB->delete_records(dbtables::EVAL, ['id' => $eval]);
-
         }
 
         $errors[] = self::set_default_evaluation_for($courseids, $category);
@@ -207,7 +207,7 @@ class evaluation_manager {
 
         $notiftext = "Sehr geehrte*r Evaluationskoordinator*in,\n\n" .
                 "Dies ist eine automatisch generierte Mail, ausgelöst dadurch, dass ein*e Dozent*in die Evaluation " .
-                "der nachfolgenden Veranstaltung beantragt hat.\n".
+                "der nachfolgenden Veranstaltung beantragt hat.\n" .
                 "Bitte passen Sie die Evaluationszeiträume dem untenstehenden Wunsch an.\n";
 
         foreach ($evaluation->evaluations as $eval) {
@@ -234,5 +234,4 @@ class evaluation_manager {
         global $DB;
         $DB->delete_records(dbtables::ERRORS, ['courseid' => $courseid]);
     }
-
 }

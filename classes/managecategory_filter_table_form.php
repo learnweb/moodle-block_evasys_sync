@@ -32,7 +32,6 @@ require_once($CFG->libdir . '/formslib.php');
  */
 
 class managecategory_filter_table_form extends moodleform {
-
     /**
      * Defines formelements.
      */

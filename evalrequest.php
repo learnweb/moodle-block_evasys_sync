@@ -69,7 +69,6 @@ if ($data = $mform->get_simplified_data()) {
             redirect(course_get_url($course));
         }
     }
-
 }
 
 $mform->display();

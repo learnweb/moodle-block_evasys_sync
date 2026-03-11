@@ -23,7 +23,6 @@ namespace block_evasys_sync;
  * @copyright 2022 Justus Dieckmann WWU
  */
 class evasys_soap_client {
-
     private static $instance = null;
 
     public static function get(): \SoapClient {
@@ -48,5 +47,4 @@ class evasys_soap_client {
         $soapclient->__setSoapHeaders($header);
         return $soapclient;
     }
-
 }

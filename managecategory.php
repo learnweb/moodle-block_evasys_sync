@@ -72,12 +72,12 @@ $catids = array_merge($category->get_all_children_ids(), [$category->id]);
 
 $PAGE->navigation->add('EvaSys', new moodle_url('/blocks/evasys_sync/manageroverview.php'))
     ->add(
-            get_string('evaluations', 'block_evasys_sync') . ' in ' . data_controller::get_name_for_semester($data->semester),
-            new moodle_url('/blocks/evasys_sync/managecategory.php', ['id' => $category->id])
-        )->make_active();
+        get_string('evaluations', 'block_evasys_sync') . ' in ' . data_controller::get_name_for_semester($data->semester),
+        new moodle_url('/blocks/evasys_sync/managecategory.php', ['id' => $category->id])
+    )->make_active();
 
-list($inmanualsql, $params) = $DB->get_in_or_equal(evaluation_state::MANUAL_STATES, SQL_PARAMS_NAMED);
-list($incatsql, $incatparams) = $DB->get_in_or_equal($catids, SQL_PARAMS_NAMED);
+[$inmanualsql, $params] = $DB->get_in_or_equal(evaluation_state::MANUAL_STATES, SQL_PARAMS_NAMED);
+[$incatsql, $incatparams] = $DB->get_in_or_equal($catids, SQL_PARAMS_NAMED);
 $params = array_merge($params, $incatparams);
 
 $courseamounts = $DB->get_record_sql('SELECT (COUNT(DISTINCT evalc.courseid) - COUNT(DISTINCT evalmanualc.courseid)) as autoevalcourses, ' .
@@ -94,16 +94,14 @@ $courseamounts = $DB->get_record_sql('SELECT (COUNT(DISTINCT evalc.courseid) - C
         ') evalmanualc ON evalmanualc.courseid = c.id ' .
         "WHERE cfd.intvalue = :semester AND " .
         "c.idnumber <> '' AND " .
-        "c.category $incatsql ", array_merge(['semesterfieldid' => $field->id, 'semester' => $data->semester], $params)
-);
+        "c.category $incatsql ", array_merge(['semesterfieldid' => $field->id, 'semester' => $data->semester], $params));
 
 $courseamountsall = $DB->get_record_sql('SELECT COUNT(DISTINCT errors.courseid) as errorcourses, COUNT(DISTINCT c.id) as allcourses ' .
         'FROM {course} c '  .
         'JOIN {customfield_data} cfd ON cfd.instanceid = c.id AND cfd.fieldid = :semesterfieldid ' .
         'LEFT JOIN {' . dbtables::ERRORS . '} errors ON errors.courseid = c.id AND errors.timehandled IS NULL ' .
         "WHERE cfd.intvalue = :semester AND " .
-        "c.category $incatsql ", array_merge(['semesterfieldid' => $field->id, 'semester' => $data->semester], $params)
-);
+        "c.category $incatsql ", array_merge(['semesterfieldid' => $field->id, 'semester' => $data->semester], $params));
 
 
 
@@ -137,42 +135,54 @@ $table->setup();
 
 if ($courseamountsall->errorcourses) {
     $table->add_data([
-        html_writer::link(new moodle_url('/blocks/evasys_sync/managecategory_errors.php', ['id' => $id]),
-                get_string('courses_with_errors', 'block_evasys_sync')), $courseamountsall->errorcourses,
+        html_writer::link(
+            new moodle_url('/blocks/evasys_sync/managecategory_errors.php', ['id' => $id]),
+            get_string('courses_with_errors', 'block_evasys_sync')
+        ), $courseamountsall->errorcourses,
     ], 'table-warning');
 }
 
 if ($evasyscategory->is_automatic() || $courseamounts->requestcourses) {
     $table->add_data([
-        html_writer::link(new moodle_url('/blocks/evasys_sync/managecategory_requests.php', ['id' => $id]),
-                get_string('courses_with_requests', 'block_evasys_sync')), $courseamounts->requestcourses,
+        html_writer::link(
+            new moodle_url('/blocks/evasys_sync/managecategory_requests.php', ['id' => $id]),
+            get_string('courses_with_requests', 'block_evasys_sync')
+        ), $courseamounts->requestcourses,
     ]);
 }
 
 if ($evasyscategory->is_automatic() || $courseamounts->autoevalcourses) {
     $table->add_data([
-        html_writer::link(new moodle_url('/blocks/evasys_sync/managecategory_auto.php', ['id' => $id]),
-                get_string('courses_with_automatic_evals', 'block_evasys_sync')), $courseamounts->autoevalcourses,
+        html_writer::link(
+            new moodle_url('/blocks/evasys_sync/managecategory_auto.php', ['id' => $id]),
+            get_string('courses_with_automatic_evals', 'block_evasys_sync')
+        ), $courseamounts->autoevalcourses,
     ]);
 }
 
 if (!$evasyscategory->is_automatic() || $courseamounts->manualevalcourses) {
     $table->add_data([
-        html_writer::link(new moodle_url('/blocks/evasys_sync/managecategory_manual.php', ['id' => $id]),
-                get_string('courses_with_manual_evals', 'block_evasys_sync')), $courseamounts->manualevalcourses,
+        html_writer::link(
+            new moodle_url('/blocks/evasys_sync/managecategory_manual.php', ['id' => $id]),
+            get_string('courses_with_manual_evals', 'block_evasys_sync')
+        ), $courseamounts->manualevalcourses,
     ]);
 }
 
 $table->add_data([
-        html_writer::link(new moodle_url('/blocks/evasys_sync/managecategory_remaining.php', ['id' => $id]),
-                get_string('courses_without_evals', 'block_evasys_sync')), $courseamounts->remainingcourses,
+        html_writer::link(
+            new moodle_url('/blocks/evasys_sync/managecategory_remaining.php', ['id' => $id]),
+            get_string('courses_without_evals', 'block_evasys_sync')
+        ), $courseamounts->remainingcourses,
 ]);
 
 $courseswithoutidnumber = $courseamountsall->allcourses - $courseamounts->allcourses;
 if ($courseswithoutidnumber) {
     $table->add_data([
-        html_writer::link(new moodle_url('/blocks/evasys_sync/managecategory_invalid.php', ['id' => $id]),
-                get_string('courses_without_idnumber', 'block_evasys_sync')), $courseswithoutidnumber,
+        html_writer::link(
+            new moodle_url('/blocks/evasys_sync/managecategory_invalid.php', ['id' => $id]),
+            get_string('courses_without_idnumber', 'block_evasys_sync')
+        ), $courseswithoutidnumber,
     ]);
 }
 

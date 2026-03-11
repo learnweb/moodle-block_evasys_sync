@@ -26,7 +26,6 @@ require_once($CFG->dirroot . '/local/lsf_unification/lib_his.php');
 require_once($CFG->dirroot . '/local/lsf_unification/class_pg_lite.php');
 
 class add_course_form extends moodleform {
-
     // Todo make mustache form.
     // Todo check if course has been started.
 
@@ -46,7 +45,7 @@ class add_course_form extends moodleform {
         global $pgDB, $USER, $DB; // phpcs:ignore // @codingStandardsIgnoreLine
         $mform = $this->_form;
 
-        $mform->addElement( 'html', '<h3>'. get_string('add_course_header', 'block_evasys_sync') .'</h3>');
+        $mform->addElement('html', '<h3>' . get_string('add_course_header', 'block_evasys_sync') . '</h3>');
         $pgDB = new \pg_lite(); // phpcs:ignore // @codingStandardsIgnoreLine
         $pgDB->connect(); // phpcs:ignore // @codingStandardsIgnoreLine
         $lsfid = $DB->get_field('course', 'idnumber', ['id' => $courseid]);
@@ -91,12 +90,14 @@ class add_course_form extends moodleform {
      */
     private function courses_proposed_for_association(int $courseid): array {
         global $USER;
-        $veranstids = array();
+        $veranstids = [];
         if (!is_siteadmin()) {
             $veranstids = get_veranstids_by_teacher(get_teachers_pid($USER->username));
         } else {
             $teachers = get_users_by_capability(
-                \context_course::instance($courseid), 'block/evasys_sync:modifymapping');
+                \context_course::instance($courseid),
+                'block/evasys_sync:modifymapping'
+            );
             foreach ($teachers as $teacher) {
                 $personalid = get_teachers_pid($teacher->username);
                 if (!$personalid) {
@@ -110,7 +111,7 @@ class add_course_form extends moodleform {
 
     private function addid($id) {
         $mform = $this->_form;
-        $mform->addElement('html', '<input type="hidden" name="id" value="'. $id .'">');
+        $mform->addElement('html', '<input type="hidden" name="id" value="' . $id . '">');
     }
 
 

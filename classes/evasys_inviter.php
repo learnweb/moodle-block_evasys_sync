@@ -27,7 +27,6 @@ require_once($CFG->dirroot . '/course/lib.php');
  */
 
 class evasys_inviter {
-
     public static $instance = null;
     private $soapclient;
 
@@ -168,7 +167,7 @@ class evasys_inviter {
         $this->open_evasys_surveys($courses);
 
         // Update state information for Moodle.
-        list($where, $params) = $DB->get_in_or_equal($usedcourseids);
+        [$where, $params] = $DB->get_in_or_equal($usedcourseids);
         $DB->execute("UPDATE {block_evasys_sync_courseeval} SET state = 1 WHERE course $where", $params);
 
         // Record that this has happened.
@@ -176,8 +175,7 @@ class evasys_inviter {
             $event = event\evaluation_opened::create([
                 'context' => \context_course::instance($courseid),
                 'courseid' => $courseid,
-                ]
-            );
+                ]);
             $event->trigger();
         }
     }
@@ -205,8 +203,7 @@ class evasys_inviter {
             $event = event\evaluation_closed::create([
                 'context' => \context_course::instance($courseid),
                 'courseid' => $courseid,
-                ]
-            );
+                ]);
             $event->trigger();
         }
     }
@@ -237,7 +234,7 @@ class evasys_inviter {
     }
 
     public function make_sure_enough_passwords_are_available($evasyscourseid) {
-        $evasyscourse = $this->soapclient->GetCourse($evasyscourseid, 'PUBLIC' , false, false);
+        $evasyscourse = $this->soapclient->GetCourse($evasyscourseid, 'PUBLIC', false, false);
         if (!is_soap_fault($evasyscourse)) {
             $usercount = $evasyscourse->m_nCountStud;
             $surveys = $this->get_evasys_course_surveys($evasyscourseid);
@@ -320,7 +317,7 @@ class evasys_inviter {
         $coursestring = '';
         foreach ($evacourses as $evacourse) {
             // Add courses with two tabulators.
-            $coursestring .= "\t\t". $evacourse . "\n";
+            $coursestring .= "\t\t" . $evacourse . "\n";
         }
         $usercoordinator = evasys_synchronizer::get_assigned_user($course);
         $data = [
@@ -333,7 +330,17 @@ class evasys_inviter {
         $subject = get_string("alert_email_subject", "block_evasys_sync", $course->fullname);
         $message = get_string("alert_email_body", "block_evasys_sync", $data);
 
-        email_to_user($usercoordinator, $USER, $subject, $message, '', '' , '',
-                                    true, $USER->email, $USER->firstname . " " . $USER->lastname);
+        email_to_user(
+            $usercoordinator,
+            $USER,
+            $subject,
+            $message,
+            '',
+            '',
+            '',
+            true,
+            $USER->email,
+            $USER->firstname . " " . $USER->lastname
+        );
     }
 }

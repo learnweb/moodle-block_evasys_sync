@@ -97,9 +97,9 @@ $mform = new \block_evasys_sync\managecategory_filter_table_form($PAGE->url, ['t
 
 $PAGE->navigation->add('EvaSys', new moodle_url('/blocks/evasys_sync/manageroverview.php'))
     ->add(
-                get_string('evaluations', 'block_evasys_sync') . ' in ' . data_controller::get_name_for_semester($data->semester),
-                new moodle_url('/blocks/evasys_sync/managecategory.php', ['id' => $category->id])
-        )->add(get_string('courses_without_evals', 'block_evasys_sync'), $PAGE->url)->make_active();
+        get_string('evaluations', 'block_evasys_sync') . ' in ' . data_controller::get_name_for_semester($data->semester),
+        new moodle_url('/blocks/evasys_sync/managecategory.php', ['id' => $category->id])
+    )->add(get_string('courses_without_evals', 'block_evasys_sync'), $PAGE->url)->make_active();
 
 $mformdata = $cache->get('coursesfilter');
 if ($mformdata) {

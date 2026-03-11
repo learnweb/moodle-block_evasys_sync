@@ -204,7 +204,7 @@ class admin_form extends moodleform {
             $enddate = $record->get('standard_time_end');
             if ($startdate) {
                 $mform->addElement('html', "<br/><div id='timehint_$i'>" .
-                                         get_string('time_set', 'block_evasys_sync'). "</div>");
+                                         get_string('time_set', 'block_evasys_sync') . "</div>");
             } else {
                 $mform->addElement('html', "<br/><div id='timehint_$i'></div>");
             }
@@ -287,7 +287,6 @@ class admin_form extends moodleform {
         // Validate user ids.
         $records = \block_evasys_sync\evasys_category::get_records();
         foreach ($records as $allocation) {
-
             $newvalue = 'category_' . $allocation->get('id');
 
             if (!\core_user::is_real_user($data[$newvalue], true)) {

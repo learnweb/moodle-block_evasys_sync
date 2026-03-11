@@ -88,7 +88,7 @@ switch ($action) {
         } else {
             $ids = required_param_array('ids', PARAM_INT);
         }
-        list($insql, $params) = $DB->get_in_or_equal($ids, SQL_PARAMS_NAMED);
+        [$insql, $params] = $DB->get_in_or_equal($ids, SQL_PARAMS_NAMED);
         $params['time'] = time();
         $params['evasyscat'] = $evasyscategory->get('id');
         $DB->execute('DELETE FROM {' . \block_evasys_sync\dbtables::ERRORS . '} ' .
@@ -123,7 +123,8 @@ $PAGE->navigation->add('EvaSys', new moodle_url('/blocks/evasys_sync/managerover
         get_string('evaluations', 'block_evasys_sync') . ' in ' . data_controller::get_name_for_semester($data->semester),
         new moodle_url('/blocks/evasys_sync/managecategory.php', ['id' => $category->id])
     )->add(
-        get_string('searchresults', 'block_evasys_sync'), new moodle_url('/blocks/evasys_sync/coursesearch.php', ['id' => $category->id, 'search' => $search])
+        get_string('searchresults', 'block_evasys_sync'),
+        new moodle_url('/blocks/evasys_sync/coursesearch.php', ['id' => $category->id, 'search' => $search])
     )->make_active();
 
 echo $OUTPUT->header();

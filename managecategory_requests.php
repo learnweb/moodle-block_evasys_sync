@@ -56,15 +56,18 @@ if (!$data) {
 
 $catids = array_merge($category->get_all_children_ids(), [$category->id]);
 
-$table = new \block_evasys_sync\course_manager_table($catids, $data->semester ?? null,
-        $data->coursename ?? null);
+$table = new \block_evasys_sync\course_manager_table(
+    $catids,
+    $data->semester ?? null,
+    $data->coursename ?? null
+);
 $table->define_baseurl($PAGE->url);
 
 $PAGE->navigation->add('EvaSys', new moodle_url('/blocks/evasys_sync/manageroverview.php'))
     ->add(
-                get_string('evaluations', 'block_evasys_sync') . ' in ' . data_controller::get_name_for_semester($data->semester),
-                new moodle_url('/blocks/evasys_sync/managecategory.php', ['id' => $category->id])
-        )->add(get_string('courses_with_requests', 'block_evasys_sync'), $PAGE->url)->make_active();
+        get_string('evaluations', 'block_evasys_sync') . ' in ' . data_controller::get_name_for_semester($data->semester),
+        new moodle_url('/blocks/evasys_sync/managecategory.php', ['id' => $category->id])
+    )->add(get_string('courses_with_requests', 'block_evasys_sync'), $PAGE->url)->make_active();
 
 echo $OUTPUT->header();
 

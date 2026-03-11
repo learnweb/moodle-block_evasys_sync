@@ -40,7 +40,6 @@ require_once($CFG->libdir . '/tablelib.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class manual_courses_table extends \table_sql {
-
     private evasys_category $evasyscategory;
 
     private bool $showbuttons;
@@ -64,8 +63,12 @@ class manual_courses_table extends \table_sql {
             'evalvcount.veranstcount, ' .
             'evalv.veranstid, evalv.veransttitle, evalv.starttime, evalv.endtime';
 
-        $semesterfield = $DB->get_record('customfield_field',
-            ['shortname' => 'semester', 'type' => 'semester'], '*', MUST_EXIST);
+        $semesterfield = $DB->get_record(
+            'customfield_field',
+            ['shortname' => 'semester', 'type' => 'semester'],
+            '*',
+            MUST_EXIST
+        );
 
         $from = '{course} c ' .
             'JOIN {customfield_data} cfd ON cfd.instanceid = c.id AND cfd.fieldid = :semesterfieldid ' .
@@ -82,12 +85,12 @@ class manual_courses_table extends \table_sql {
             'LEFT JOIN {' . dbtables::EVAL_VERANSTS . '} evalv ON evalv.id = evalvcount.minveranstid';
         $params = ['semesterfieldid' => $semesterfield->id];
 
-        list($insql, $inparams) = $DB->get_in_or_equal(evaluation_state::MANUAL_STATES, SQL_PARAMS_NAMED);
+        [$insql, $inparams] = $DB->get_in_or_equal(evaluation_state::MANUAL_STATES, SQL_PARAMS_NAMED);
         $params = array_merge($params, $inparams);
         $where = ['evalv.state ' . $insql];
 
         if ($categoryids != null) {
-            list($insql, $inparams) = $DB->get_in_or_equal($categoryids, SQL_PARAMS_NAMED);
+            [$insql, $inparams] = $DB->get_in_or_equal($categoryids, SQL_PARAMS_NAMED);
             $where[] = "c.category $insql";
             $params = array_merge($params, $inparams);
         }
@@ -138,7 +141,7 @@ class manual_courses_table extends \table_sql {
 
     public function col_teacher($row) {
         $users = get_users_by_capability(\context_course::instance($row->courseid), 'block/evasys_sync:teacherforcourse');
-        $users = array_map(function($user) {
+        $users = array_map(function ($user) {
             return \html_writer::link(new moodle_url('/user/profile.php', ['id' => $user->id]), fullname($user));
         }, $users);
         return join(', ', $users);
@@ -189,14 +192,19 @@ class manual_courses_table extends \table_sql {
             'sesskey' => sesskey(),
         ]);
 
-        return $OUTPUT->render(new \single_button($url,
-            get_string('set_re_eval', 'block_evasys_sync'), 'post', \single_button::BUTTON_SECONDARY, [
+        return $OUTPUT->render(new \single_button(
+            $url,
+            get_string('set_re_eval', 'block_evasys_sync'),
+            'post',
+            \single_button::BUTTON_SECONDARY,
+            [
             'data-modal' => 'confirmation',
             'data-modal-title-str' => json_encode(['confirm', 'core']),
             'data-modal-content-str' => json_encode(['areyousure']),
             'data-modal-yes-button-str' => json_encode(['confirm', 'core']),
             'data-modal-destination' => $url->out(false),
-        ]));
+            ]
+        ));
     }
 
     /**
@@ -228,7 +236,7 @@ class manual_courses_table extends \table_sql {
 
         global $DB;
 
-        list($insql, $inparams) = $DB->get_in_or_equal($courses, SQL_PARAMS_NAMED);
+        [$insql, $inparams] = $DB->get_in_or_equal($courses, SQL_PARAMS_NAMED);
         $where = "c.id $insql";
         $params = array_merge($this->sql->params, $inparams);
 

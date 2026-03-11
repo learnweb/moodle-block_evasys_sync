@@ -78,17 +78,21 @@ if (!$data) {
 
 $catids = array_merge($category->get_all_children_ids(), [$category->id]);
 
-$table = new \block_evasys_sync\local\table\manual_courses_table($catids, $data->semester ?? null,
-        $evasyscategory, $data->coursename ?? null);
+$table = new \block_evasys_sync\local\table\manual_courses_table(
+    $catids,
+    $data->semester ?? null,
+    $evasyscategory,
+    $data->coursename ?? null
+);
 $table->define_baseurl($PAGE->url);
 
 $mform = new \block_evasys_sync\managecategory_filter_table_form($PAGE->url, ['table' => $table]);
 
 $PAGE->navigation->add('EvaSys', new moodle_url('/blocks/evasys_sync/manageroverview.php'))
     ->add(
-                get_string('evaluations', 'block_evasys_sync') . ' in ' . data_controller::get_name_for_semester($data->semester),
-                new moodle_url('/blocks/evasys_sync/managecategory.php', ['id' => $category->id])
-        )->add(get_string('courses_with_manual_evals', 'block_evasys_sync'), $PAGE->url)->make_active();
+        get_string('evaluations', 'block_evasys_sync') . ' in ' . data_controller::get_name_for_semester($data->semester),
+        new moodle_url('/blocks/evasys_sync/managecategory.php', ['id' => $category->id])
+    )->add(get_string('courses_with_manual_evals', 'block_evasys_sync'), $PAGE->url)->make_active();
 
 $mformdata = $cache->get('coursesfilter');
 if ($mformdata) {

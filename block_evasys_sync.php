@@ -20,7 +20,6 @@
  */
 
 class block_evasys_sync extends block_base {
-
     /**
      * Initializes the block.
      */
@@ -112,7 +111,9 @@ class block_evasys_sync extends block_base {
         // See if there are any students that can evaluate.
         // If there are no students we disable all controls.
         $nostudents = (count_enrolled_users(
-                        context_course::instance($this->page->course->id), 'block/evasys_sync:mayevaluate') == 0);
+            context_course::instance($this->page->course->id),
+            'block/evasys_sync:mayevaluate'
+        ) == 0);
 
         if ($evaluations) {
             $emailsentnotice = true;

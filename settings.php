@@ -22,8 +22,10 @@
 defined('MOODLE_INTERNAL') || die;
 
 if ($hassiteconfig) { // Needs this condition or there is error on login page.
-    $ADMIN->add('blocksettings', new admin_externalpage('block_evasys_sync',
+    $ADMIN->add('blocksettings', new admin_externalpage(
+        'block_evasys_sync',
         get_string('evasys_sync', 'block_evasys_sync'),
-        new moodle_url('/blocks/evasys_sync/adminsettings.php')));
+        new moodle_url('/blocks/evasys_sync/adminsettings.php')
+    ));
 }
 $settings = null;

@@ -40,10 +40,10 @@ $string['add_course_header'] = "Wählen Sie die LSF-Veranstaltungen, die gemeins
 $string['addcat'] = 'Kategorie hinzufügen';
 $string['alert_email_body'] = 'Sehr geehrte*r Evaluationskoordinator*in, ' . "\n" .
     'Sie erhalten diese E-Mail da im Learnweb-Kurs "{$a->name}" der Evaluationszeitraum wie folgt festgesetzt wurde:' . "\n\n" .
-    "\t".'Start: {$a->start}' . "\n" .
-    "\t".'Ende:  {$a->end}' . "\n" .
-    "\t".'Verantwortliche*r: {$a->teacher}' . "\n" .
-    "\t".'EvaSys-IDs:' . "\n" .
+    "\t" . 'Start: {$a->start}' . "\n" .
+    "\t" . 'Ende:  {$a->end}' . "\n" .
+    "\t" . 'Verantwortliche*r: {$a->teacher}' . "\n" .
+    "\t" . 'EvaSys-IDs:' . "\n" .
     '{$a->evasyscourses}' . "\n" .
     'Mit freundlichen Grüßen' . "\n" .
     'Ihr Learnweb-Support';
@@ -81,7 +81,7 @@ $string['content_send_success'] = 'Es wurden {$a->sent} von {$a->total} Einladun
 $string['content_start_after_end'] = "Der Start ist nach dem Ende";
 $string['content_success'] = "Sie haben die Evaluation erfolgreich beantragt.<br />" .
                              "!!!DIE EVALUATION HAT NOCH NICHT BEGONNEN!!!<br />" .
-                             "Sie müssen nichts weiter tun, ".
+                             "Sie müssen nichts weiter tun, " .
                              "Ihr*e Evaluationsbeauftragte*r wird nach den Richtlinien Ihres Fachbereichs weiter verfahren.";
 $string['content_success_direct'] = "Die Evaluationsperiode wurde erfolgreich gesetzt";
 $string['content_success_invite'] = "Die Evaluation wurde erfolgreich gestartet";

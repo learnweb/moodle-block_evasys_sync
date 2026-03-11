@@ -39,7 +39,6 @@ require_once($CFG->libdir . '/tablelib.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class remaining_courses_table extends \table_sql {
-
     private evasys_category $evasyscategory;
 
     private bool $showbuttons;
@@ -58,8 +57,12 @@ class remaining_courses_table extends \table_sql {
 
         $fields = 'c.id as courseid, c.fullname as coursename, cfd.intvalue as semester';
 
-        $semesterfield = $DB->get_record('customfield_field',
-            ['shortname' => 'semester', 'type' => 'semester'], '*', MUST_EXIST);
+        $semesterfield = $DB->get_record(
+            'customfield_field',
+            ['shortname' => 'semester', 'type' => 'semester'],
+            '*',
+            MUST_EXIST
+        );
 
         $from = '{course} c ' .
             'JOIN {customfield_data} cfd ON cfd.instanceid = c.id AND cfd.fieldid = :semesterfieldid ' .
@@ -69,7 +72,7 @@ class remaining_courses_table extends \table_sql {
         $where = ["evreqc.id IS NULL and evalc.id IS NULL and c.idnumber <> ''"];
 
         if ($categoryids != null) {
-            list($insql, $inparams) = $DB->get_in_or_equal($categoryids, SQL_PARAMS_NAMED);
+            [$insql, $inparams] = $DB->get_in_or_equal($categoryids, SQL_PARAMS_NAMED);
             $where[] = "c.category $insql";
             $params = array_merge($params, $inparams);
         }
@@ -128,7 +131,7 @@ class remaining_courses_table extends \table_sql {
 
     public function col_teacher($row) {
         $users = get_users_by_capability(\context_course::instance($row->courseid), 'block/evasys_sync:teacherforcourse');
-        $users = array_map(function($user) {
+        $users = array_map(function ($user) {
             return \html_writer::link(new moodle_url('/user/profile.php', ['id' => $user->id]), fullname($user));
         }, $users);
         return join(', ', $users);
@@ -145,8 +148,10 @@ class remaining_courses_table extends \table_sql {
         if (!$this->evasyscategory->default_period_set() || !$this->showbuttons) {
             return '';
         }
-        return $OUTPUT->render(new \single_button(new moodle_url($PAGE->url, ['action' => 'seteval', 'ids[]' => $row->courseid, 'id' => $this->evasyscategory->get('course_category')]),
-                get_string('set_default_eval', 'block_evasys_sync')));
+        return $OUTPUT->render(new \single_button(
+            new moodle_url($PAGE->url, ['action' => 'seteval', 'ids[]' => $row->courseid, 'id' => $this->evasyscategory->get('course_category')]),
+            get_string('set_default_eval', 'block_evasys_sync')
+        ));
     }
 
     public function wrap_html_start() {
@@ -167,14 +172,20 @@ class remaining_courses_table extends \table_sql {
             return;
         }
 
-        echo $OUTPUT->render(new \single_button(new moodle_url($PAGE->url),
-                get_string('set_default_eval_for_selected', 'block_evasys_sync'), 'post', false,
-                ['data-evasys-action' => 'seteval']
+        echo $OUTPUT->render(new \single_button(
+            new moodle_url($PAGE->url),
+            get_string('set_default_eval_for_selected', 'block_evasys_sync'),
+            'post',
+            false,
+            ['data-evasys-action' => 'seteval']
         ));
 
-        echo $OUTPUT->render(new \single_button(new moodle_url($PAGE->url),
-                 get_string('set_default_eval_for_all', 'block_evasys_sync'), 'post', false,
-                ['data-evasys-action' => 'seteval', 'data-evasys-forall' => 1]
+        echo $OUTPUT->render(new \single_button(
+            new moodle_url($PAGE->url),
+            get_string('set_default_eval_for_all', 'block_evasys_sync'),
+            'post',
+            false,
+            ['data-evasys-action' => 'seteval', 'data-evasys-forall' => 1]
         ));
     }
 
@@ -220,7 +231,7 @@ class remaining_courses_table extends \table_sql {
 
         global $DB;
 
-        list($insql, $inparams) = $DB->get_in_or_equal($courses, SQL_PARAMS_NAMED);
+        [$insql, $inparams] = $DB->get_in_or_equal($courses, SQL_PARAMS_NAMED);
         $where = "c.id $insql";
         $params = array_merge($this->sql->params, $inparams);
 

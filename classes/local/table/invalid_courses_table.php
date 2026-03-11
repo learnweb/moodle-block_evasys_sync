@@ -39,7 +39,6 @@ require_once($CFG->libdir . '/tablelib.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class invalid_courses_table extends \table_sql {
-
     private evasys_category $evasyscategory;
 
     /**
@@ -53,8 +52,12 @@ class invalid_courses_table extends \table_sql {
 
         $fields = 'c.id as courseid, c.fullname as coursename, cfd.intvalue as semester';
 
-        $semesterfield = $DB->get_record('customfield_field',
-            ['shortname' => 'semester', 'type' => 'semester'], '*', MUST_EXIST);
+        $semesterfield = $DB->get_record(
+            'customfield_field',
+            ['shortname' => 'semester', 'type' => 'semester'],
+            '*',
+            MUST_EXIST
+        );
 
         $from = '{course} c ' .
             'JOIN {customfield_data} cfd ON cfd.instanceid = c.id AND cfd.fieldid = :semesterfieldid ' .
@@ -63,7 +66,7 @@ class invalid_courses_table extends \table_sql {
         $where = ["c.idnumber = ''"];
 
         if ($categoryids != null) {
-            list($insql, $inparams) = $DB->get_in_or_equal($categoryids, SQL_PARAMS_NAMED);
+            [$insql, $inparams] = $DB->get_in_or_equal($categoryids, SQL_PARAMS_NAMED);
             $where[] = "c.category $insql";
             $params = array_merge($params, $inparams);
         }
@@ -119,7 +122,7 @@ class invalid_courses_table extends \table_sql {
 
     public function col_teacher($row) {
         $users = get_users_by_capability(\context_course::instance($row->courseid), 'block/evasys_sync:teacherforcourse');
-        $users = array_map(function($user) {
+        $users = array_map(function ($user) {
             return \html_writer::link(new moodle_url('/user/profile.php', ['id' => $user->id]), fullname($user));
         }, $users);
         return join(', ', $users);

@@ -25,7 +25,7 @@ use core\persistent;
  * @property string evasyscourses
  * @package block_evasys_sync
  */
-class course_evasys_courses_allocation  extends persistent {
+class course_evasys_courses_allocation extends persistent {
     const TABLE = 'block_evasys_sync_courses';
     /**
      * Return the definition of the properties of this model.

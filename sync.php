@@ -38,7 +38,6 @@ $returnurl->param('id', $courseid);
 $returnurl->param('evasyssynccheck', 1);
 
 if (!optional_param('activate_standard', false, PARAM_BOOL)) {
-
     if (optional_param('datedisabled', false, PARAM_BOOL)) {
         // We already have an evaluation request for this course: fetch the start- and enddates.
         $sql = 'SELECT v.id, v.starttime, v.endtime, max(v.timemodified) as time FROM {' . \block_evasys_sync\dbtables::EVAL_VERANSTS . '} v INNER JOIN ' .
@@ -47,9 +46,7 @@ if (!optional_param('activate_standard', false, PARAM_BOOL)) {
         // $record = course_evaluation_allocation::get_record_by_course($courseid);
         $startdate = new \DateTime('@' . $record->starttime, \core_date::get_server_timezone_object());
         $enddate = new \DateTime('@' . $record->endtime, \core_date::get_server_timezone_object());
-
     } else {
-
         if (optional_param('only_end', false, PARAM_BOOL)) {
             // Existing start date should not be changed; just the end date. Fetch start date from record.
             $sql = 'SELECT v.id, v.starttime, max(v.timemodified) as time FROM {' . \block_evasys_sync\dbtables::EVAL_VERANSTS . '} v INNER JOIN ' .
@@ -83,7 +80,6 @@ if (!optional_param('activate_standard', false, PARAM_BOOL)) {
         $enddate->setTimezone(\core_date::get_server_timezone_object());
         $enddate->setDate($endyear, $endmonth, $endday);
         $enddate->setTime($endhour, $endmin);
-
     }
 
     $dates = ["start" => $startdate->getTimestamp(), "end" => $enddate->getTimestamp()];
@@ -125,7 +121,6 @@ try {
     \block_evasys_sync\evaluation_manager::clear_error($courseid);
 
     if ($newparticipantsadded || $datenew) {
-
         if ($datenew) {
             // Only send an email if it's the first time requesting this evaluation
             $evasyssynchronizer->notify_evaluation_responsible_person($dates, $newparticipantsadded, $datenew);

@@ -24,7 +24,6 @@ namespace block_evasys_sync;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class evalcat_manager {
-
     private static $instance;
 
     public static function get_instance(): evalcat_manager {
@@ -58,8 +57,10 @@ class evalcat_manager {
         if (has_capability('block/evasys_sync:managecourses', \context_system::instance())) {
             return array_keys($this->get_categories());
         } else {
-            list ($contextlimitsql, $contextlimitparams) = \core\access\get_user_capability_course_helper::get_sql(
-                    $USER->id, 'block/evasys_sync:managecourses');
+             [$contextlimitsql, $contextlimitparams] = \core\access\get_user_capability_course_helper::get_sql(
+                 $USER->id,
+                 'block/evasys_sync:managecourses'
+             );
             if (!$contextlimitsql) {
                 return [];
             }
@@ -67,7 +68,7 @@ class evalcat_manager {
             return $DB->get_fieldset_sql("
             SELECT c.id
               FROM {course_categories} c
-              JOIN {". dbtables::CATEGORIES . "} eval ON eval.course_category = c.id 
+              JOIN {" . dbtables::CATEGORIES . "} eval ON eval.course_category = c.id 
               JOIN {context} x ON c.id = x.instanceid AND x.contextlevel = ?
             WHERE $contextlimitsql", array_merge([CONTEXT_COURSECAT], $contextlimitparams));
         }
@@ -99,5 +100,4 @@ class evalcat_manager {
     public function purge_categories() {
         $this->cache->purge();
     }
-
 }

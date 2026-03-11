@@ -25,7 +25,6 @@ use block_evasys_sync\local\entity\evaluation_state;
  * @copyright 2022 Justus Dieckmann WWU
  */
 class evaluation {
-
     /** @var int|null ID of request. */
     public $id = null;
 
@@ -134,18 +133,24 @@ class evaluation {
             $DB->update_record(dbtables::EVAL, $record);
 
             // Delete outdated courses.
-            list($insql, $inparams) = $DB->get_in_or_equal($this->courses, SQL_PARAMS_NAMED, 'param', false);
+            [$insql, $inparams] = $DB->get_in_or_equal($this->courses, SQL_PARAMS_NAMED, 'param', false);
             $inparams['evalid'] = $record->id;
-            $DB->delete_records_select(dbtables::EVAL_COURSES,
-                "evalid = :evalid AND courseid $insql", $inparams);
+            $DB->delete_records_select(
+                dbtables::EVAL_COURSES,
+                "evalid = :evalid AND courseid $insql",
+                $inparams
+            );
 
             $existingveransts = $DB->get_records(dbtables::EVAL_VERANSTS, ['evalid' => $this->id], '', 'veranstid, id, veransttitle, starttime, endtime');
 
             // Delete outdated lsf courses.
-            list($insql, $inparams) = $DB->get_in_or_equal(array_keys($this->evaluations), SQL_PARAMS_NAMED, 'param', false);
+            [$insql, $inparams] = $DB->get_in_or_equal(array_keys($this->evaluations), SQL_PARAMS_NAMED, 'param', false);
             $inparams['evalid'] = $record->id;
-            $DB->delete_records_select(dbtables::EVAL_VERANSTS,
-                "evalid = :evalid AND veranstid $insql", $inparams);
+            $DB->delete_records_select(
+                dbtables::EVAL_VERANSTS,
+                "evalid = :evalid AND veranstid $insql",
+                $inparams
+            );
 
             $existingcourses = $DB->get_records(dbtables::EVAL_COURSES, ['evalid' => $this->id], '', 'courseid, id');
         } else {
@@ -185,5 +190,4 @@ class evaluation {
 
         $transaction->allow_commit();
     }
-
 }

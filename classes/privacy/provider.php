@@ -36,7 +36,6 @@ use core_privacy\local\request\contextlist;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class provider implements \core_privacy\local\metadata\provider, \core_privacy\local\request\plugin\provider {
-
     /**
      * Returns meta data about this system.
      *

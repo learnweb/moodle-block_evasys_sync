@@ -30,7 +30,6 @@ require_once($CFG->libdir . '/formslib.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class course_manager_filter_form extends moodleform {
-
     #[\Override]
     protected function definition() {
         global $DB;
@@ -53,5 +52,4 @@ class course_manager_filter_form extends moodleform {
         }
         return $data;
     }
-
 }

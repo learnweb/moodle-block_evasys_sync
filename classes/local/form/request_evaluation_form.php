@@ -41,7 +41,6 @@ require_once($CFG->dirroot . '/local/lsf_unification/lib_his.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class request_evaluation_form extends moodleform {
-
     private $course;
     private $lsfcourses;
     private $defaulttimeframe;
@@ -93,17 +92,27 @@ class request_evaluation_form extends moodleform {
         $mform->disabledIf('sectionone', 'donotevaluate', 'checked');
         $mform->disabledIf('sectiontwo', 'donotevaluate', 'checked');
 
-        $mform->addElement('checkbox', 'additionalveranstaltungen',
-            get_string('eval_additional_lsfcourses', 'block_evasys_sync'));
+        $mform->addElement(
+            'checkbox',
+            'additionalveranstaltungen',
+            get_string('eval_additional_lsfcourses', 'block_evasys_sync')
+        );
 
-        $mform->addElement('autocomplete', 'lsfcourses',
+        $mform->addElement(
+            'autocomplete',
+            'lsfcourses',
             get_string('course_units', 'block_evasys_sync'),
-            $this->lsfcourses, ['multiple' => true]);
+            $this->lsfcourses,
+            ['multiple' => true]
+        );
 
         $mform->hideIf('lsfcourses', 'additionalveranstaltungen', 'notchecked');
 
-        $mform->addElement('checkbox', 'additionalcourses',
-            get_string('eval_additional_courses', 'block_evasys_sync'));
+        $mform->addElement(
+            'checkbox',
+            'additionalcourses',
+            get_string('eval_additional_courses', 'block_evasys_sync')
+        );
 
         $mform->addElement('course', 'courses', get_string('courses'), ['multiple' => true]);
         $mform->hideIf('courses', 'additionalcourses', 'notchecked');
@@ -115,24 +124,42 @@ class request_evaluation_form extends moodleform {
         $mform->addElement('html', '<fieldset id="fitem_id_sectiontwo" class="fitem grouponly" name="sectiontwo">');
 
         if ($this->defaulttimeframe) {
-            $mform->addElement('checkbox', 'usedefaultevalperiod',
-                get_string('use_default_evalperiod', 'block_evasys_sync',
-                    userdate($this->defaulttimeframe['start']) . ' - ' . userdate($this->defaulttimeframe['end'])));
+            $mform->addElement(
+                'checkbox',
+                'usedefaultevalperiod',
+                get_string(
+                    'use_default_evalperiod',
+                    'block_evasys_sync',
+                    userdate($this->defaulttimeframe['start']) . ' - ' . userdate($this->defaulttimeframe['end'])
+                )
+            );
             $mform->setDefault('usedefaultevalperiod', 1);
         }
 
         $mform->addElement('checkbox', 'useoneevalperiod', get_string('useoneevalperiod', 'block_evasys_sync'));
         $mform->setDefault('useoneevalperiod', 1);
 
-        $mform->addElement('date_time_selector', 'evaltimestartmulticourse',
-            get_string('startondate', 'block_evasys_sync'));
-        $mform->addElement('date_time_selector', 'evaltimeendmulticourse',
-            get_string('endondate', 'block_evasys_sync'));
+        $mform->addElement(
+            'date_time_selector',
+            'evaltimestartmulticourse',
+            get_string('startondate', 'block_evasys_sync')
+        );
+        $mform->addElement(
+            'date_time_selector',
+            'evaltimeendmulticourse',
+            get_string('endondate', 'block_evasys_sync')
+        );
 
-        $mform->addElement('date_time_selector', 'evaltimestartsinglecourse',
-            get_string('startondate', 'block_evasys_sync'));
-        $mform->addElement('date_time_selector', 'evaltimeendsinglecourse',
-            get_string('endondate', 'block_evasys_sync'));
+        $mform->addElement(
+            'date_time_selector',
+            'evaltimestartsinglecourse',
+            get_string('startondate', 'block_evasys_sync')
+        );
+        $mform->addElement(
+            'date_time_selector',
+            'evaltimeendsinglecourse',
+            get_string('endondate', 'block_evasys_sync')
+        );
 
         if ($this->defaulttimeframe) {
             $mform->disabledIf('useoneevalperiod', 'usedefaultevalperiod', 'checked');
@@ -177,10 +204,16 @@ class request_evaluation_form extends moodleform {
         foreach ($selectedlsfcourses as $id => $title) {
             $mform->addElement('html', '<div class="pl-5" data-evasys-lsfid="' . $id . '"><h4 class="mb-3 mt-4">' .
                 get_string('evaluationperiod_for', 'block_evasys_sync', $title) . '</h4>');
-            $mform->addElement('date_time_selector', "evaltimestart_$id",
-                get_string('startondate', 'block_evasys_sync'));
-            $mform->addElement('date_time_selector', "evaltimeend_$id",
-                get_string('endondate', 'block_evasys_sync'));
+            $mform->addElement(
+                'date_time_selector',
+                "evaltimestart_$id",
+                get_string('startondate', 'block_evasys_sync')
+            );
+            $mform->addElement(
+                'date_time_selector',
+                "evaltimeend_$id",
+                get_string('endondate', 'block_evasys_sync')
+            );
             $mform->addElement('html', '</div>');
         }
 
@@ -303,5 +336,4 @@ class request_evaluation_form extends moodleform {
         }
         return $data;
     }
-
 }

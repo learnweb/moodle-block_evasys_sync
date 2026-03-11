@@ -23,7 +23,6 @@ namespace block_evasys_sync;
  * @copyright 2022 Justus Dieckmann WWU
  */
 class evaluation_request {
-
     /** @var int|null ID of request. */
     public $id = null;
 
@@ -131,18 +130,24 @@ class evaluation_request {
             $DB->update_record(dbtables::EVAL_REQUESTS, $record);
 
             // Delete outdated courses.
-            list($insql, $inparams) = $DB->get_in_or_equal($this->courses, SQL_PARAMS_NAMED, 'param', false);
+            [$insql, $inparams] = $DB->get_in_or_equal($this->courses, SQL_PARAMS_NAMED, 'param', false);
             $inparams['erequestid'] = $record->id;
-            $DB->delete_records_select(dbtables::EVAL_REQUESTS_COURSES,
-                "erequestid = :erequestid AND courseid $insql", $inparams);
+            $DB->delete_records_select(
+                dbtables::EVAL_REQUESTS_COURSES,
+                "erequestid = :erequestid AND courseid $insql",
+                $inparams
+            );
 
             $existingveransts = $DB->get_records(dbtables::EVAL_REQUESTS_VERANSTS, ['erequestid' => $this->id], '', 'veranstid, id, veransttile, starttime, endttime');
 
             // Delete outdated lsf courses.
-            list($insql, $inparams) = $DB->get_in_or_equal(array_keys($this->evaluations), SQL_PARAMS_NAMED, 'param', false);
+            [$insql, $inparams] = $DB->get_in_or_equal(array_keys($this->evaluations), SQL_PARAMS_NAMED, 'param', false);
             $inparams['erequestid'] = $record->id;
-            $DB->delete_records_select(dbtables::EVAL_REQUESTS_VERANSTS,
-                "erequestid = :erequestid AND veranstid $insql", $inparams);
+            $DB->delete_records_select(
+                dbtables::EVAL_REQUESTS_VERANSTS,
+                "erequestid = :erequestid AND veranstid $insql",
+                $inparams
+            );
 
             $existingcourses = $DB->get_records(dbtables::EVAL_REQUESTS_COURSES, ['erequestid' => $this->id], '', 'courseid, id');
         } else {
@@ -157,9 +162,11 @@ class evaluation_request {
         foreach ($this->evaluations as $lsfcourseid => $evaluation) {
             if (isset($existingveransts[$lsfcourseid])) {
                 $existingrecord = $existingveransts[$lsfcourseid];
-                if ($evaluation->title == $existingrecord->veransttitle &&
+                if (
+                    $evaluation->title == $existingrecord->veransttitle &&
                     $evaluation->start == $existingrecord->starttime &&
-                    $evaluation->end == $existingrecord->endtime) {
+                    $evaluation->end == $existingrecord->endtime
+                ) {
                     continue;
                 }
                 $existingrecord->veransttitle = $evaluation->title;
@@ -179,5 +186,4 @@ class evaluation_request {
 
         $transaction->allow_commit();
     }
-
 }

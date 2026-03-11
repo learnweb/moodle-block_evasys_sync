@@ -40,10 +40,10 @@ $string['add_course_header'] = "Choose LSF courses that should be synchronized t
 $string['addcat'] = 'Add Category';
 $string['alert_email_body'] = 'Sehr geehrte*r Evaluationskoordinator*in, ' . "\n" .
     'Sie erhalten diese E-Mail da im Learnweb-Kurs "{$a->name}" der Evaluationszeitraum wie folgt festgesetzt wurde:' . "\n\n" .
-    "\t".'Start: {$a->start}' . "\n" .
-    "\t".'Ende:  {$a->end}' . "\n" .
-    "\t".'Verantwortliche*r: {$a->teacher}' . "\n" .
-    "\t".'EvaSys-IDs:' . "\n" .
+    "\t" . 'Start: {$a->start}' . "\n" .
+    "\t" . 'Ende:  {$a->end}' . "\n" .
+    "\t" . 'Verantwortliche*r: {$a->teacher}' . "\n" .
+    "\t" . 'EvaSys-IDs:' . "\n" .
     '{$a->evasyscourses}' . "\n" .
     'Mit freundlichen Grüßen' . "\n" .
     'Ihr Learnweb-Support';
@@ -76,12 +76,12 @@ $string['content_send_invalid'] = "An evaluationperiod is set to start after it 
     "All other evlautionperiods have been changed normally.";
 $string['content_send_rejected'] = "One or more dates have been set to a date in the past. <br />" .
     "This is not allowed. Some evaluation periods may have been altered.<br />";
-$string['content_send_success'] = '{$a->sent} of {$a->total} emails have been send. <br />'.
+$string['content_send_success'] = '{$a->sent} of {$a->total} emails have been send. <br />' .
                                   '{$a->queued} jobs have been queued';
 $string['content_start_after_end'] = "Start is after end";
 $string['content_success'] = "Your evaluation coordinator has been instructed to start the evaluation.<br />" .
     "!!!THE EVALUATION HAS NOT STARTED YET!!! <br />" .
-    "However, you have done your part.".
+    "However, you have done your part." .
     "The coordinator will process your request in accordance with the regulations of your organization.";
 $string['content_success_direct'] = "Evaluation period has been set";
 $string['content_success_invite'] = "Evaluation has been started";
@@ -107,7 +107,7 @@ $string['delete'] = 'Delete';
 $string['delete_category_user'] = 'Delete Entry';
 $string['delete_confirm'] = 'Are you sure you want to delete the user for this course category?';
 $string['different_period'] = "Exceptional evaluationperiod:";
-$string['direct_already'] = "You have already sent invitations to all students.".
+$string['direct_already'] = "You have already sent invitations to all students." .
                             "No new invitations have been send";
 $string['direct_invite_checkbox'] = 'Start evaluation immediately';
 $string['direct_title_info'] = "Invitation already complete";

@@ -34,7 +34,6 @@ use core\persistent;
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class evasys_category extends persistent {
-
     const TABLE = 'block_evasys_sync_categories';
 
     const MASK_TEACHER_CAN_REQUEST_EVALUATION = 1 << 0;
@@ -91,7 +90,7 @@ class evasys_category extends persistent {
             return $record;
         }
         // Loop through parents.
-        try{
+        try {
             $parents = \core_course_category::get($categoryid)->get_parents();
             for ($i = count($parents) - 1; $i >= 0; $i--) {
                 $record = self::get_record(['course_category' => $parents[$i]]);
@@ -100,7 +99,7 @@ class evasys_category extends persistent {
                     return $record;
                 }
             }
-        }catch(\Exception $e){
+        } catch (\Exception $e) {
             // if category is not visible or cannot be accessed, just proceed as if no category was found.
         }
 

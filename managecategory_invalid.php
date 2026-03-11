@@ -62,9 +62,9 @@ $table->define_baseurl($PAGE->url);
 
 $PAGE->navigation->add('EvaSys', new moodle_url('/blocks/evasys_sync/manageroverview.php'))
     ->add(
-                get_string('evaluations', 'block_evasys_sync') . ' in ' . data_controller::get_name_for_semester($data->semester),
-                new moodle_url('/blocks/evasys_sync/managecategory.php', ['id' => $category->id])
-        )->add(get_string('courses_without_idnumber', 'block_evasys_sync'), $PAGE->url)->make_active();
+        get_string('evaluations', 'block_evasys_sync') . ' in ' . data_controller::get_name_for_semester($data->semester),
+        new moodle_url('/blocks/evasys_sync/managecategory.php', ['id' => $category->id])
+    )->add(get_string('courses_without_idnumber', 'block_evasys_sync'), $PAGE->url)->make_active();
 
 echo $OUTPUT->header();
 

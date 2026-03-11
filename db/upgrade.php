@@ -38,11 +38,10 @@ use block_evasys_sync\local\entity\evaluation_state;
  * @param int $oldversion
  * @return bool
  */
-function xmldb_block_evasys_sync_upgrade ($oldversion) {
+function xmldb_block_evasys_sync_upgrade($oldversion) {
     global $DB;
     $dbman = $DB->get_manager();
     if ($oldversion < 2017121403) {
-
         // Define table block_evasys_sync_categories to be created.
         $table = new xmldb_table('block_evasys_sync_categories');
 
@@ -69,7 +68,6 @@ function xmldb_block_evasys_sync_upgrade ($oldversion) {
     }
 
     if ($oldversion < 2019032600) {
-
         // Define table block_evasys_sync_categories to be created.
         $table = new xmldb_table('block_evasys_sync_categories');
         $table->add_field('category_mode', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, 0);
@@ -127,7 +125,6 @@ function xmldb_block_evasys_sync_upgrade ($oldversion) {
 
         // Evasys_sync savepoint reached.
         upgrade_block_savepoint(true, 2019032600, 'evasys_sync');
-
     }
     if ($oldversion < 2019172402) {
         $coursetable = new xmldb_table('block_evasys_sync_surveys');
@@ -165,8 +162,8 @@ function xmldb_block_evasys_sync_upgrade ($oldversion) {
         $oldtable = new xmldb_table('block_evasys_sync_surveys');
         if ($dbman->table_exists($oldtable)) {
             // Migrate data.
-            $DB->execute("INSERT INTO {block_evasys_sync_courseeval}".
-                " (course, startdate, enddate, usermodified, timecreated, timemodified)".
+            $DB->execute("INSERT INTO {block_evasys_sync_courseeval}" .
+                " (course, startdate, enddate, usermodified, timecreated, timemodified)" .
                 " SELECT course, startdate, enddate, usermodified, timecreated, timemodified FROM {block_evasys_sync_surveys}");
 
             // Drop old table.
@@ -196,7 +193,6 @@ function xmldb_block_evasys_sync_upgrade ($oldversion) {
     }
 
     if ($oldversion < 2019201400) {
-
         $table = new xmldb_table('block_evasys_sync_categories');
         $field = new xmldb_field('standard_time_mode', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'standard_time_end');
 
@@ -225,7 +221,6 @@ function xmldb_block_evasys_sync_upgrade ($oldversion) {
     }
 
     if ($oldversion < 2019203100) {
-
         // Define field usestandardtime to be added to block_evasys_sync_courseeval.
         $table = new xmldb_table('block_evasys_sync_courseeval');
         $field = new xmldb_field('usestandardtime', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0', 'timemodified');
@@ -240,7 +235,6 @@ function xmldb_block_evasys_sync_upgrade ($oldversion) {
     }
 
     if ($oldversion < 2022092400) {
-
         /// Create Evasys Manager Role. ///
         require_once(__DIR__ . '/install.php');
         xmldb_block_evasys_sync_create_role();
@@ -399,7 +393,7 @@ function xmldb_block_evasys_sync_upgrade ($oldversion) {
                 continue;
             }
             // Check if any veranstaltungen already exist in the database.
-            list($insql, $inparams) = $DB->get_in_or_equal($veransts);
+            [$insql, $inparams] = $DB->get_in_or_equal($veransts);
             $evalgroups = $DB->get_fieldset_sql(
                 'SELECT evalid FROM {' . dbtables::EVAL_VERANSTS . '} ' .
                 'WHERE veranstid ' . $insql . ' ' .
@@ -413,7 +407,7 @@ function xmldb_block_evasys_sync_upgrade ($oldversion) {
                 // If true, merge all evaluation groups with veranstaltungen of this course into the one.
                 $evalid = array_shift($evalgroups);
                 if ($evalgroups) {
-                    list($insql, $inparams) = $DB->get_in_or_equal($evalgroups, SQL_PARAMS_NAMED);
+                    [$insql, $inparams] = $DB->get_in_or_equal($evalgroups, SQL_PARAMS_NAMED);
                     $inparams['evalid'] = $evalid;
                     $DB->execute(
                         'UPDATE {' . dbtables::EVAL_COURSES . '} ' .
@@ -440,7 +434,7 @@ function xmldb_block_evasys_sync_upgrade ($oldversion) {
                 'courseid' => $record->course,
             ]);
 
-            foreach($veransts as $veranst) {
+            foreach ($veransts as $veranst) {
                 if (!isset($existingveranst[$veranst])) {
                     $title = null;
                     try {

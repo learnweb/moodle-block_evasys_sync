@@ -30,7 +30,6 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 final class courses_allocation_test extends advanced_testcase {
-
     /**
      * Tests if a course has a idnumber, but no allocation entry.
      */

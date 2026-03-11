@@ -69,7 +69,7 @@ if ($mform->is_validated()) {
     global $DB, $USER, $pgDB; // phpcs:ignore // @codingStandardsIgnoreLine
     $data = $mform->get_data();
     if (is_object($data)) {
-        $data = (Array) $data;
+        $data = (array) $data;
     }
     // Build mapping between moodle and evasys courses.
     $mapping = [];

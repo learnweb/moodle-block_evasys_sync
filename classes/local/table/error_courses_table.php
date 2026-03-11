@@ -39,7 +39,6 @@ require_once($CFG->libdir . '/tablelib.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class error_courses_table extends \table_sql {
-
     private evasys_category $evasyscategory;
 
     private array $str;
@@ -60,8 +59,12 @@ class error_courses_table extends \table_sql {
 
         $fields = 'err.id, c.id as courseid, c.fullname as coursename, err.lsfid, err.text, err.timecreated as time';
 
-        $semesterfield = $DB->get_record('customfield_field',
-            ['shortname' => 'semester', 'type' => 'semester'], '*', MUST_EXIST);
+        $semesterfield = $DB->get_record(
+            'customfield_field',
+            ['shortname' => 'semester', 'type' => 'semester'],
+            '*',
+            MUST_EXIST
+        );
 
         $from = '{' . dbtables::ERRORS . '} err ' .
             'LEFT JOIN {course} c ON err.courseid = c.id ' .
@@ -71,7 +74,7 @@ class error_courses_table extends \table_sql {
         $where = ['err.timehandled IS NULL'];
 
         if ($categoryids != null) {
-            list($insql, $inparams) = $DB->get_in_or_equal($categoryids, SQL_PARAMS_NAMED);
+            [$insql, $inparams] = $DB->get_in_or_equal($categoryids, SQL_PARAMS_NAMED);
             $where[] = "c.category $insql";
             $params = array_merge($params, $inparams);
         }
@@ -132,7 +135,7 @@ class error_courses_table extends \table_sql {
 
     public function col_teacher($row) {
         $users = get_users_by_capability(\context_course::instance($row->courseid), 'block/evasys_sync:teacherforcourse');
-        $users = array_map(function($user) {
+        $users = array_map(function ($user) {
             return \html_writer::link(new moodle_url('/user/profile.php', ['id' => $user->id]), fullname($user));
         }, $users);
         return join(', ', $users);
@@ -150,8 +153,10 @@ class error_courses_table extends \table_sql {
      */
     public function col_tools($row) {
         global $PAGE, $OUTPUT;
-        return $OUTPUT->render(new \single_button(new moodle_url($PAGE->url, ['action' => 'clearerror', 'ids[]' => $row->id]),
-                get_string('clear_error', 'block_evasys_sync')));
+        return $OUTPUT->render(new \single_button(
+            new moodle_url($PAGE->url, ['action' => 'clearerror', 'ids[]' => $row->id]),
+            get_string('clear_error', 'block_evasys_sync')
+        ));
     }
 
     /**
@@ -164,14 +169,20 @@ class error_courses_table extends \table_sql {
         parent::wrap_html_finish();
         echo "<br>";
 
-        echo $OUTPUT->render(new \single_button(new moodle_url(''),
-                get_string('clear_selected_errors', 'block_evasys_sync'), 'post', false,
-                ['data-evasys-action' => 'clearerror']
+        echo $OUTPUT->render(new \single_button(
+            new moodle_url(''),
+            get_string('clear_selected_errors', 'block_evasys_sync'),
+            'post',
+            false,
+            ['data-evasys-action' => 'clearerror']
         ));
 
-        echo $OUTPUT->render(new \single_button(new moodle_url(''),
-                get_string('clear_all_errors', 'block_evasys_sync'), 'post', false,
-                ['data-evasys-action' => 'clearerror', 'data-evasys-forall' => 1]
+        echo $OUTPUT->render(new \single_button(
+            new moodle_url(''),
+            get_string('clear_all_errors', 'block_evasys_sync'),
+            'post',
+            false,
+            ['data-evasys-action' => 'clearerror', 'data-evasys-forall' => 1]
         ));
     }
 

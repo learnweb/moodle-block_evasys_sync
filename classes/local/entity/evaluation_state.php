@@ -25,7 +25,6 @@ use block_evasys_sync\evaluation;
  * @copyright 2022 Justus Dieckmann WWU
  */
 class evaluation_state {
-
     public const PENDING = 0;
     public const PLANNED = 1;
     public const SYNCHRONIZED = 2;
@@ -39,5 +38,4 @@ class evaluation_state {
     public function is_manual(\stdClass $evaluation) {
         return in_array($evaluation->state, self::MANUAL_STATES);
     }
-
 }

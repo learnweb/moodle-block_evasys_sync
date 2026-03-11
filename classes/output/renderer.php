@@ -50,7 +50,6 @@ use html_writer;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class renderer extends \plugin_renderer_base {
-
     function print_evasys_category_header(evasys_category $evasyscategory) {
         $catid = $evasyscategory->get('course_category');
         $category = \core_course_category::get($catid);
@@ -92,5 +91,4 @@ class renderer extends \plugin_renderer_base {
 
         echo $this->output->box_end();
     }
-
 }

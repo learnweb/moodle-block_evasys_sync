@@ -19,13 +19,12 @@ namespace block_evasys_sync\task;
 use core\task\adhoc_task;
 
 class evasys_bulk_task extends adhoc_task {
-
     public function execute() {
         global $DB;
         $data = $this->get_custom_data();
         $courses = $data->courses;
         $categoryid = $data->categoryid;
-        if(empty($categoryid) || empty($courses)){
+        if (empty($categoryid) || empty($courses)) {
             mtrace("No category or courses specified, exiting.");
         }
         $evasyscategory = \block_evasys_sync\evasys_category::for_category($categoryid);

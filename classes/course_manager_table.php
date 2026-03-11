@@ -37,7 +37,6 @@ require_once($CFG->libdir . '/tablelib.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class course_manager_table extends \table_sql {
-
     /**
      * Constructor for course_manager_table.
      */
@@ -52,8 +51,12 @@ class course_manager_table extends \table_sql {
             'evreqvcount.veranstcount, ' .
             'evreqv.veranstid, evreqv.veransttitle, evreqv.starttime, evreqv.endtime';
 
-        $semesterfield = $DB->get_record('customfield_field',
-            ['shortname' => 'semester', 'type' => 'semester'], '*', MUST_EXIST);
+        $semesterfield = $DB->get_record(
+            'customfield_field',
+            ['shortname' => 'semester', 'type' => 'semester'],
+            '*',
+            MUST_EXIST
+        );
 
         $from = '{course} c ' .
             'JOIN {customfield_data} cfd ON cfd.instanceid = c.id AND cfd.fieldid = :semesterfieldid ' .
@@ -72,7 +75,7 @@ class course_manager_table extends \table_sql {
         $where = ['TRUE'];
 
         if ($categoryids != null) {
-            list($insql, $inparams) = $DB->get_in_or_equal($categoryids, SQL_PARAMS_NAMED);
+            [$insql, $inparams] = $DB->get_in_or_equal($categoryids, SQL_PARAMS_NAMED);
             $where[] = "c.category $insql";
             $params = array_merge($params, $inparams);
         }
@@ -120,7 +123,7 @@ class course_manager_table extends \table_sql {
 
     public function col_teacher($row) {
         $users = get_users_by_capability(\context_course::instance($row->courseid), 'moodle/course:update');
-        $users = array_map(function($user) {
+        $users = array_map(function ($user) {
             return \html_writer::link(new moodle_url('/user/profile.php', ['id' => $user->id]), fullname($user));
         }, $users);
         return join(', ', $users);
@@ -169,7 +172,7 @@ class course_manager_table extends \table_sql {
             return '';
         }
         if ($row->state == 0) {
-            return $OUTPUT->render(new \single_button(new moodle_url(''), get_string('approve'), 'post', true)).
+            return $OUTPUT->render(new \single_button(new moodle_url(''), get_string('approve'), 'post', true)) .
                 \html_writer::link(new moodle_url(''), get_string('details'), ['class' => 'ml-2 btn btn-secondary']);
         }
         return '';

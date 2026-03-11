@@ -80,7 +80,6 @@ class evasys_synchronizer {
             } else {
                 $result[$course] = $soapresult;
             }
-
         }
         return $result;
     }
@@ -186,8 +185,10 @@ class evasys_synchronizer {
     }
 
     public function get_amount_participants($courseid) {
-        if (!isset($this->courseinformation[$courseid]) || $this->courseinformation[$courseid] === null
-            || !property_exists($this->courseinformation[$courseid]->m_aoParticipants, "Persons")) {
+        if (
+            !isset($this->courseinformation[$courseid]) || $this->courseinformation[$courseid] === null
+            || !property_exists($this->courseinformation[$courseid]->m_aoParticipants, "Persons")
+        ) {
             return 0;
         }
         if (is_object($this->courseinformation[$courseid]->m_aoParticipants->Persons)) {
@@ -276,11 +277,11 @@ class evasys_synchronizer {
 
         $notiftext = "Sehr geehrte*r Evaluationskoordinator*in,\r\n\r\n";
         $notiftext .= "Dies ist eine automatisch generierte Mail, ausgelöst dadurch, dass ein*e Dozent*in die Evaluation " .
-            "der nachfolgenden Veranstaltung beantragt hat. \r\n".
-            "Bitte passen Sie die Evaluationszeiträume dem untenstehenden Wunsch an. \r\n".
+            "der nachfolgenden Veranstaltung beantragt hat. \r\n" .
+            "Bitte passen Sie die Evaluationszeiträume dem untenstehenden Wunsch an. \r\n" .
             "Bitte versenden Sie die TANs im EvaSys-Menü " .
-            "unter dem Menüpunkt 'TANs per E-Mail an Befragte versenden' für die Veranstaltungen.\r\n".
-            "Falls Sie für diesen Kurs bereits eine E-Mail erhalten haben, wurden gerade neue Teilnehmer*innen ".
+            "unter dem Menüpunkt 'TANs per E-Mail an Befragte versenden' für die Veranstaltungen.\r\n" .
+            "Falls Sie für diesen Kurs bereits eine E-Mail erhalten haben, wurden gerade neue Teilnehmer*innen " .
             "hinzugefügt oder der Zeitraum angepasst. Dies ist ggf. unten angegeben.\r\n\r\n";
 
         $addstandardtimestring = false;
@@ -309,7 +310,7 @@ class evasys_synchronizer {
 
         foreach ($this->courseinformation as $course) {
             $notiftext .= "Name: " . $course->m_sCourseTitle . "\r\n";
-            $notiftext .= "EvaSys-ID: " . $course->m_sPubCourseId ."\r\n";
+            $notiftext .= "EvaSys-ID: " . $course->m_sPubCourseId . "\r\n";
             $notiftext .= "Die Veranstaltung hat folgende Fragebögen:\r\n\r\n";
 
             $surveys = $this->get_surveys($course->m_sPubCourseId);
@@ -322,8 +323,18 @@ class evasys_synchronizer {
         $notiftext .= "Mit freundlichen Grüßen\r\n";
         $notiftext .= "Learnweb-Support";
 
-        $mailresult = email_to_user($userto, $userfrom, $notifsubject, $notiftext, '', '' , '',
-            true, $userfrom->email, $userfrom->firstname . " " . $userfrom->lastname);
+        $mailresult = email_to_user(
+            $userto,
+            $userfrom,
+            $notifsubject,
+            $notiftext,
+            '',
+            '',
+            '',
+            true,
+            $userfrom->email,
+            $userfrom->firstname . " " . $userfrom->lastname
+        );
         if (!$mailresult) {
             throw new \Exception('Could not send e-mail to person responsible for evaluation');
         }

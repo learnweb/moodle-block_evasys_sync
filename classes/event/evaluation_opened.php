@@ -17,7 +17,6 @@
 namespace block_evasys_sync\event;
 
 class evaluation_opened extends \core\event\base {
-
     /**
      * Override in subclass.
      *

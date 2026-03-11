@@ -23,7 +23,6 @@ namespace block_evasys_sync;
  * @copyright 2022 Justus Dieckmann WWU
  */
 class dbtables {
-
     const CATEGORIES = 'block_evasys_sync_categories';
     const EVAL_REQUESTS = 'block_evasys_sync_ereq';
     const EVAL_REQUESTS_COURSES = 'block_evasys_sync_ereq_cours';
@@ -32,5 +31,4 @@ class dbtables {
     const EVAL_COURSES = 'block_evasys_sync_eval_cours';
     const EVAL_VERANSTS = 'block_evasys_sync_eval_veran';
     const ERRORS = 'block_evasys_sync_errors';
-
 }

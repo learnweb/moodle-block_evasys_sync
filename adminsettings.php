@@ -55,9 +55,11 @@ if (has_capability('moodle/site:config', context_system::instance())) {
         // Print a confirmation message.
         echo $OUTPUT->header();
         echo $OUTPUT->heading(get_string('settings', 'block_evasys_sync'));
-        echo $OUTPUT->confirm(get_string("delete_confirm", 'block_evasys_sync'),
+        echo $OUTPUT->confirm(
+            get_string("delete_confirm", 'block_evasys_sync'),
             "adminsettings.php?d=$delid&c=$delid",
-            'adminsettings.php');
+            'adminsettings.php'
+        );
         echo $OUTPUT->footer();
         exit();
     } else if ($data = $mform->get_data()) {
@@ -129,8 +131,10 @@ if (has_capability('moodle/site:config', context_system::instance())) {
                     $oldvaluemode = $newvaluemode + 1; // Make the below if statement execute.
                 }
                 // Update db entry.
-                if ($data->$newvalue != $oldvalue or
-                    $newvaluemode != $oldvaluemode) {
+                if (
+                    $data->$newvalue != $oldvalue or
+                    $newvaluemode != $oldvaluemode
+                ) {
                     if ($evasysroleid && $data->$newvalue != $oldvalue) {
                         role_unassign($evasysroleid, $oldvalue, context_coursecat::instance($allocation->get('course_category'))->id);
                     }
@@ -151,7 +155,7 @@ if (has_capability('moodle/site:config', context_system::instance())) {
 
     // Load existing setttings.
     if (empty($entry->id)) {
-        $entry = new stdClass;
+        $entry = new stdClass();
         $entry->id = 0;
     }
 

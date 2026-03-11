@@ -17,7 +17,6 @@
 namespace block_evasys_sync\event;
 
 class evaluationperiod_set extends \core\event\base {
-
     /**
      * Override in subclass.
      *
@@ -42,7 +41,7 @@ class evaluationperiod_set extends \core\event\base {
     }
 
     public function get_description() {
-        return "The user with ID {$this->userid} set the evaluationperiod for the course {$this->courseid}, ".
+        return "The user with ID {$this->userid} set the evaluationperiod for the course {$this->courseid}, " .
                     "from {$this->other['start']} until {$this->other['end']}";
     }
 
