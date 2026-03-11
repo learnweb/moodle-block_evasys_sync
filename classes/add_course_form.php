@@ -17,7 +17,7 @@
 namespace block_evasys_sync;
 
 use moodleform;
-use html_writer;
+use core\output\html_writer;
 
 defined('MOODLE_INTERNAL') || die;
 
