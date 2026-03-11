@@ -24,7 +24,6 @@
 namespace block_evasys_sync;
 use core\persistent;
 
-defined('MOODLE_INTERNAL') || die;
 
 class course_evaluation_allocation extends persistent {
     const TABLE = 'block_evasys_sync_courseeval';

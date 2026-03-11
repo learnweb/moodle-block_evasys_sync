@@ -18,7 +18,6 @@ namespace block_evasys_sync\task;
 
 use block_evasys_sync\evasys_inviter;
 
-defined('MOODLE_INTERNAL') || die();
 
 
 class update_survey_status extends \core\task\scheduled_task {

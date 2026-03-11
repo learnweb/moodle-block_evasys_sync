@@ -31,7 +31,6 @@
 use block_evasys_sync\dbtables;
 use block_evasys_sync\local\entity\evaluation_state;
 
-defined('MOODLE_INTERNAL') || die();
 
 /**
  * Execute evasys_sync upgrade from the given old version

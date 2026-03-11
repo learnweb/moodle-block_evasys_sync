@@ -18,7 +18,6 @@ namespace block_evasys_sync;
 
 use block_evasys_sync\local\entity\evaluation_state;
 
-defined('MOODLE_INTERNAL') || die();
 
 /**
  * Evaluation entity.

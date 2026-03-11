@@ -21,7 +21,6 @@
  * @copyright 2019 T Reischmann
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-defined('MOODLE_INTERNAL') || die();
 
 /**
  * PHPUnit evasys testcase

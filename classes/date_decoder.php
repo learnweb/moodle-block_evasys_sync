@@ -16,7 +16,6 @@
 
 namespace block_evasys_sync;
 
-defined('MOODLE_INTERNAL') || die();
 
 class date_decoder {
     private static $instance = null;

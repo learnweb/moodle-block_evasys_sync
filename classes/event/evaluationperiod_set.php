@@ -15,7 +15,6 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 namespace block_evasys_sync\event;
-defined('MOODLE_INTERNAL') || die();
 
 class evaluationperiod_set extends \core\event\base {
 

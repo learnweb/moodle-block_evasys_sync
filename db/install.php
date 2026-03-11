@@ -18,7 +18,6 @@
 // * lib.php/modulename_install() post installation hook
 // * partially defaults.php
 
-defined('MOODLE_INTERNAL') || die();
 
 /**
  * install.php
