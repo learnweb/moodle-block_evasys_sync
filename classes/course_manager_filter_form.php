@@ -14,13 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Filter moodle form for course manager overview table.
- *
- * @package    block_evasys_sync
- * @copyright  2022 Justus Dieckmann WWU
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
 namespace block_evasys_sync;
 
 use moodleform;
@@ -38,9 +31,7 @@ require_once($CFG->libdir . '/formslib.php');
  */
 class course_manager_filter_form extends moodleform {
 
-    /**
-     * Defines form elements.
-     */
+    #[\Override]
     protected function definition() {
         global $DB;
         $mform = $this->_form;
@@ -54,6 +45,7 @@ class course_manager_filter_form extends moodleform {
         $this->add_action_buttons(true, get_string('apply', 'block_evasys_sync'));
     }
 
+    #[\Override]
     public function get_data() {
         $data = parent::get_data();
         if ($data) {
