@@ -69,6 +69,7 @@ class evasys_soap_client {
         } else {
             foreach ($result->Strings as $id) {
                 $result = $soapclient->GetCoursesByUserId((int) $id);
+                var_dump($result);
                 if ($result instanceof SoapFault) {
                     throw $result;
                 } else {
