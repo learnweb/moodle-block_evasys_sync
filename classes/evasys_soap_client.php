@@ -62,11 +62,14 @@ class evasys_soap_client {
     public function courses_by_user(stdClass $user): array {
         $soapclient = self::get();
         $result = $soapclient->GetUserIdsByParams(['Email' => $user->email]);
+        var_dump($user);
+        var_dump($result);
         if ($result instanceof SoapFault) {
             throw $result;
         } else {
             foreach ($result->Strings as $id) {
                 $result = $soapclient->GetCoursesByUserId((int) $id);
+                var_dump($result);
                 if ($result instanceof SoapFault) {
                     throw $result;
                 } else {
