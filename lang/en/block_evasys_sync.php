@@ -127,6 +127,7 @@ $string['evalperiodsetnotice'] = 'Evaluationperiod has been set';
 $string['evaluationperiod'] = 'Evaluation period';
 $string['evaluationperiod_for'] = 'Evaluation period for "{$a}"';
 $string['evaluations'] = 'Evaluations';
+$string['evasys:usernotfound'] = 'No EvaSys user with email {$a} found';
 $string['evasys_settings_for'] = 'Evasys settings for {$a}';
 $string['evasys_sync'] = 'EvaSys Sync';
 $string['evasys_sync:addinstance'] = 'Add a new EvaSys Sync Block';
