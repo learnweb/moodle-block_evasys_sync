@@ -127,6 +127,7 @@ $string['evalperiodsetnotice'] = 'Evaluationszeitraum gesetzt';
 $string['evaluationperiod'] = 'Evaluationszeitraum';
 $string['evaluationperiod_for'] = 'Evaluationszeitraum für "{$a}"';
 $string['evaluations'] = 'Evaluationen';
+$string['evasys:usernotfound'] = 'Kein EvaSys-Benutzer mit E-Mail-Adresse {$a} gefunden';
 $string['evasys_settings_for'] = 'Evasys-Einstellungen für {$a}';
 $string['evasys_sync'] = 'EvaSys-Export';
 $string['evasys_sync:addinstance'] = 'EvaSys-Export-Block hinzufügen';

@@ -66,6 +66,8 @@ class evasys_soap_client {
         var_dump($result);
         if ($result instanceof SoapFault) {
             throw $result;
+        } else if (empty($result->Strings)) {
+            throw \moodle_exception('evasysusernotfound');
         } else {
             foreach ($result->Strings as $id) {
                 $result = $soapclient->GetCoursesByUserId((int) $id);
