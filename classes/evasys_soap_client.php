@@ -47,4 +47,14 @@ class evasys_soap_client {
         $soapclient->__setSoapHeaders($header);
         return $soapclient;
     }
+
+    public function userids(): array {
+        $soapclient = self::get();
+        $result = $soapclient->GetUserIdsByParams([]);
+        if ($result instanceof SoapFault) {
+            return null;
+        } else {
+            return $result->Strings;
+        }
+    }
 }

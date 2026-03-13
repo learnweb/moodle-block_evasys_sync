@@ -71,6 +71,12 @@ class block_evasys_sync extends block_base {
                 $this->content->text .= $output->single_button($href, get_string('checkstatus', 'block_evasys_sync'), 'get');
             } else {
                 $this->content->text .= get_string('missing_course_id', 'block_evasys_sync');
+                $evasys = new \block_evasys_sync\evasys_soap_client();
+                $result = $evasys->userids();
+                if ($result) {
+                    $useridlistitems = array_map(fn($id) => "<li>$id</li>", $evasys->userids());
+                    $this->content->text .= '<ul>' . join('', $useridlistitems) . '</ul>';
+                }
             }
             return $this->content;
         }
