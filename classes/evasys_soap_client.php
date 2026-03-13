@@ -59,7 +59,7 @@ class evasys_soap_client {
         }
     }
 
-    public function courses_by_user(stdClass $user) {
+    public function courses_by_user(stdClass $user): array {
         $soapclient = self::get();
         $result = $soapclient->GetUserIdsByParams(['Email' => $user->email]);
         var_dump($user);
@@ -78,6 +78,8 @@ class evasys_soap_client {
                     return $result->Courses;
                 }
             }
+
+            return [];
         }
     }
 }
