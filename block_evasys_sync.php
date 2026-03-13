@@ -33,6 +33,7 @@ class block_evasys_sync extends block_base {
      * @return object
      */
     public function get_content() {
+        global $USER;
         $evasyssynccheck = optional_param('evasyssynccheck', 0, PARAM_BOOL);
         $status = optional_param('status', "", PARAM_TEXT);
 
@@ -72,10 +73,10 @@ class block_evasys_sync extends block_base {
             } else {
                 $this->content->text .= get_string('missing_course_id', 'block_evasys_sync');
                 $evasys = new \block_evasys_sync\evasys_soap_client();
-                $result = $evasys->userids();
+                $result = $evasys->courses_by_user($USER);
                 if ($result) {
-                    $useridlistitems = array_map(fn($id) => "<li>$id</li>", $evasys->userids());
-                    $this->content->text .= '<ul>' . join('', $useridlistitems) . '</ul>';
+                    $courses = array_map(fn($id) => "<li>$id</li>", $result);
+                    $this->content->text .= '<ul>' . join('', $courses) . '</ul>';
                 }
             }
             return $this->content;

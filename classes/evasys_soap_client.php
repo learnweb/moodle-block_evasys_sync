@@ -16,6 +16,7 @@
 
 namespace block_evasys_sync;
 
+use stdClass;
 
 /**
  * Singleton for evasys soap client.
@@ -48,13 +49,30 @@ class evasys_soap_client {
         return $soapclient;
     }
 
-    public function userids(): array {
+    public function userids(): mixed {
         $soapclient = self::get();
         $result = $soapclient->GetUserIdsByParams([]);
         if ($result instanceof SoapFault) {
             return null;
         } else {
             return $result->Strings;
+        }
+    }
+
+    public function courses_by_user(stdClass $user): array {
+        $soapclient = self::get();
+        $result = $soapclient->GetUserIdsByParams(['Email' => $user->email]);
+        if ($result instanceof SoapFault) {
+            throw $result;
+        } else {
+            foreach ($result->Strings as $id) {
+                $result = $soapclient->GetCoursesByUserId((int) $id);
+                if ($result instanceof SoapFault) {
+                    throw $result;
+                } else {
+                    return $result->Courses;
+                }
+            }
         }
     }
 }
