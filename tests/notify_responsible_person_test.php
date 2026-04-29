@@ -67,6 +67,7 @@ final class notify_responsible_person_test extends advanced_testcase {
         $data->course_category = $categoryone->id;
         $data->userid = $userone->id;
         $data->category_mode = 0;
+        $data->mode_flags = 1;
         $record = new \block_evasys_sync\evasys_category(0, $data);
         $record->create();
 
@@ -84,6 +85,7 @@ final class notify_responsible_person_test extends advanced_testcase {
         $data->course_category = $subcategoryone->id;
         $data->userid = $usersubone->id;
         $data->category_mode = 0;
+        $data->mode_flags = 1;
         $record = new \block_evasys_sync\evasys_category(0, $data);
         $record->create();
 
@@ -94,6 +96,7 @@ final class notify_responsible_person_test extends advanced_testcase {
         $data->course_category = $subsubcategoryone->id;
         $data->userid = $usersubsubone->id;
         $data->category_mode = 0;
+        $data->mode_flags = 1;
         $record = new \block_evasys_sync\evasys_category(0, $data);
         $record->create();
 
