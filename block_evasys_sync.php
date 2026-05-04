@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+use core\output\notification;
+
 /**
  * @package block_evasys_sync
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -71,13 +73,10 @@ class block_evasys_sync extends block_base {
                 $href = new moodle_url('/course/view.php', ['id' => $this->page->course->id, "evasyssynccheck" => true]);
                 $this->content->text .= $output->single_button($href, get_string('checkstatus', 'block_evasys_sync'), 'get');
             } else {
-                $this->content->text .= get_string('missing_course_id', 'block_evasys_sync');
-                $evasys = new \block_evasys_sync\evasys_soap_client();
-                $result = $evasys->courses_by_user($USER);
-                if ($result) {
-                    $courses = array_map(fn($id) => "<li>$id</li>", $result);
-                    $this->content->text .= '<ul>' . join('', $courses) . '</ul>';
-                }
+                $this->content->text .= $output->render(new notification(
+                    message: get_string('missing_course_id', 'block_evasys_sync'),
+                    closebutton: false
+                ));
             }
             return $this->content;
         }
